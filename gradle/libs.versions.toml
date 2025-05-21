@@ -10,7 +10,7 @@ minSdk = "24"
 targetSdk = "35"
 kotlin = "2.1.20" # Match your project's Kotlin version
 ksp = "2.1.20-2.0.1" #First part must match Kotlin version
-androidGradlePlugin = "8.6.1" # Android Gradle Plugin version
+androidGradlePlugin = "8.10.0" # Android Gradle Plugin version
 corektx = "1.16.0"
 
 # Compose
