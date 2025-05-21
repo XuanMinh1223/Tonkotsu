@@ -1,0 +1,101 @@
+# Tonkotsu/gradle/libs.versions.toml
+
+[versions]
+# SDK & Kotlin
+compileSdk = "35"
+espressoCore = "3.6.1"
+junit = "4.13.2"
+junitVersion = "1.2.1"
+minSdk = "24"
+targetSdk = "35"
+kotlin = "2.1.20" # Match your project's Kotlin version
+ksp = "2.1.20-2.0.1" #First part must match Kotlin version
+androidGradlePlugin = "8.6.1" # Android Gradle Plugin version
+corektx = "1.16.0"
+
+# Compose
+composeBom = "2024.04.00" # Latest BOM for Compose
+activityCompose = "1.8.2"
+lifecycleRuntimeKtx = "2.8.0"
+lifecycleViewModelCompose = "2.8.0"
+navigationCompose = "2.7.7"
+kotlinCompilerExtension = "1.5.1"
+
+# Hilt
+hilt = "2.51.1"
+hiltCompiler = "1.2.0" # For androidx.hilt
+
+# Network
+retrofit = "2.9.0"
+okhttpLogging = "4.12.0"
+
+# Coroutines
+kotlinCoroutines = "1.8.0"
+
+# Image Loading
+coil = "2.6.0"
+
+# Room (Optional - if you plan to use it for local storage)
+room = "2.6.1"
+
+[libraries]
+# AndroidX
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "corektx" } # Note: core-ktx version often follows Kotlin version
+espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
+ext-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
+junit = { module = "junit:junit", version.ref = "junit" }
+lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+
+# Compose
+activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+ui = { group = "androidx.compose.ui", name = "ui" }
+ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+material3 = { group = "androidx.compose.material3", name = "material3" }
+ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+
+# Lifecycle & ViewModel
+lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
+lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewModelCompose" }
+
+# Navigation
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+
+# Hilt
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltCompiler" } # For androidx.hilt annotations
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltCompiler" } # Uses hiltCompiler version
+
+# Network
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttpLogging" }
+
+# Coroutines
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinCoroutines" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinCoroutines" }
+
+# Image Loading
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+
+# Room (Optional)
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+
+[bundles]
+# You can create bundles to easily group related dependencies
+# Example: network = ["retrofit", "retrofit-converter-gson", "okhttp-logging-interceptor"]
+#          compose = ["ui", "ui-graphics", "ui-tooling-preview", "material3"]
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
+android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version = "2.1.21" }
