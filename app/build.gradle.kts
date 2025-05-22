@@ -42,7 +42,7 @@ android {
 dependencies {
     // --- Module Dependencies ---
     implementation(project(":feature:home"))
-    implementation(project(":domain")) // App needs access to domain models and interfaces
+    // App needs access to domain models and interfaces
 
     // --- Core Android & Compose Dependencies ---
     implementation(libs.core.ktx)

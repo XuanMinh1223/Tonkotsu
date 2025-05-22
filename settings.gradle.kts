@@ -21,7 +21,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "Tonkotsu"
 include(":app")
-include(":domain")
-include(":data")
 include(":feature")
 include(":feature:home")
+include(":core")
+include(":core:data")
+include(":core:domain")
