@@ -37,6 +37,8 @@ coil = "2.6.0"
 
 # Room (Optional - if you plan to use it for local storage)
 room = "2.6.1"
+appcompat = "1.6.1"
+material = "1.10.0"
 
 [libraries]
 # AndroidX
@@ -85,6 +87,8 @@ coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coi
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [bundles]
 # You can create bundles to easily group related dependencies

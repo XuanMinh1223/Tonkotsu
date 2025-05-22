@@ -41,6 +41,7 @@ android {
 
 dependencies {
     // --- Module Dependencies ---
+    implementation(project(":feature:home"))
     implementation(project(":domain")) // App needs access to domain models and interfaces
 
     // --- Core Android & Compose Dependencies ---
@@ -61,8 +62,8 @@ dependencies {
 
     // --- Hilt ---
     implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose) // Still used for hiltViewModel()
+    ksp(libs.hilt.android.compiler)
     ksp(libs.hilt.compiler)
 
     // Navigation
