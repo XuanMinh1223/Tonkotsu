@@ -1,3 +1,4 @@
+//data
 // data/build.gradle.kts
 plugins {
     alias(libs.plugins.android.library) // This module is an Android library
@@ -23,7 +24,7 @@ android {
 dependencies {
     // --- Module Dependencies ---
     // The data module implements interfaces from the domain module
-    implementation(project(":domain"))
+    implementation(project(":core:domain"))
 
     // --- Core Dependencies ---
     implementation(libs.kotlinx.coroutines.core)

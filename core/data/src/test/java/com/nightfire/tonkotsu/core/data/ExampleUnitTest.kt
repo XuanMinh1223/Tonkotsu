@@ -1,4 +1,4 @@
-package com.nightfire.data
+package com.nightfire.tonkotsu.core.data
 
 import org.junit.Test
 

@@ -54,7 +54,6 @@ dependencies {
 
     // --- Multi-Module Dependency: Feature depends on Domain ---
     // This is crucial for accessing models, repositories interfaces, and use cases
-    implementation(project(":domain"))
 
     // --- Hilt Dependency Injection ---
     implementation(libs.hilt.android)
