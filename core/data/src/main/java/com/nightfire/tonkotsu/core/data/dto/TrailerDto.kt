@@ -1,0 +1,10 @@
+package com.nightfire.tonkotsu.core.data.dto
+
+import com.google.gson.annotations.SerializedName
+
+data class TrailerDto(
+    @SerializedName("youtube_id") val youtubeId: String?,
+    @SerializedName("url") val url: String?,
+    @SerializedName("embed_url") val embedUrl: String?,
+    @SerializedName("images") val images: TrailerImagesDto? // Often present, though not in your sample
+)
