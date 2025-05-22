@@ -1,4 +1,4 @@
-package com.nightfire.home
+package com.nightfire.tonkotsu.feature.home
 
 import org.junit.Test
 
