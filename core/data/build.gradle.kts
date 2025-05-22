@@ -23,7 +23,7 @@ android {
 dependencies {
     // --- Module Dependencies ---
     // The data module implements interfaces from the domain module
-    implementation(project(":domain"))
+    implementation(project(":core:domain"))
 
     // --- Core Dependencies ---
     implementation(libs.kotlinx.coroutines.core)
