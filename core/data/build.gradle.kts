@@ -25,6 +25,7 @@ dependencies {
     // --- Module Dependencies ---
     // The data module implements interfaces from the domain module
     implementation(project(":core:domain"))
+    implementation(project(":core:common"))
 
     // --- Core Dependencies ---
     implementation(libs.kotlin.stdlib)

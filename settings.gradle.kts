@@ -1,3 +1,5 @@
+// settings.gradle
+
 pluginManagement {
     repositories {
         google {
@@ -23,7 +25,11 @@ rootProject.name = "Tonkotsu"
 include(":app")
 include(":feature")
 include(":feature:home")
-include(":core")
+
+// YOU NEED TO INCLUDE THE PARENT 'CORE' MODULE FIRST
+include(":core") // <--- ADD THIS LINE!
+
 include(":core:data")
 include(":core:domain")
 include(":core:network")
+include(":core:common")
