@@ -28,13 +28,11 @@ android {
     buildFeatures {
         compose = true // Enable Jetpack Compose in this module
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.kotlinCompilerExtension.get()
-    }
 }
 
 dependencies {
     // --- Android & Compose Core UI ---
+    implementation(libs.kotlin.stdlib)
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.activity.compose)

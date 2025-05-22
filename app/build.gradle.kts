@@ -45,6 +45,7 @@ dependencies {
     // App needs access to domain models and interfaces
 
     // --- Core Android & Compose Dependencies ---
+    implementation(libs.kotlin.stdlib)
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.activity.compose)

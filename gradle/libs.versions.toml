@@ -19,7 +19,6 @@ activityCompose = "1.8.2"
 lifecycleRuntimeKtx = "2.8.0"
 lifecycleViewModelCompose = "2.8.0"
 navigationCompose = "2.7.7"
-kotlinCompilerExtension = "1.5.1"
 
 # Hilt
 hilt = "2.51.1"
@@ -41,6 +40,9 @@ appcompat = "1.6.1"
 material = "1.10.0"
 
 [libraries]
+# Kotlin Standard Library
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+
 # AndroidX
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "corektx" } # Note: core-ktx version often follows Kotlin version
 espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }

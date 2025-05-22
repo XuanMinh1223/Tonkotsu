@@ -27,6 +27,7 @@ dependencies {
     implementation(project(":core:domain"))
 
     // --- Core Dependencies ---
+    implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
 
