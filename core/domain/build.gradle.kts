@@ -33,7 +33,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
 
     implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
+    ksp(libs.hilt.android.compiler)
     // IMPORTANT: Add the dependency to core:common here!
     implementation(project(":core:common")) // <--- ADD THIS LINE (if you haven't yet)
 

@@ -8,18 +8,18 @@ junit = "4.13.2"
 junitVersion = "1.2.1"
 minSdk = "24"
 targetSdk = "35"
-kotlin = "2.1.20" # Match your project's Kotlin version
-ksp = "2.1.20-2.0.1" #First part must match Kotlin version
+kotlin = "1.9.22" # <--- CHANGE THIS: Use a stable Kotlin 1.9.x version
+ksp = "1.9.22-1.0.17" #First part must match Kotlin version
 androidGradlePlugin = "8.10.0" # Android Gradle Plugin version
 corektx = "1.16.0"
 
 # Compose
-composeBom = "2024.04.00" # Latest BOM for Compose
+composeBom = "2023.08.00" # Latest BOM for Compose
 activityCompose = "1.8.2"
 lifecycleRuntimeKtx = "2.8.0"
 lifecycleViewModelCompose = "2.8.0"
 navigationCompose = "2.7.7"
-
+composeCompiler = "1.5.10"
 # Hilt
 hilt = "2.51.1"
 hiltCompiler = "1.2.0" # For androidx.hilt
@@ -100,7 +100,6 @@ material = { group = "com.google.android.material", name = "material", version.r
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

@@ -1,4 +1,3 @@
-// settings.gradle
 
 pluginManagement {
     repositories {
@@ -26,8 +25,7 @@ include(":app")
 include(":feature")
 include(":feature:home")
 
-// YOU NEED TO INCLUDE THE PARENT 'CORE' MODULE FIRST
-include(":core") // <--- ADD THIS LINE!
+include(":core")
 
 include(":core:data")
 include(":core:domain")

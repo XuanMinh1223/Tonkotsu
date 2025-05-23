@@ -3,7 +3,6 @@
 plugins {
     alias(libs.plugins.android.library) // This is an Android Library module
     alias(libs.plugins.kotlin.android)  // For Kotlin in Android
-    alias(libs.plugins.compose.compiler) // Compose compiler
     alias(libs.plugins.ksp)             // For Hilt's annotation processing (replaces kapt)
     alias(libs.plugins.hilt.android)    // For Hilt dependency injection
 }
@@ -24,6 +23,10 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+    
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    }
 
     buildFeatures {
         compose = true // Enable Jetpack Compose in this module
@@ -31,6 +34,9 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:domain"))
+    implementation(project(":core:common"))
+
     // --- Android & Compose Core UI ---
     implementation(libs.kotlin.stdlib)
     implementation(libs.core.ktx)
@@ -55,8 +61,8 @@ dependencies {
 
     // --- Hilt Dependency Injection ---
     implementation(libs.hilt.android)
+    implementation(libs.hilt.navigation.compose)
     ksp(libs.hilt.android.compiler)
-    ksp(libs.hilt.compiler)
 
     // --- Other common libraries (e.g., Coil for image loading) ---
     implementation(libs.coil.compose)

@@ -1,7 +1,6 @@
 // app/build.gradle.kts
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.android)
@@ -34,6 +33,9 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    }
     kotlinOptions {
         jvmTarget = "17"
     }
@@ -42,6 +44,8 @@ android {
 dependencies {
     // --- Module Dependencies ---
     implementation(project(":feature:home"))
+    implementation(project(":core:data"))    // <--- Add this
+    implementation(project(":core:network"))
     // App needs access to domain models and interfaces
 
     // --- Core Android & Compose Dependencies ---
@@ -65,10 +69,6 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose) // Still used for hiltViewModel()
     ksp(libs.hilt.android.compiler)
-    ksp(libs.hilt.compiler)
-
-    // Navigation
-    implementation(libs.hilt.navigation.compose)
 
     // --- Image Loading ---
     implementation(libs.coil.compose)

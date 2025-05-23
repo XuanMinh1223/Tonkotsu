@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "com.nightfire.data"
+    namespace = "com.nightfire.tonkotsu.core.data"
     compileSdk = libs.versions.compileSdk.get().toInt()
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInt()
@@ -23,7 +23,7 @@ android {
 
 dependencies {
     // --- Module Dependencies ---
-    // The data module implements interfaces from the domain module
+    implementation(project(":core:network"))
     implementation(project(":core:domain"))
     implementation(project(":core:common"))
 

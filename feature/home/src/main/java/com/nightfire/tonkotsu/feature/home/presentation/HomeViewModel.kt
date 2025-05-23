@@ -1,0 +1,46 @@
+package com.nightfire.tonkotsu.feature.home.presentation
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.nightfire.tonkotsu.core.common.Resource
+import com.nightfire.tonkotsu.core.common.UiState // Import your new UiState
+import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
+import com.nightfire.tonkotsu.core.domain.usecase.GetTopAnimeOverviewUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
+
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val getTopAnimeOverviewUseCase: GetTopAnimeOverviewUseCase
+) : ViewModel() {
+
+    private val _state = MutableStateFlow(UiState<List<AnimeOverview>>())
+    val state: StateFlow<UiState<List<AnimeOverview>>> = _state
+
+    init {
+        getTopAnimeOverview()
+    }
+
+    private fun getTopAnimeOverview() {
+        getTopAnimeOverviewUseCase().onEach { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _state.value = UiState.loading(result.data)
+                }
+                is Resource.Success -> {
+                    _state.value = UiState.success(result.data ?: emptyList())
+                }
+                is Resource.Error -> {
+                    _state.value = UiState.error(
+                        message = result.message ?: "An unexpected error occurred",
+                        data = result.data
+                    )
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+}

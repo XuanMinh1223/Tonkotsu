@@ -1,11 +1,16 @@
 package com.nightfire.tonkotsu.core.data.di
 
+import com.google.gson.Gson
 import com.nightfire.tonkotsu.core.data.remote.api.JikanApi // Your API interface
+import com.nightfire.tonkotsu.core.data.repository.AnimeRepositoryImpl
+import com.nightfire.tonkotsu.core.domain.repository.AnimeRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
@@ -14,8 +19,23 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideJikanApi(retrofit: Retrofit): JikanApi {
-        return retrofit.create(JikanApi::class.java)
+    fun provideJikanApi(okHttpClient: OkHttpClient, gson: Gson): JikanApi { // ADD gson parameter
+        return Retrofit.Builder()
+            .baseUrl("https://api.jikan.moe/v4/")
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create(gson)) // Pass gson here
+            .build()
+            .create(JikanApi::class.java)
+    }
+
+    /**
+     * Provides a singleton instance of [AnimeRepository].
+     * Hilt will automatically inject the [JikanApi] instance.
+     */
+    @Provides
+    @Singleton
+    fun provideAnimeRepository(api: JikanApi): AnimeRepository {
+        return AnimeRepositoryImpl(api)
     }
 
 }
