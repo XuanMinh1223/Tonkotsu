@@ -56,8 +56,6 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
 
-    // --- Multi-Module Dependency: Feature depends on Domain ---
-    // This is crucial for accessing models, repositories interfaces, and use cases
 
     // --- Hilt Dependency Injection ---
     implementation(libs.hilt.android)
