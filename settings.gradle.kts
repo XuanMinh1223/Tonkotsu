@@ -1,4 +1,3 @@
-
 pluginManagement {
     repositories {
         google {
@@ -31,3 +30,4 @@ include(":core:data")
 include(":core:domain")
 include(":core:network")
 include(":core:common")
+include(":ui")

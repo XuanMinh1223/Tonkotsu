@@ -26,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel // For injecting ViewModel
 import com.nightfire.tonkotsu.core.common.UiState
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview // Your domain model
 import com.nightfire.tonkotsu.feature.home.presentation.HomeViewModel // Your ViewModel
+import com.nightfire.tonkotsu.ui.ImageFromUrl
 
 /**
  * The Home screen composable function.
@@ -97,42 +98,13 @@ fun HomeScreenContent(
                 horizontalArrangement = Arrangement.spacedBy(16.dp), // Space between items
                 contentPadding = PaddingValues(horizontal = 16.dp) // Horizontal padding for the row
             ) {
-                // Iterate over the list of anime overviews
                 items(state.data ?: emptyList()) { anime ->
-                    // Use a dedicated Composable for each Anime item for better reusability and previewing
                     AnimeCard(anime = anime)
                 }
             }
         }
     }
 }
-
-/**
- * A composable to display a single Anime item card.
- * This is also stateless and takes its data as a parameter.
- */
-@Composable
-fun AnimeCard(anime: AnimeOverview, modifier: Modifier = Modifier) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.padding(vertical = 8.dp) // Padding for each item
-    ) {
-        Text(
-            text = "Image: ${anime.imageUrl?.take(20)}...", // Truncate URL for display
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(bottom = 4.dp)
-        )
-        Text(
-            text = anime.title,
-            style = MaterialTheme.typography.bodyMedium,
-            maxLines = 2
-        )
-        anime.score?.let {
-            Text(text = "Score: $it", style = MaterialTheme.typography.bodySmall)
-        }
-    }
-}
-
 
 // --- Preview Functions ---
 
@@ -239,28 +211,6 @@ fun HomeScreenContentErrorPreview() {
                     data = null,
                     isLoading = false,
                     errorMessage = "Failed to load anime. Please try again."
-                )
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AnimeCardPreview() {
-    MaterialTheme { // Use your app's theme here
-        Surface(color = MaterialTheme.colorScheme.background) {
-            AnimeCard(
-                anime = AnimeOverview(
-                    malId = 100,
-                    title = "My Hero Academia: World Heroes' Mission",
-                    imageUrl = "https://cdn.myanimelist.net/images/anime/1769/117967.jpg",
-                    score = 8.12,
-                    type = "movie",
-                    episodes = 1,
-                    synopsis = "Under the doctrines of Quirk Doomsday Theory, the ideological group Humarise is convinced that all humans with quirks are diseased and must be eradicated. In order to rebuild the world, the group's extremists have constructed a lethal device known as a \"Trigger Bomb\" that causes people with quirks to lose control and die. Their leader, Flect Turn, evades capture from the Pro Heroes deployed around the world.\n" +
-                            "\n" +
-                            "During his work study in the country of Otheon with Japan's number one Pro Hero, Izuku \"Deku\" Midoriya is accused of a crime he did not commit. Unintentionally involving Roddy Soul, a local, Deku soon finds himself on the run with the boy. It is now up to Rody, Deku, and Deku's classmates to stop the Trigger Bomb plot set in motion by Flect, all while eluding the other persistent members of Humarise."
                 )
             )
         }

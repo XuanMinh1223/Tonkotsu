@@ -36,6 +36,7 @@ android {
 dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:common"))
+    implementation(project(":ui"))
 
     // --- Android & Compose Core UI ---
     implementation(libs.kotlin.stdlib)

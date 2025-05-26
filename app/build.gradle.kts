@@ -46,6 +46,7 @@ dependencies {
     implementation(project(":feature:home"))
     implementation(project(":core:data"))    // <--- Add this
     implementation(project(":core:network"))
+    implementation(project(":ui"))
     // App needs access to domain models and interfaces
 
     // --- Core Android & Compose Dependencies ---
