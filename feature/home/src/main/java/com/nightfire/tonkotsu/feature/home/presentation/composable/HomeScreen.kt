@@ -10,23 +10,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel // For injecting ViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.nightfire.tonkotsu.core.common.UiState
-import com.nightfire.tonkotsu.core.domain.model.AnimeOverview // Your domain model
-import com.nightfire.tonkotsu.feature.home.presentation.HomeViewModel // Your ViewModel
-import com.nightfire.tonkotsu.ui.ImageFromUrl
+import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
+import com.nightfire.tonkotsu.feature.home.presentation.HomeViewModel
+import com.nightfire.tonkotsu.ui.skeleton.CardRowSkeleton
 
 /**
  * The Home screen composable function.
@@ -66,20 +65,17 @@ fun HomeScreenContent(
 
         if (state.isLoading) {
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                CircularProgressIndicator()
-                state.data?.let {
-                    // Optionally show stale data while loading if available
-                    if (it.isNotEmpty()) {
-                        Text(text = "Loading more...", style = MaterialTheme.typography.bodySmall)
-                    }
-                }
+                CardRowSkeleton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp) // Apply vertical padding if your actual row has it
+                )
             }
         } else if (state.errorMessage != null) {
-            // Show an error message
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
