@@ -59,7 +59,7 @@ fun HomeScreenContent(
         modifier = modifier.fillMaxSize() // Use the passed modifier
     ) {
         Text(
-            text = "Top Anime Shows",
+            text = "Most Popular Anime",
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 16.dp) // Add padding for title
         )

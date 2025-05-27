@@ -10,24 +10,11 @@ package com.nightfire.tonkotsu.core.common
  * @param data Optional data associated with the success or error state.
  * @param message Optional message associated with the error state.
  */
-sealed class Resource<T>(val data: T? = null, val message: String? = null) {
+sealed class Resource<out T>(val data: T? = null, val message: String? = null) { // <-- ADD 'out' HERE
 
-    /**
-     * Represents a successful operation.
-     * @param data The result data of the successful operation.
-     */
-    class Success<T>(data: T) : Resource<T>(data)
+    class Success<out T>(data: T) : Resource<T>(data)
 
-    /**
-     * Represents a failed operation.
-     * @param message The error message describing the failure.
-     * @param data Optional data that might still be useful even in an error state (e.g., cached data).
-     */
-    class Error<T>(message: String, data: T? = null) : Resource<T>(data, message)
+    class Error<out T>(message: String, data: T? = null) : Resource<T>(data, message) // <-- ADD 'out' HERE
 
-    /**
-     * Represents an ongoing operation (e.g., data is being fetched).
-     * @param data Optional data that might be displayed while loading (e.g., stale data).
-     */
-    class Loading<T>(data: T? = null) : Resource<T>(data)
+    object Loading : Resource<Nothing>()
 }

@@ -3,6 +3,7 @@ package com.nightfire.tonkotsu.core.domain.repository
 
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 import com.nightfire.tonkotsu.core.common.Resource // We'll define this common class next
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Interface defining the contract for anime-related data operations.
@@ -22,11 +23,11 @@ interface AnimeRepository {
      * @return A [Resource] sealed class that wraps either a success (List<AnimeOverview>)
      * or a failure (error message).
      */
-    suspend fun getTopAnimeOverview(
+    fun getTopAnimeOverview(
         type: String? = null,
         filter: String? = null,
         page: Int? = null,
         limit: Int? = null
-    ): Resource<List<AnimeOverview>>
+    ): Flow<Resource<List<AnimeOverview>>>
 
 }
