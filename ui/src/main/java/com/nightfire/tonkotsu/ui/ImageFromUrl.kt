@@ -18,6 +18,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
+import coil.request.ImageRequest
+
 /**
  * A reusable Composable for loading images from URLs with common loading (shimmer)
  * and error (placeholder) states.
@@ -48,7 +51,10 @@ fun ImageFromUrl(
     val placeholderTint = MaterialTheme.colorScheme.onSurfaceVariant
 
     SubcomposeAsyncImage(
-        model = imageUrl,
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(imageUrl)
+            .crossfade(500)
+            .build(),
         contentDescription = contentDescription,
         modifier = modifier
             .size(width, height)
