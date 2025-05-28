@@ -1,0 +1,45 @@
+package com.nightfire.tonkotsu.core.data.remote.dto
+
+import com.google.gson.annotations.SerializedName
+
+data class AnimeDetailDto(
+     @SerializedName("mal_id") val malId: Int,
+     @SerializedName("url") val url: String?,
+     @SerializedName("images") val images: ImagesDto?,
+     @SerializedName("trailer") val trailer: TrailerDto?,
+     @SerializedName("titles") val titles: List<TitleDto>?,
+     @SerializedName("title") val title: String?,
+     @SerializedName("title_english") val titleEnglish: String?,
+     @SerializedName("title_japanese") val titleJapanese: String?,
+     @SerializedName("type") val type: String?,
+     @SerializedName("source") val source: String?,
+     @SerializedName("episodes") val episodes: Int?,
+     @SerializedName("status") val status: String?,
+     @SerializedName("airing") val airing: Boolean?,
+     @SerializedName("aired") val aired: AiredDto?,
+     @SerializedName("duration") val duration: String?,
+     @SerializedName("rating") val rating: String?,
+     @SerializedName("score") val score: Double?,
+     @SerializedName("scored_by") val scoredBy: Int?,
+     @SerializedName("rank") val rank: Int?,
+     @SerializedName("popularity") val popularity: Int?,
+     @SerializedName("members") val members: Int?,
+     @SerializedName("favorites") val favorites: Int?,
+     @SerializedName("synopsis") val synopsis: String?,
+     @SerializedName("background") val background: String?,
+     @SerializedName("season") val season: String?,
+     @SerializedName("year") val year: Int?,
+     @SerializedName("broadcast") val broadcast: BroadcastDto?,
+     @SerializedName("producers") val producers: List<StaffDto>?,
+     @SerializedName("licensors") val licensors: List<StaffDto>?,
+     @SerializedName("studios") val studios: List<StaffDto>?,
+     @SerializedName("genres") val genres: List<GenreDto>?,
+     @SerializedName("explicit_genres") val explicitGenres: List<GenreDto>?,
+     @SerializedName("themes") val themes: List<GenreDto>?,
+     @SerializedName("demographics") val demographics: List<GenreDto>?,
+     @SerializedName("relations") val relations: List<RelationDto>?,
+     @SerializedName("theme") val theme: ThemeSongsDto?,
+     @SerializedName("external") val external: List<ExternalLinkDto>?,
+     @SerializedName("streaming") val streaming: List<StreamingServiceDto>?
+)
+
