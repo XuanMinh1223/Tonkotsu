@@ -26,9 +26,7 @@ fun AnimeRow(
     state: UiState<List<AnimeOverview>>,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier.fillMaxSize() // Use the passed modifier
-    ) {
+    Column {
         Text(
             text = title,
             style = MaterialTheme.typography.headlineMedium,

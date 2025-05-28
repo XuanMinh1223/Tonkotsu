@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -34,10 +36,12 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val popularAnimeState by viewModel.popularAnimeState.collectAsState()
+    val topAiringAnimeState by viewModel.topAiringAnimeState.collectAsState()
 
     Scaffold(modifier = Modifier.systemBarsPadding()) { innerPadding ->
         HomeScreenContent(
             popularAnimeState = popularAnimeState,
+            topAiringAnimeState = topAiringAnimeState,
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -49,12 +53,18 @@ fun HomeScreen(
  */
 @Composable
 fun HomeScreenContent(
-    popularAnimeState: UiState<List<AnimeOverview>>, // All UI data is passed as a parameter here
+    popularAnimeState: UiState<List<AnimeOverview>>,
+    topAiringAnimeState: UiState<List<AnimeOverview>>,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxSize() // Use the passed modifier
+        modifier = modifier.verticalScroll(rememberScrollState()) // Use the passed modifier
     ) {
+        AnimeRow(
+            title = "Top Airing Anime",
+            state = topAiringAnimeState
+        )
+
         AnimeRow(
             title = "Most Popular Anime",
             state = popularAnimeState
@@ -135,7 +145,12 @@ fun HomeScreenContentSuccessPreview() {
                     data = provideMockAnimeList(),
                     isLoading = false,
                     errorMessage = null
-                )
+                ),
+                topAiringAnimeState = UiState(
+                    data = provideMockAnimeList(),
+                    isLoading = false,
+                    errorMessage = null
+                ),
             )
         }
     }
@@ -148,6 +163,11 @@ fun HomeScreenContentLoadingPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeScreenContent(
                 popularAnimeState = UiState(
+                    data = if (provideMockAnimeList().isNotEmpty()) provideMockAnimeList() else null, // Show stale data if desired
+                    isLoading = true,
+                    errorMessage = null
+                ),
+                topAiringAnimeState = UiState(
                     data = if (provideMockAnimeList().isNotEmpty()) provideMockAnimeList() else null, // Show stale data if desired
                     isLoading = true,
                     errorMessage = null
@@ -167,6 +187,11 @@ fun HomeScreenContentErrorPreview() {
                     data = null,
                     isLoading = false,
                     errorMessage = "Failed to load anime. Please try again."
+                ),
+                topAiringAnimeState = UiState(
+                    data = if (provideMockAnimeList().isNotEmpty()) provideMockAnimeList() else null, // Show stale data if desired
+                    isLoading = true,
+                    errorMessage = null
                 )
             )
         }
