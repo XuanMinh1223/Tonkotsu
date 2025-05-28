@@ -1,4 +1,3 @@
-// feature/home/src/main/java/com/nightfire.tonkotsu.feature.home.presentation.composable/HomeScreen.kt
 package com.nightfire.tonkotsu.feature.home.presentation.composable
 
 import androidx.compose.foundation.layout.Arrangement
@@ -7,66 +6,105 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.unit.dp
 import com.nightfire.tonkotsu.core.common.UiState
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
-import com.nightfire.tonkotsu.feature.home.presentation.HomeViewModel
+import com.nightfire.tonkotsu.ui.skeleton.CardRowSkeleton
 
-/**
- * The Home screen composable function.
- * It observes the [HomeViewModel]'s state and displays the UI accordingly.
- */
 @Composable
-fun HomeScreen(
-    viewModel: HomeViewModel = hiltViewModel()
-) {
-    val popularAnimeState by viewModel.popularAnimeState.collectAsState()
-
-    Scaffold(modifier = Modifier.systemBarsPadding()) { innerPadding ->
-        HomeScreenContent(
-            popularAnimeState = popularAnimeState,
-            modifier = Modifier.padding(innerPadding)
-        )
-    }
-}
-
-/**
- * Stateless composable that displays the Home screen content based on the provided state.
- * This function is ideal for previews as it doesn't depend on a ViewModel.
- */
-@Composable
-fun HomeScreenContent(
-    popularAnimeState: UiState<List<AnimeOverview>>, // All UI data is passed as a parameter here
+fun AnimeRow(
+    title: String,
+    state: UiState<List<AnimeOverview>>,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.fillMaxSize() // Use the passed modifier
     ) {
-        AnimeRow(
-            title = "Most Popular Anime",
-            state = popularAnimeState
+        Text(
+            text = title,
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(16.dp)
         )
+
+        if (state.isLoading) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CardRowSkeleton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp) // Apply vertical padding if your actual row has it
+                )
+            }
+        } else if (state.errorMessage != null) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = state.errorMessage ?: "An unknown error occurred",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+        } else {
+            // Display the LazyRow when data is successfully loaded
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp), // Space between items
+                contentPadding = PaddingValues(horizontal = 16.dp) // Horizontal padding for the row
+            ) {
+                items(state.data ?: emptyList()) { anime ->
+                    AnimeCard(anime = anime)
+                }
+            }
+        }
     }
 }
 
-// --- Preview Functions ---
 
-// 1. Create a helper function to provide mock data
-fun provideMockAnimeList(): List<AnimeOverview> {
-    return listOf(
+@Preview(showBackground = true, widthDp = 360, heightDp = 280)
+@Composable
+fun AnimeRowLoadingPreview() {
+    MaterialTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            AnimeRow(
+                title = "Popular Anime (Loading)",
+                state = UiState.loading()
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, widthDp = 360, heightDp = 280)
+@Composable
+fun AnimeRowErrorPreview() {
+    MaterialTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            AnimeRow(
+                title = "Popular Anime (Error)",
+                state = UiState.error("Failed to load anime data. Please try again later.")
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, widthDp = 360, heightDp = 280)
+@Composable
+fun AnimeRowSuccessPreview() {
+    val sampleAnimeList = listOf(
         AnimeOverview(
             malId = 1,
             title = "Shingeki no Kyojin",
@@ -116,58 +154,12 @@ fun provideMockAnimeList(): List<AnimeOverview> {
                     "One day, Saitama catches the attention of 19-year-old cyborg Genos, who witnesses his power and wishes to become Saitama's disciple. Genos proposes that the two join the Hero Association in order to become certified heroes that will be recognized for their positive contributions to society. Saitama, who is shocked that no one knows who he is, quickly agrees. Meeting new allies and taking on new foes, Saitama embarks on a new journey as a member of the Hero Association to experience the excitement of battle he once felt."
         )
     )
-}
 
-// Assuming your HomeUiState is defined like this (or similar in HomeViewModel.kt):
-// data class HomeUiState(
-//     val data: List<AnimeOverview>? = null, // Renamed from topAnimeList to data
-//     val isLoading: Boolean = false,
-//     val errorMessage: String? = null
-// )
-
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenContentSuccessPreview() {
-    MaterialTheme { // Use your app's theme here (e.g., TonkotsuTheme)
+    MaterialTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-            HomeScreenContent(
-                popularAnimeState = UiState(
-                    data = provideMockAnimeList(),
-                    isLoading = false,
-                    errorMessage = null
-                )
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenContentLoadingPreview() {
-    MaterialTheme { // Use your app's theme here
-        Surface(color = MaterialTheme.colorScheme.background) {
-            HomeScreenContent(
-                popularAnimeState = UiState(
-                    data = if (provideMockAnimeList().isNotEmpty()) provideMockAnimeList() else null, // Show stale data if desired
-                    isLoading = true,
-                    errorMessage = null
-                )
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenContentErrorPreview() {
-    MaterialTheme { // Use your app's theme here
-        Surface(color = MaterialTheme.colorScheme.background) {
-            HomeScreenContent(
-                popularAnimeState = UiState(
-                    data = null,
-                    isLoading = false,
-                    errorMessage = "Failed to load anime. Please try again."
-                )
+            AnimeRow(
+                title = "Popular Anime (Success)",
+                state = UiState.success(sampleAnimeList)
             )
         }
     }

@@ -48,7 +48,7 @@ fun ImageFromUrl(
 ) {
 
     val errorTint = MaterialTheme.colorScheme.onErrorContainer
-    val placeholderTint = MaterialTheme.colorScheme.onSurfaceVariant
+    val placeholderTint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
 
     SubcomposeAsyncImage(
         model = ImageRequest.Builder(LocalContext.current)

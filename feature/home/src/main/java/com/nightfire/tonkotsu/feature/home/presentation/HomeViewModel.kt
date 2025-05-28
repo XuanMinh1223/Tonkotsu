@@ -18,8 +18,8 @@ class HomeViewModel @Inject constructor(
     private val getTopAnimeOverviewUseCase: GetTopAnimeOverviewUseCase
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(UiState<List<AnimeOverview>>())
-    val state: StateFlow<UiState<List<AnimeOverview>>> = _state
+    private val _popularAnimeState = MutableStateFlow(UiState<List<AnimeOverview>>())
+    val popularAnimeState: StateFlow<UiState<List<AnimeOverview>>> = _popularAnimeState
 
     init {
         getTopAnimeOverview()
@@ -29,13 +29,13 @@ class HomeViewModel @Inject constructor(
         getTopAnimeOverviewUseCase().onEach { result ->
             when (result) {
                 is Resource.Loading -> {
-                    _state.value = UiState.loading(result.data)
+                    _popularAnimeState.value = UiState.loading(result.data)
                 }
                 is Resource.Success -> {
-                    _state.value = UiState.success(result.data ?: emptyList())
+                    _popularAnimeState.value = UiState.success(result.data ?: emptyList())
                 }
                 is Resource.Error -> {
-                    _state.value = UiState.error(
+                    _popularAnimeState.value = UiState.error(
                         message = result.message ?: "An unexpected error occurred",
                         data = result.data
                     )
