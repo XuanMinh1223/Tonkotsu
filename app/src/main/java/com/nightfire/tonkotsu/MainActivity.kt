@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
             TonkotsuTheme { // Your app's main theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.surface
                 ) {
                     HomeScreen()
                 }
