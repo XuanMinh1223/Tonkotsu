@@ -1,9 +1,11 @@
 // core/data/src/main/java/com/nightfire/tonkotsu.core.data.remote/JikanApi.kt
 package com.nightfire.tonkotsu.core.data.remote.api
 
+import com.nightfire.tonkotsu.core.data.remote.dto.AnimeDetailResponse
 import com.nightfire.tonkotsu.core.data.remote.dto.TopAnimeResponse
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 /**
@@ -29,4 +31,15 @@ interface JikanApi {
         @Query("limit") limit: Int? = null,
         @Query("sfw") sfw: Boolean = true
     ): Response<TopAnimeResponse>
+
+    /**
+     * Fetches the full details of a specific anime from the Jikan API.
+     *
+     * @param malId The MyAnimeList ID of the anime.
+     * @return A [Response] containing an [AnimeDetailResponse] DTO with the anime's full details.
+     */
+    @GET("anime/{id}/full")
+    suspend fun getAnimeDetail(
+        @Path("id") malId: Int
+    ): Response<AnimeDetailResponse>
 }
