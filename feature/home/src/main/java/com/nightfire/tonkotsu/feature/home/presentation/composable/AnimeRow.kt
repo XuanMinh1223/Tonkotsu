@@ -26,7 +26,9 @@ fun AnimeRow(
     state: UiState<List<AnimeOverview>>,
     modifier: Modifier = Modifier
 ) {
-    Column {
+    Column(
+        modifier = modifier
+    ) {
         Text(
             text = title,
             style = MaterialTheme.typography.headlineMedium,

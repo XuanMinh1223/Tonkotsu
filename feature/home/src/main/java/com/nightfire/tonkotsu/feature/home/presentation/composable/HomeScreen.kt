@@ -29,11 +29,13 @@ fun HomeScreen(
 ) {
     val popularAnimeState by viewModel.popularAnimeState.collectAsState()
     val topAiringAnimeState by viewModel.topAiringAnimeState.collectAsState()
+    val mostAnticipatedAnimeState by viewModel.mostAnticipatedAnimeState.collectAsState()
 
     Scaffold(modifier = Modifier.systemBarsPadding()) { innerPadding ->
         HomeScreenContent(
             popularAnimeState = popularAnimeState,
             topAiringAnimeState = topAiringAnimeState,
+            mostAnticipatedAnimeState = mostAnticipatedAnimeState,
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -47,6 +49,7 @@ fun HomeScreen(
 fun HomeScreenContent(
     popularAnimeState: UiState<List<AnimeOverview>>,
     topAiringAnimeState: UiState<List<AnimeOverview>>,
+    mostAnticipatedAnimeState: UiState<List<AnimeOverview>>,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -55,6 +58,11 @@ fun HomeScreenContent(
         AnimeRow(
             title = "Top Airing Anime",
             state = topAiringAnimeState
+        )
+
+        AnimeRow(
+            title = "Most Anticipated Anime",
+            state = mostAnticipatedAnimeState
         )
 
         AnimeRow(
@@ -143,6 +151,11 @@ fun HomeScreenContentSuccessPreview() {
                     isLoading = false,
                     errorMessage = null
                 ),
+                mostAnticipatedAnimeState = UiState(
+                    data = provideMockAnimeList(),
+                    isLoading = false,
+                    errorMessage = null
+                ),
             )
         }
     }
@@ -160,6 +173,11 @@ fun HomeScreenContentLoadingPreview() {
                     errorMessage = null
                 ),
                 topAiringAnimeState = UiState(
+                    data = if (provideMockAnimeList().isNotEmpty()) provideMockAnimeList() else null, // Show stale data if desired
+                    isLoading = true,
+                    errorMessage = null
+                ),
+                mostAnticipatedAnimeState = UiState(
                     data = if (provideMockAnimeList().isNotEmpty()) provideMockAnimeList() else null, // Show stale data if desired
                     isLoading = true,
                     errorMessage = null
@@ -181,9 +199,14 @@ fun HomeScreenContentErrorPreview() {
                     errorMessage = "Failed to load anime. Please try again."
                 ),
                 topAiringAnimeState = UiState(
-                    data = if (provideMockAnimeList().isNotEmpty()) provideMockAnimeList() else null, // Show stale data if desired
-                    isLoading = true,
-                    errorMessage = null
+                    data = null,
+                    isLoading = false,
+                    errorMessage = "Failed to load anime. Please try again."
+                ),
+                mostAnticipatedAnimeState = UiState(
+                    data = null,
+                    isLoading = false,
+                    errorMessage = "Failed to load anime. Please try again."
                 )
             )
         }

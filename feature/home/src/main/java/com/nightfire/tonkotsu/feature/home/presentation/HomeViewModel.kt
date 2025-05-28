@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.nightfire.tonkotsu.core.common.Resource
 import com.nightfire.tonkotsu.core.common.UiState // Import your new UiState
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
+import com.nightfire.tonkotsu.core.domain.usecase.GetMostAnticipatedAnimeUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetPopularAnimeUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetTopAiringAnimeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,6 +19,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getPopularAnimeUseCase: GetPopularAnimeUseCase,
     private val getTopAiringAnimeUseCase: GetTopAiringAnimeUseCase,
+    private val getMostAnticipatedAnimeUseCase: GetMostAnticipatedAnimeUseCase
 ) : ViewModel() {
 
     private val _popularAnimeState = MutableStateFlow(UiState<List<AnimeOverview>>())
@@ -26,9 +28,13 @@ class HomeViewModel @Inject constructor(
     private val _topAiringAnimeState = MutableStateFlow(UiState<List<AnimeOverview>>())
     val topAiringAnimeState: StateFlow<UiState<List<AnimeOverview>>> = _topAiringAnimeState
 
+    private val _mostAnticipatedAnimeState = MutableStateFlow(UiState<List<AnimeOverview>>())
+    val mostAnticipatedAnimeState: StateFlow<UiState<List<AnimeOverview>>> = _mostAnticipatedAnimeState
+
     init {
         getPopularAnime()
         getTopAiringAnime()
+        getMostAnticipatedAnime()
     }
 
     private fun getPopularAnime() {
@@ -61,6 +67,25 @@ class HomeViewModel @Inject constructor(
                 }
                 is Resource.Error -> {
                     _topAiringAnimeState.value = UiState.error(
+                        message = result.message ?: "An unexpected error occurred",
+                        data = result.data
+                    )
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getMostAnticipatedAnime() {
+        getMostAnticipatedAnimeUseCase().onEach { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _mostAnticipatedAnimeState.value = UiState.loading(result.data)
+                }
+                is Resource.Success -> {
+                    _mostAnticipatedAnimeState.value = UiState.success(result.data ?: emptyList())
+                }
+                is Resource.Error -> {
+                    _mostAnticipatedAnimeState.value = UiState.error(
                         message = result.message ?: "An unexpected error occurred",
                         data = result.data
                     )
