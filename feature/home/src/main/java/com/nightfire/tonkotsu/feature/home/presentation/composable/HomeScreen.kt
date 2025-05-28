@@ -36,6 +36,9 @@ fun HomeScreen(
             popularAnimeState = popularAnimeState,
             topAiringAnimeState = topAiringAnimeState,
             mostAnticipatedAnimeState = mostAnticipatedAnimeState,
+            popularAnimeErrorClickAction = { viewModel.getPopularAnime() },
+            topAiringErrorClickAction = { viewModel.getTopAiringAnime() },
+            mostAnticipatedAnimeErrorClickAction = { viewModel.getMostAnticipatedAnime() },
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -47,27 +50,33 @@ fun HomeScreen(
  */
 @Composable
 fun HomeScreenContent(
+    modifier: Modifier = Modifier,
     popularAnimeState: UiState<List<AnimeOverview>>,
     topAiringAnimeState: UiState<List<AnimeOverview>>,
     mostAnticipatedAnimeState: UiState<List<AnimeOverview>>,
-    modifier: Modifier = Modifier
+    popularAnimeErrorClickAction: () -> Unit = {},
+    topAiringErrorClickAction: () -> Unit = {},
+    mostAnticipatedAnimeErrorClickAction: () -> Unit = {},
 ) {
     Column(
         modifier = modifier.verticalScroll(rememberScrollState()) // Use the passed modifier
     ) {
         AnimeRow(
             title = "Top Airing Anime",
-            state = topAiringAnimeState
+            state = topAiringAnimeState,
+            onErrorActionClick = topAiringErrorClickAction
         )
 
         AnimeRow(
             title = "Most Anticipated Anime",
-            state = mostAnticipatedAnimeState
+            state = mostAnticipatedAnimeState,
+            onErrorActionClick = mostAnticipatedAnimeErrorClickAction
         )
 
         AnimeRow(
             title = "Most Popular Anime",
-            state = popularAnimeState
+            state = popularAnimeState,
+            onErrorActionClick = popularAnimeErrorClickAction
         )
     }
 }

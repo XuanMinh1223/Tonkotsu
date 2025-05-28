@@ -18,13 +18,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nightfire.tonkotsu.core.common.UiState
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
+import com.nightfire.tonkotsu.ui.ErrorCard
 import com.nightfire.tonkotsu.ui.skeleton.CardRowSkeleton
 
 @Composable
 fun AnimeRow(
     title: String,
     state: UiState<List<AnimeOverview>>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onErrorActionClick: (() -> Unit)? = null
 ) {
     Column(
         modifier = modifier
@@ -49,17 +51,12 @@ fun AnimeRow(
                 )
             }
         } else if (state.errorMessage != null) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = state.errorMessage ?: "An unknown error occurred",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
+            ErrorCard(
+                message = state.errorMessage ?: "An unknown error occurred",
+                modifier = Modifier.padding(16.dp),
+                onActionClick = onErrorActionClick,
+                actionButtonText = "Retry",
+            )
         } else {
             // Display the LazyRow when data is successfully loaded
             LazyRow(

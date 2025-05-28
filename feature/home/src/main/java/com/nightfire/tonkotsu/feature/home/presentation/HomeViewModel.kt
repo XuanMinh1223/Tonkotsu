@@ -37,7 +37,7 @@ class HomeViewModel @Inject constructor(
         getMostAnticipatedAnime()
     }
 
-    private fun getPopularAnime() {
+    fun getPopularAnime() {
         getPopularAnimeUseCase().onEach { result ->
             when (result) {
                 is Resource.Loading -> {
@@ -56,7 +56,7 @@ class HomeViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun getTopAiringAnime() {
+    fun getTopAiringAnime() {
         getTopAiringAnimeUseCase().onEach { result ->
             when (result) {
                 is Resource.Loading -> {
@@ -75,7 +75,7 @@ class HomeViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun getMostAnticipatedAnime() {
+    fun getMostAnticipatedAnime() {
         getMostAnticipatedAnimeUseCase().onEach { result ->
             when (result) {
                 is Resource.Loading -> {
