@@ -21,6 +21,20 @@ import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 import com.nightfire.tonkotsu.ui.ErrorCard
 import com.nightfire.tonkotsu.ui.skeleton.CardRowSkeleton
 
+/**
+ * A composable function that displays a row of anime cards with a title.
+ * It handles loading, error, and success states for the anime data.
+ *
+ * @param title The title to be displayed above the row of anime cards.
+ * @param state The [UiState] representing the current state of the anime data.
+ *              This can be loading, error, or success with a list of [AnimeOverview].
+ * @param modifier The [Modifier] to be applied to the root Column of this composable.
+ *                 Defaults to [Modifier].
+ * @param onErrorActionClick A lambda function to be invoked when the action button
+ *                           on the error card is clicked. This is typically used for retrying
+ *                           the data fetching operation. Defaults to null, in which case the
+ *                           action button will not be shown.
+ */
 @Composable
 fun AnimeRow(
     title: String,
