@@ -1,5 +1,3 @@
-// feature/home/build.gradle.kts
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -8,28 +6,31 @@ plugins {
 }
 
 android {
-    namespace = "com.nightfire.tonkotsu.feature.home" // IMPORTANT: Must match your package structure
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    namespace = "com.nightfire.tonkotsu.animedetail"
+    compileSdk = 35
 
     defaultConfig {
-        minSdk = libs.versions.minSdk.get().toInt()
+        minSdk = 24
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
-
     kotlinOptions {
-        jvmTarget = "17"
-    }
-    
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
-    }
-
-    buildFeatures {
-        compose = true // Enable Jetpack Compose in this module
+        jvmTarget = "11"
     }
 }
 
