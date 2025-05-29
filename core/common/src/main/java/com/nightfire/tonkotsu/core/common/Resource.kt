@@ -10,11 +10,11 @@ package com.nightfire.tonkotsu.core.common
  * @param data Optional data associated with the success or error state.
  * @param message Optional message associated with the error state.
  */
-sealed class Resource<out T>(val data: T? = null, val message: String? = null) { // <-- ADD 'out' HERE
+sealed class Resource<out T>(val data: T? = null, val message: String? = null) {
 
     class Success<out T>(data: T) : Resource<T>(data)
 
-    class Error<out T>(message: String, data: T? = null) : Resource<T>(data, message) // <-- ADD 'out' HERE
+    class Error<out T>(message: String, data: T? = null) : Resource<T>(data, message)
 
     object Loading : Resource<Nothing>()
 }

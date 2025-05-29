@@ -1,6 +1,9 @@
 package com.nightfire.tonkotsu.core.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
+import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
+import com.nightfire.tonkotsu.core.domain.model.RelationEntry
+import com.nightfire.tonkotsu.core.domain.model.StreamingService
 
 data class AnimeDetailDto(
      @SerializedName("mal_id") val malId: Int,
@@ -42,4 +45,54 @@ data class AnimeDetailDto(
      @SerializedName("external") val external: List<ExternalLinkDto>?,
      @SerializedName("streaming") val streaming: List<StreamingServiceDto>?
 )
+
+fun AnimeDetailDto.toAnimeDetail(): AnimeDetail {
+     return AnimeDetail(
+          id = malId,
+          title = titleEnglish ?: title ?: titleJapanese ?: "N/A",
+          // Prefer large JPG image, then large WebP, then any JPG, default to empty
+          imageUrl = images?.jpg?.largeImageUrl
+               ?: images?.webp?.largeImageUrl
+               ?: images?.jpg?.imageUrl
+               ?: "",
+          synopsis = synopsis ?: "No synopsis available.",
+          score = score,
+          scoredBy = scoredBy,
+          rank = rank,
+          popularity = popularity,
+          members = members,
+          favorites = favorites,
+          episodes = episodes,
+          status = status,
+          duration = duration,
+          rating = rating,
+          source = source,
+          season = season,
+          year = year,
+          genres = genres?.mapNotNull { it.name } ?: emptyList(),
+          studios = studios?.mapNotNull { it.name } ?: emptyList(),
+          producers = producers?.mapNotNull { it.name } ?: emptyList(),
+          licensors = licensors?.mapNotNull { it.name } ?: emptyList(),
+          background = background,
+          trailerYoutubeId = trailer?.youtubeId,
+          relations = relations?.associate { relationDto ->
+               relationDto.relation!! to (relationDto.entry?.map { entryDto ->
+                    RelationEntry(
+                         id = entryDto.malId ?: 0, // Default ID if null
+                         name = entryDto.name ?: "Unknown",
+                         type = entryDto.type ?: "Unknown",
+                         url = entryDto.url ?: ""
+                    )
+               } ?: emptyList())
+          } ?: emptyMap(),
+          streamingServices = streaming?.map { streamingDto ->
+               StreamingService(
+                    name = streamingDto.name ?: "Unknown",
+                    url = streamingDto.url ?: ""
+               )
+          } ?: emptyList(),
+          openingThemes = theme?.openings ?: emptyList(),
+          endingThemes = theme?.endings ?: emptyList()
+     )
+}
 

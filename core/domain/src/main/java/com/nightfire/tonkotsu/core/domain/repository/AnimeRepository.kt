@@ -3,6 +3,7 @@ package com.nightfire.tonkotsu.core.domain.repository
 
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 import com.nightfire.tonkotsu.core.common.Resource // We'll define this common class next
+import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -29,5 +30,9 @@ interface AnimeRepository {
         page: Int? = null,
         limit: Int? = null
     ): Flow<Resource<List<AnimeOverview>>>
+
+    fun getAnimeDetail(
+        id: Int
+    ) : Flow<Resource<AnimeDetail>>
 
 }

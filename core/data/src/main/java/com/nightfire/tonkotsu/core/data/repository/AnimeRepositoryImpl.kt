@@ -1,19 +1,17 @@
 package com.nightfire.tonkotsu.core.data.repository
 
 
-import android.util.Log
+import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
+import com.nightfire.tonkotsu.core.domain.model.AnimeOverview   // Ensure this is imported
 import com.nightfire.tonkotsu.core.common.Resource
-import com.nightfire.tonkotsu.core.data.Constants.RetryConfig
+import com.nightfire.tonkotsu.core.common.networkBoundResourceFlow
 import com.nightfire.tonkotsu.core.data.remote.api.JikanApi
+import com.nightfire.tonkotsu.core.data.remote.dto.AnimeDetailResponse
+import com.nightfire.tonkotsu.core.data.remote.dto.TopAnimeResponse
+import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeDetail
 import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeOverview
-import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 import com.nightfire.tonkotsu.core.domain.repository.AnimeRepository
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.retryWhen
-import retrofit2.HttpException
-import java.io.IOException
 import javax.inject.Inject
 
 /**
@@ -30,88 +28,28 @@ class AnimeRepositoryImpl @Inject constructor(
         filter: String?,
         page: Int?,
         limit: Int?
-    ): Flow<Resource<List<AnimeOverview>>> = flow {
-        try {
-            emit(Resource.Loading)
-
-            val response = api.getTopAnime(
-                type = type,
-                filter = filter,
-                page = page,
-                limit = limit
-            )
-
-            if (response.isSuccessful) {
-                val domainList = response.body()?.data?.map { it.toAnimeOverview() }
-                    ?: emptyList()
-                emit(Resource.Success(domainList))
-            } else {
-                val errorMessage = response.errorBody()?.string() ?: "An unexpected HTTP error occurred"
-                emit(Resource.Error(
-                    message = errorMessage,
-                    data = null
-                ))
-                throw HttpException(response)
+    ): Flow<Resource<List<AnimeOverview>>> {
+        return networkBoundResourceFlow(
+            apiCall = {
+                api.getTopAnime(
+                    type = type,
+                    filter = filter,
+                    page = page,
+                    limit = limit
+                )
+            },
+            mapper = { dto: TopAnimeResponse ->
+                dto.data.map { it.toAnimeOverview() }
             }
-
-        } catch (e: HttpException) {
-            val errorMessage = e.localizedMessage ?: "An HTTP error occurred"
-            Log.e("HTTP Exception in getTopAnimeOverview: %s", errorMessage)
-            emit(Resource.Error(
-                message = errorMessage,
-                data = null
-            ))
-            throw e
-        } catch (e: IOException) {
-            val errorMessage = "Couldn't reach server. Check your internet connection."
-            Log.e( "Network Exception in getTopAnimeOverview: %s", errorMessage)
-            emit(Resource.Error(
-                message = errorMessage,
-                data = null
-            ))
-            throw e
-        } catch (e: Exception) {
-            val errorMessage = e.localizedMessage ?: "An unknown error occurred"
-            Log.e( "Unexpected Exception in getTopAnimeOverview: %s", errorMessage)
-            emit(Resource.Error(
-                message = errorMessage,
-                data = null
-            ))
-            // Re-throw the exception to propagate it
-            throw e
-        }
-    }.retryWhen { cause, attempt ->
-        if (attempt < RetryConfig.MAX_RETRIES && isRateLimitOrNetworkError(cause)) {
-            val delayMillis = calculateBackoffDelay(attempt)
-            delay(delayMillis) // Suspend and wait for the calculated delay
-            true
-        } else {
-            false
-        }
+        )
     }
 
-    private fun isRateLimitOrNetworkError(cause: Throwable): Boolean {
-        return when (cause) {
-            is HttpException -> cause.code() == 429 // Check for HTTP 429 (Too Many Requests)
-            is IOException -> true // Network connectivity issues are often transient
-            else -> false // Don't retry for other types of exceptions (e.g., parsing errors, logic errors)
-        }
-    }
-
-    // Helper function to calculate exponential backoff with jitter
-    private fun calculateBackoffDelay(attempt: Long): Long {
-        // Base delay grows exponentially: initial * 2^attempt
-        var delay = RetryConfig.INITIAL_RETRY_DELAY_MS * (1L shl attempt.toInt()) // 1L shl attempt = 2^attempt
-
-        // Cap the delay at the maximum
-        if (delay > RetryConfig.MAX_RETRY_DELAY_MS) {
-            delay = RetryConfig.MAX_RETRY_DELAY_MS
-        }
-
-        // Add jitter: +/- 25% of the calculated delay
-        val jitterRange = delay / 4 // 25% of the delay
-        // Generate a random value within [-jitterRange, +jitterRange]
-        val randomJitter = ((-jitterRange)..jitterRange).random()
-        return delay + randomJitter
+    override fun getAnimeDetail(id: Int): Flow<Resource<AnimeDetail>> {
+        return networkBoundResourceFlow(
+            apiCall = { api.getAnimeDetail(id) },
+            mapper = { dto: AnimeDetailResponse ->
+                dto.data.toAnimeDetail()
+            }
+        )
     }
 }

@@ -26,6 +26,7 @@ dependencies {
     implementation(libs.core.ktx)
     // The Kotlin Standard Library (explicitly declared for clarity)
     implementation(libs.kotlin.stdlib)
+    implementation(libs.retrofit)
 
     // --- Testing ---
     testImplementation(libs.junit)
