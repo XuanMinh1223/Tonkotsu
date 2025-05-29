@@ -43,8 +43,10 @@ android {
 
 dependencies {
     // --- Module Dependencies ---
+    implementation(project(":feature:navigation"))
     implementation(project(":feature:home"))
-    implementation(project(":core:data"))    // <--- Add this
+    implementation(project(":feature:animedetail"))
+    implementation(project(":core:data"))
     implementation(project(":core:network"))
     implementation(project(":ui"))
     // App needs access to domain models and interfaces

@@ -1,12 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt.android)
 }
 
 android {
-    namespace = "com.nightfire.tonkotsu.animedetail"
+    namespace = "com.nightfire.tonkotsu.navigation"
     compileSdk = 35
 
     defaultConfig {
@@ -35,11 +33,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:domain"))
-    implementation(project(":core:common"))
-    implementation(project(":ui"))
 
-    // --- Android & Compose Core UI ---
     implementation(libs.kotlin.stdlib)
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
@@ -50,20 +44,12 @@ dependencies {
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
 
-    // --- Testing ---
+    implementation(libs.navigation.compose)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(platform(libs.compose.bom))
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
-
-
-    // --- Hilt Dependency Injection ---
-    implementation(libs.hilt.android)
-    implementation(libs.hilt.navigation.compose)
-    ksp(libs.hilt.android.compiler)
-
-    // --- Other common libraries (e.g., Coil for image loading) ---
-    implementation(libs.coil.compose)
 }
