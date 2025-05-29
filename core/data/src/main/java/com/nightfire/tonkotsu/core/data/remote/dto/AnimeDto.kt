@@ -1,6 +1,7 @@
 package com.nightfire.tonkotsu.core.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
+import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 
 data class AnimeDto(
     @SerializedName("mal_id") val malId: Int,
@@ -40,3 +41,19 @@ data class AnimeDto(
     @SerializedName("themes") val themes: List<GenreDto>?,
     @SerializedName("demographics") val demographics: List<GenreDto>?
 )
+
+/**
+ * Extension function to map an [AnimeDto] to an [AnimeOverview] domain model.
+ * This keeps the mapping logic isolated and clean.
+ */
+fun AnimeDto.toAnimeOverview(): AnimeOverview {
+    return AnimeOverview(
+        malId = malId,
+        title = title,
+        imageUrl = images?.jpg?.imageUrl,
+        score = score,
+        type = type,
+        episodes = episodes,
+        synopsis = synopsis
+    )
+}

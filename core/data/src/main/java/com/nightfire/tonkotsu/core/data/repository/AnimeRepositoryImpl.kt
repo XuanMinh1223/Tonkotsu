@@ -2,19 +2,20 @@ package com.nightfire.tonkotsu.core.data.repository
 
 
 import android.util.Log
-import com.nightfire.tonkotsu.core.common.Resource // Import the Resource sealed class
+import com.nightfire.tonkotsu.core.common.Resource
 import com.nightfire.tonkotsu.core.data.Constants.RetryConfig
 import com.nightfire.tonkotsu.core.data.remote.api.JikanApi
-import com.nightfire.tonkotsu.core.data.remote.dto.AnimeDto // Import the DTO
-import com.nightfire.tonkotsu.core.domain.model.AnimeOverview // Import your domain model
-import com.nightfire.tonkotsu.core.domain.repository.AnimeRepository // Import your repository interface
+import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeOverview
+import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
+import com.nightfire.tonkotsu.core.domain.repository.AnimeRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.retryWhen
 import retrofit2.HttpException
 import java.io.IOException
-import javax.inject.Inject // Hilt annotation for constructor injection
-import kotlinx.coroutines.flow.retryWhen
+import javax.inject.Inject
+
 /**
  * Implementation of the [AnimeRepository] interface.
  * This class handles fetching anime data from the Jikan API and mapping it to domain models.
@@ -33,7 +34,7 @@ class AnimeRepositoryImpl @Inject constructor(
         try {
             emit(Resource.Loading)
 
-            val response = api.getTopAnime( // This is your suspend Retrofit call
+            val response = api.getTopAnime(
                 type = type,
                 filter = filter,
                 page = page,
@@ -113,20 +114,4 @@ class AnimeRepositoryImpl @Inject constructor(
         val randomJitter = ((-jitterRange)..jitterRange).random()
         return delay + randomJitter
     }
-}
-
-/**
- * Extension function to map an [AnimeDto] to an [AnimeOverview] domain model.
- * This keeps the mapping logic isolated and clean.
- */
-fun AnimeDto.toAnimeOverview(): AnimeOverview {
-    return AnimeOverview(
-        malId = malId,
-        title = title,
-        imageUrl = images?.jpg?.imageUrl,
-        score = score,
-        type = type,
-        episodes = episodes,
-        synopsis = synopsis
-    )
 }
