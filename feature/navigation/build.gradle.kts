@@ -23,6 +23,17 @@ android {
             )
         }
     }
+
+    buildFeatures {
+        // Enable Compose for this module
+        compose = true
+    }
+
+    composeOptions {
+        // CRITICAL: Specify the Compose Compiler Extension version from your libs.versions.toml
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -33,6 +44,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":feature:animedetail"))
+    implementation(project(":feature:home"))
 
     implementation(libs.kotlin.stdlib)
     implementation(libs.core.ktx)
@@ -45,6 +58,7 @@ dependencies {
     implementation(libs.material3)
 
     implementation(libs.navigation.compose)
+    implementation(libs.navigation.common.android)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

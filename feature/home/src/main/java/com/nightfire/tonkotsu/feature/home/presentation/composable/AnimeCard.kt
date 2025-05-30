@@ -24,12 +24,15 @@ import com.nightfire.tonkotsu.ui.ImageFromUrl
  * This is also stateless and takes its data as a parameter.
  */
 @Composable
-fun AnimeCard(anime: AnimeOverview, modifier: Modifier = Modifier) {
+fun AnimeCard(
+    anime: AnimeOverview,
+    modifier: Modifier = Modifier,
+    onCardClick: (Int) -> Unit = {}) {
     Card(
         modifier = modifier
             .width(120.dp)
             .clickable {
-                // TODO: Implement navigation to the detailed anime screen when clicked
+                onCardClick(anime.malId)
             },
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(

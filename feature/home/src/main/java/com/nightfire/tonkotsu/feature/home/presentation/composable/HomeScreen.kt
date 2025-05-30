@@ -25,6 +25,7 @@ import com.nightfire.tonkotsu.feature.home.presentation.HomeViewModel
  */
 @Composable
 fun HomeScreen(
+    onNavigateToAnimeDetail: (Int) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val popularAnimeState by viewModel.popularAnimeState.collectAsState()
@@ -39,6 +40,7 @@ fun HomeScreen(
             popularAnimeErrorClickAction = { viewModel.getPopularAnime() },
             topAiringErrorClickAction = { viewModel.getTopAiringAnime() },
             mostAnticipatedAnimeErrorClickAction = { viewModel.getMostAnticipatedAnime() },
+            onNavigateToAnimeDetail = onNavigateToAnimeDetail,
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -57,6 +59,7 @@ fun HomeScreenContent(
     popularAnimeErrorClickAction: () -> Unit = {},
     topAiringErrorClickAction: () -> Unit = {},
     mostAnticipatedAnimeErrorClickAction: () -> Unit = {},
+    onNavigateToAnimeDetail: (Int) -> Unit = {},
 ) {
     Column(
         modifier = modifier.verticalScroll(rememberScrollState()) // Use the passed modifier
@@ -64,19 +67,22 @@ fun HomeScreenContent(
         AnimeRow(
             title = "Top Airing Anime",
             state = topAiringAnimeState,
-            onErrorActionClick = topAiringErrorClickAction
+            onErrorActionClick = topAiringErrorClickAction,
+            onCardClick = onNavigateToAnimeDetail
         )
 
         AnimeRow(
             title = "Most Anticipated Anime",
             state = mostAnticipatedAnimeState,
-            onErrorActionClick = mostAnticipatedAnimeErrorClickAction
+            onErrorActionClick = mostAnticipatedAnimeErrorClickAction,
+            onCardClick = onNavigateToAnimeDetail
         )
 
         AnimeRow(
             title = "Most Popular Anime",
             state = popularAnimeState,
-            onErrorActionClick = popularAnimeErrorClickAction
+            onErrorActionClick = popularAnimeErrorClickAction,
+            onCardClick = onNavigateToAnimeDetail
         )
     }
 }

@@ -40,7 +40,8 @@ fun AnimeRow(
     title: String,
     state: UiState<List<AnimeOverview>>,
     modifier: Modifier = Modifier,
-    onErrorActionClick: (() -> Unit)? = null
+    onErrorActionClick: (() -> Unit)? = null,
+    onCardClick: (Int) -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -79,7 +80,10 @@ fun AnimeRow(
                 contentPadding = PaddingValues(horizontal = 16.dp) // Horizontal padding for the row
             ) {
                 items(state.data ?: emptyList()) { anime ->
-                    AnimeCard(anime = anime)
+                    AnimeCard(
+                        anime = anime,
+                        onCardClick = onCardClick
+                        )
                 }
             }
         }
