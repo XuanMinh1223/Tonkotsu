@@ -1,4 +1,4 @@
-package com.nightfire.tonkotsu.navigation
+package com.nightfire.tonkotsu.feature.navigation
 
 
 import androidx.navigation.NavController
@@ -7,8 +7,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation // For defining nested graphs
 import com.nightfire.tonkotsu.animedetail.presentation.composable.AnimeDetailScreen
 import com.nightfire.tonkotsu.feature.home.presentation.composable.HomeScreen
-import com.nightfire.tonkotsu.navigation.Screen.AnimeDetailScreen
-import com.nightfire.tonkotsu.navigation.Screen.HomeScreen
+import com.nightfire.tonkotsu.feature.navigation.Screen.AnimeDetailScreen
+import com.nightfire.tonkotsu.feature.navigation.Screen.HomeScreen
 
 // Import the Composable functions from your feature modules
 
@@ -17,8 +17,8 @@ import com.nightfire.tonkotsu.navigation.Screen.HomeScreen
  */
 fun NavGraphBuilder.addAnimeDetailScreen() {
     composable(
-        route = Screen.AnimeDetailScreen.route,
-        arguments = Screen.AnimeDetailScreen.navArguments // Use the defined nav arguments
+        route = AnimeDetailScreen.route,
+        arguments = AnimeDetailScreen.navArguments // Use the defined nav arguments
     ) { backStackEntry ->
         // Retrieve the argument for the AnimeDetailScreen
         val malId = backStackEntry.arguments?.getInt(Screen.Args.ANIME_ID)

@@ -1,4 +1,4 @@
-package com.nightfire.tonkotsu.navigation
+package com.nightfire.tonkotsu.feature.navigation
 
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
