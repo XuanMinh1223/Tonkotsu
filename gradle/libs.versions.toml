@@ -16,7 +16,7 @@ corektx = "1.16.0"
 
 # Compose
 # ALIGNMENT POINT 2: Use a recent stable Compose BOM version
-composeBom = "2024.05.00" # Updated to a more recent stable BOM (e.g., May 2024)
+composeBom = "2025.05.01" # Updated to a more recent stable BOM (e.g., May 2024)
 activityCompose = "1.9.0" # This will be managed by BOM. Removed explicit version in [libraries]
 lifecycleRuntimeKtx = "2.8.0" # This will be managed by BOM. Removed explicit version in [libraries]
 lifecycleViewModelCompose = "2.8.0" # This will be managed by BOM. Removed explicit version in [libraries]

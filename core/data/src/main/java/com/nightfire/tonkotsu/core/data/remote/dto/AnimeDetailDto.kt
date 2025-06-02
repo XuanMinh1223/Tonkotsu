@@ -56,6 +56,7 @@ fun AnimeDetailDto.toAnimeDetail(): AnimeDetail {
                ?: images?.jpg?.imageUrl
                ?: "",
           synopsis = synopsis ?: "No synopsis available.",
+          type = type,
           score = score,
           scoredBy = scoredBy,
           rank = rank,

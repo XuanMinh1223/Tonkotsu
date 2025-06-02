@@ -1,9 +1,14 @@
 package com.nightfire.tonkotsu.animedetail.presentation.composable
 
+import android.content.Intent
+import android.net.Uri
 import android.widget.ProgressBar
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,9 +16,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,6 +36,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,6 +44,10 @@ import coil.compose.AsyncImage
 import com.nightfire.tonkotsu.animedetail.presentation.AnimeDetailViewModel
 import com.nightfire.tonkotsu.core.common.UiState
 import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
+import androidx.core.net.toUri
+import com.nightfire.tonkotsu.ui.ExpandableText
+import com.nightfire.tonkotsu.ui.InfoRow
+import com.nightfire.tonkotsu.ui.TagSection
 
 @Composable
 fun AnimeDetailScreen(
@@ -51,24 +68,26 @@ fun AnimeDetailScreen(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class, ExperimentalLayoutApi::class) // For FlowRow, which TagSection uses
 @Composable
 fun AnimeDetailScreenContent(
-    state: UiState<AnimeDetail>, // Changed to UiState<AnimeDetail>
+    state: UiState<AnimeDetail>,
     modifier: Modifier = Modifier,
+    onGenreClick: (String) -> Unit = {} // For clickable genres
 ) {
+    val context = LocalContext.current
+
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         if (state.isLoading) {
             CircularProgressIndicator()
         } else if (state.errorMessage != null) {
-            // Display error message if available
             Text(
-                text = state.errorMessage!!, // Directly access errorMessage
+                text = state.errorMessage!!,
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(16.dp)
             )
         } else {
-            // Display data if not loading and no error
             state.data?.let { anime ->
                 Column(
                     modifier = Modifier
@@ -77,9 +96,8 @@ fun AnimeDetailScreenContent(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.Start
                 ) {
-                    // 1. Anime Image
                     AsyncImage(
-                        model = anime.imageUrl,
+                        model = anime.imageUrl, // Direct imageUrl from new model
                         contentDescription = "${anime.title} Poster",
                         modifier = Modifier
                             .fillMaxWidth()
@@ -89,99 +107,198 @@ fun AnimeDetailScreenContent(
                     )
                     Spacer(Modifier.height(16.dp))
 
-                    // 2. Titles
                     Text(
                         text = anime.title,
                         style = MaterialTheme.typography.headlineLarge,
                         fontWeight = FontWeight.Bold
                     )
-                    Text(
-                        text = "English: ${anime.title}",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    // titleEnglish and titleJapanese are no longer in the model
                     Spacer(Modifier.height(16.dp))
 
-                    // 3. Key Stats (Score, Rank, Popularity, Members)
+                    // --- 2. Core Stats ---
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
+                        horizontalArrangement = Arrangement.SpaceAround,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         anime.score?.let {
-                            Text(
-                                text = "Score: ${it}",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
+                            Text(text = "Score: $it", style = MaterialTheme.typography.bodyLarge)
+                        }
+                        anime.scoredBy?.let {
+                            Text(text = "Scored By: ${String.format("%,d", it)}", style = MaterialTheme.typography.bodySmall)
                         }
                         anime.rank?.let {
-                            Text(
-                                text = "Rank: #$it",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
+                            Text(text = "Rank: #$it", style = MaterialTheme.typography.bodyLarge)
                         }
                         anime.popularity?.let {
-                            Text(
-                                text = "Pop: #$it",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
+                            Text(text = "Pop: #$it", style = MaterialTheme.typography.bodyLarge)
                         }
-                        anime.members?.let {
-                            Text(
-                                text = "Members: ${String.format("%,d", it)}",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
+                        anime.favorites?.let {
+                            Text(text = "Fav: ${String.format("%,d", it)}", style = MaterialTheme.typography.bodyLarge)
                         }
                     }
                     Spacer(Modifier.height(16.dp))
-
-                    // 4. Basic Info (Type, Episodes, Status, Duration, Rating)
-                    Text(text = "Episodes: ${anime.episodes ?: "N/A"}", style = MaterialTheme.typography.bodyMedium)
-                    Text(text = "Status: ${anime.status ?: "N/A"}", style = MaterialTheme.typography.bodyMedium)
-                    Text(text = "Duration: ${anime.duration ?: "N/A"}", style = MaterialTheme.typography.bodyMedium)
-                    Text(text = "Rating: ${anime.rating ?: "N/A"}", style = MaterialTheme.typography.bodyMedium)
+                    HorizontalDivider()
                     Spacer(Modifier.height(16.dp))
 
-                    // 5. Synopsis
-                    Text(
-                        text = "Synopsis:",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        text = anime.synopsis,
-                        style = MaterialTheme.typography.bodyLarge
+                    // --- 3. Key Info ---
+                    InfoRow(label = "Type:", value = anime.type)
+                    InfoRow(label = "Episodes:", value = anime.episodes?.toString())
+                    InfoRow(label = "Status:", value = anime.status)
+                    // Airing status was a boolean in old model, now just check if status is "Airing"
+                    InfoRow(label = "Duration:", value = anime.duration)
+                    InfoRow(label = "Rating:", value = anime.rating)
+                    InfoRow(label = "Source:", value = anime.source)
+                    InfoRow(label = "Season:", value = "${anime.season ?: ""} ${anime.year ?: ""}".trim())
+                    Spacer(Modifier.height(16.dp))
+                    HorizontalDivider()
+                    Spacer(Modifier.height(16.dp))
+
+                    // --- 4. Synopsis & Background (with "Read More") ---
+                    ExpandableText(
+                        title = "Synopsis",
+                        text = anime.synopsis
                     )
                     Spacer(Modifier.height(16.dp))
 
-                    // 6. Background (if available)
-                    anime.background?.let {
-                        Text(
-                            text = "Background:",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        Spacer(Modifier.height(4.dp))
-                        Text(
-                            text = it,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+                    ExpandableText(
+                        title = "Background",
+                        text = anime.background
+                    )
+                    Spacer(Modifier.height(16.dp))
+                    HorizontalDivider()
+                    Spacer(Modifier.height(16.dp))
+
+                    // --- 5. Categorization (FlowRows using TagSection) ---
+                    TagSection(title = "Genres:", tags = anime.genres, onTagClick = onGenreClick)
+                    // explicitGenres, themes, demographics are no longer in the model
+                    Spacer(Modifier.height(16.dp))
+                    Divider()
+                    Spacer(Modifier.height(16.dp))
+
+                    // --- 6. Production Details (FlowRows using TagSection) ---
+                    TagSection(title = "Studios:", tags = anime.studios)
+                    TagSection(title = "Producers:", tags = anime.producers)
+                    TagSection(title = "Licensors:", tags = anime.licensors)
+                    Spacer(Modifier.height(16.dp))
+                    HorizontalDivider()
+                    Spacer(Modifier.height(16.dp))
+
+                    // --- 7. External Media & Streaming Services ---
+                    anime.trailerYoutubeId?.let { youtubeId ->
+                        Button(
+                            onClick = {
+                                val intent = Intent(Intent.ACTION_VIEW,
+                                    "https://www.youtube.com/watch?v=$youtubeId".toUri())
+                                context.startActivity(intent)
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(Icons.Default.PlayArrow, contentDescription = "Watch Trailer")
+                            Spacer(Modifier.width(8.dp))
+                            Text("Watch Trailer")
+                        }
                         Spacer(Modifier.height(16.dp))
                     }
 
-                    // 7. Genres (example)
-                    anime.genres.takeIf { it.isNotEmpty() }?.let { genres ->
+                    anime.streamingServices.takeIf { it.isNotEmpty() }?.let { services ->
                         Text(
-                            text = "Genres:",
+                            text = "Streaming On:",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        FlowRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            services.forEach { service ->
+                                // Assuming StreamingService has a 'name' property
+                                Text(
+                                    text = service.name, // Adjust if StreamingService has a different display field
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    modifier = Modifier
+                                        .background(
+                                            MaterialTheme.colorScheme.tertiaryContainer,
+                                            MaterialTheme.shapes.small
+                                        )
+                                        .padding(horizontal = 10.dp, vertical = 5.dp)
+                                )
+                            }
+                        }
+                        Spacer(Modifier.height(16.dp))
+                    }
+                    Divider()
+                    Spacer(Modifier.height(16.dp))
+
+                    // --- 8. Themes (Opening/Ending) ---
+                    anime.openingThemes.takeIf { it.isNotEmpty() }?.let { themes ->
+                        Text(
+                            text = "Opening Themes:",
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.SemiBold
                         )
                         Spacer(Modifier.height(4.dp))
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            themes.forEach { theme ->
+                                Text(text = "• $theme", style = MaterialTheme.typography.bodyMedium)
+                            }
+                        }
+                        Spacer(Modifier.height(16.dp))
+                    }
+
+                    anime.endingThemes.takeIf { it.isNotEmpty() }?.let { themes ->
+                        Text(
+                            text = "Ending Themes:",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            themes.forEach { theme ->
+                                Text(text = "• $theme", style = MaterialTheme.typography.bodyMedium)
+                            }
+                        }
+                        Spacer(Modifier.height(16.dp))
+                    }
+                    HorizontalDivider()
+                    Spacer(Modifier.height(16.dp))
+
+                    // --- 9. Relations (Basic Display) ---
+                    anime.relations.takeIf { it.isNotEmpty() }?.let { relationsMap ->
+                        Text(
+                            text = "Relations:",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            relationsMap.forEach { (type, entries) ->
+                                Text(
+                                    text = "$type:",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.SemiBold,
+                                    modifier = Modifier.padding(start = 8.dp)
+                                )
+                                entries.forEach { entry ->
+                                    Text(
+                                        text = "• ${entry.name}",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        modifier = Modifier.padding(start = 16.dp)
+                                    )
+                                }
+                                Spacer(Modifier.height(4.dp))
+                            }
+                        }
                         Spacer(Modifier.height(16.dp))
                     }
                 }
+            } ?: run {
+                Text("No data to display.")
             }
         }
     }
 }
+

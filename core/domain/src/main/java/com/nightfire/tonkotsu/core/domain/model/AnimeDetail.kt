@@ -34,6 +34,7 @@ data class AnimeDetail(
     val title: String,
     val imageUrl: String, // Large image URL for the detail screen
     val synopsis: String,
+    val type: String?,
     val score: Double?,
     val scoredBy: Int?,
     val rank: Int?,
