@@ -395,7 +395,7 @@ fun AnimeDetailScreenContentSuccessPreview() {
             "Adaptation" to listOf(RelationEntry(567, "Sousou no Frieren", "manga","")),
             "Side Story" to listOf(RelationEntry(789, "Frieren: Daily Life", "manga",""))
         ),
-        members = TODO()
+        members = null
     )
 
     MaterialTheme { // Wrap with your app's MaterialTheme for correct colors and typography
