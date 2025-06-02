@@ -120,7 +120,7 @@ fun AnimeDetailScreenContent(
                     // --- 2. Core Stats ---
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceAround,
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         ScoreDisplayCard(
