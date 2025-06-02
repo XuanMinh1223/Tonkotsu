@@ -22,13 +22,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ExpandableText(title: String, text: String?) {
+fun ExpandableText(title: String, text: String?, modifier: Modifier = Modifier) {
     if (text.isNullOrBlank()) return
 
     var expanded by remember { mutableStateOf(false) }
     var textOverflowsVisually by remember { mutableStateOf(false) }
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = title,
             style = MaterialTheme.typography.titleLarge,

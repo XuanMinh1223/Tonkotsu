@@ -203,11 +203,11 @@ fun AnimeDetailScreenContent(
                             title = "Synopsis",
                             text = anime.synopsis
                         )
-                        Spacer(Modifier.height(16.dp))
 
                         ExpandableText(
                             title = "Background",
-                            text = anime.background
+                            text = anime.background,
+                            modifier = Modifier.padding(top = 16.dp)
                         )
                         Spacer(Modifier.height(16.dp))
                         HorizontalDivider()
