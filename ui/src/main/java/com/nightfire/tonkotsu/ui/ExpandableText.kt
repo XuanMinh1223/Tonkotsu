@@ -26,8 +26,6 @@ fun ExpandableText(title: String, text: String?) {
     if (text.isNullOrBlank()) return
 
     var expanded by remember { mutableStateOf(false) }
-    // This state now tracks if the Text Composable, in its *current* configuration (maxLines),
-    // is experiencing visual overflow. It will update regardless of `expanded`.
     var textOverflowsVisually by remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -40,10 +38,10 @@ fun ExpandableText(title: String, text: String?) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .animateContentSize( // <--- It goes HERE!
+                .animateContentSize(
                     animationSpec = spring(
                         dampingRatio = Spring.DampingRatioLowBouncy,
-                        stiffness = Spring.StiffnessMediumLow
+                        stiffness = Spring.StiffnessLow
                     )
                 )
         ) {
@@ -53,10 +51,6 @@ fun ExpandableText(title: String, text: String?) {
                 maxLines = if (expanded) Int.MAX_VALUE else 4, // Max lines depends on `expanded`
                 overflow = TextOverflow.Ellipsis,
                 onTextLayout = { textLayoutResult ->
-                    // Crucially: Update textOverflowsVisually always, not just when !expanded.
-                    // When expanded is true, maxLines becomes Int.MAX_VALUE, so hasVisualOverflow
-                    // will likely become false (unless text is truly massive).
-                    // When expanded is false, maxLines is 4, and hasVisualOverflow tells us if we need "Read More".
                     textOverflowsVisually = textLayoutResult.hasVisualOverflow
                 }
             )

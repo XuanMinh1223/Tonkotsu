@@ -47,7 +47,9 @@ import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
 import androidx.core.net.toUri
 import com.nightfire.tonkotsu.ui.ExpandableText
 import com.nightfire.tonkotsu.ui.InfoRow
+import com.nightfire.tonkotsu.ui.ScoreDisplayCard
 import com.nightfire.tonkotsu.ui.TagSection
+import java.util.Locale
 
 @Composable
 fun AnimeDetailScreen(
@@ -121,20 +123,35 @@ fun AnimeDetailScreenContent(
                         horizontalArrangement = Arrangement.SpaceAround,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        anime.score?.let {
-                            Text(text = "Score: $it", style = MaterialTheme.typography.bodyLarge)
-                        }
-                        anime.scoredBy?.let {
-                            Text(text = "Scored By: ${String.format("%,d", it)}", style = MaterialTheme.typography.bodySmall)
-                        }
-                        anime.rank?.let {
-                            Text(text = "Rank: #$it", style = MaterialTheme.typography.bodyLarge)
-                        }
-                        anime.popularity?.let {
-                            Text(text = "Pop: #$it", style = MaterialTheme.typography.bodyLarge)
-                        }
-                        anime.favorites?.let {
-                            Text(text = "Fav: ${String.format("%,d", it)}", style = MaterialTheme.typography.bodyLarge)
+                        ScoreDisplayCard(
+                            score = anime.score,
+                            scoredBy = anime.scoredBy
+                        )
+                        Column(
+                            horizontalAlignment = Alignment.End, // Right-justify text within this column
+                            verticalArrangement = Arrangement.spacedBy(4.dp) // Space between these stats
+                        ) {
+                            anime.rank?.let {
+                                Text(
+                                    text = "Rank: #$it",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                            anime.popularity?.let {
+                                Text(
+                                    text = "Popularity: #$it",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                            anime.favorites?.let {
+                                Text(
+                                    text = "Favorites: ${String.format(Locale.US, "%,d", it)}",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
                         }
                     }
                     Spacer(Modifier.height(16.dp))
