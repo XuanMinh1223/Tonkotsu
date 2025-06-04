@@ -49,7 +49,9 @@ data class AnimeDetailDto(
 fun AnimeDetailDto.toAnimeDetail(): AnimeDetail {
      return AnimeDetail(
           id = malId,
-          title = titleEnglish ?: title ?: titleJapanese ?: "N/A",
+          title = title ?: "N/A",
+          alternativeTitle = if (titleEnglish != title) titleEnglish else null,
+          japaneseTitle = titleJapanese,
           // Prefer large JPG image, then large WebP, then any JPG, default to empty
           imageUrl = images?.jpg?.largeImageUrl
                ?: images?.webp?.largeImageUrl

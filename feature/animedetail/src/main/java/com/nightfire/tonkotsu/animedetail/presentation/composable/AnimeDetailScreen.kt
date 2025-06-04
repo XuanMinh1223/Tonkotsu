@@ -1,8 +1,6 @@
 package com.nightfire.tonkotsu.animedetail.presentation.composable
 
 import android.content.Intent
-import android.net.Uri
-import android.widget.ProgressBar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,30 +28,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.nightfire.tonkotsu.animedetail.presentation.AnimeDetailViewModel
 import com.nightfire.tonkotsu.core.common.UiState
 import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
-import androidx.core.net.toUri
 import com.nightfire.tonkotsu.core.domain.model.RelationEntry
 import com.nightfire.tonkotsu.core.domain.model.StreamingService
 import com.nightfire.tonkotsu.ui.ExpandableText
@@ -108,41 +99,52 @@ fun AnimeDetailScreenContent(
                         .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.Start
                 ) {
-                    var sizeImage by remember { mutableStateOf(IntSize.Zero) }
-
-                    val gradient = Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, MaterialTheme.colorScheme.surface),
-                        startY = sizeImage.height.toFloat()*2/3,
-                        endY = sizeImage.height.toFloat()
-                    )
-                    Box (
-                        modifier = Modifier.onGloballyPositioned {
-                            sizeImage = it.size
-                        }
-                    ) {
-                        AsyncImage(
-                            model = anime.imageUrl, // Direct imageUrl from new model
-                            contentDescription = "${anime.title} Poster",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(300.dp),
-                            contentScale = ContentScale.Crop,
-                            alignment = Alignment.TopCenter
-                        )
-                        Box(modifier = Modifier.matchParentSize().background(gradient))
-                    }
-
                     Spacer(Modifier.height(16.dp))
                     Column(
                         modifier = Modifier.padding(16.dp)
                     ) {
-                        Text(
-                            text = anime.title,
-                            style = MaterialTheme.typography.headlineLarge,
-                            fontWeight = FontWeight.Bold
-                        )
-                        // titleEnglish and titleJapanese are no longer in the model
-                        Spacer(Modifier.height(16.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.Top // Align items to the top of the row
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f) // This column will take up all available space after the image
+                                    .padding(end = 8.dp) // Add some spacing between the titles and the image
+                            ) {
+                                Text(
+                                    text = anime.title,
+                                    style = MaterialTheme.typography.headlineLarge,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                anime.alternativeTitle?.let { altTitle -> // <--- Using alternativeTitle
+                                    Text(
+                                        text = altTitle,
+                                        modifier = Modifier.padding(top = 8.dp),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                                anime.japaneseTitle?.let { jpTitle -> // <--- Using japaneseTitle
+                                    Text(
+                                        text = jpTitle,
+                                        modifier = Modifier.padding(top = 8.dp),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+
+                            AsyncImage(
+                                model = anime.imageUrl,
+                                contentDescription = "${anime.title} Poster",
+                                modifier = Modifier
+                                    .width(150.dp),
+                                contentScale = ContentScale.Fit, // As requested, will fit entire image (may pillarbox)
+                                alignment = Alignment.TopCenter // Ensures the top of the image is visible if it's tall
+                            )
+                        }
 
                         // --- 2. Core Stats ---
                         Row(
@@ -197,6 +199,9 @@ fun AnimeDetailScreenContent(
                         Spacer(Modifier.height(16.dp))
                         HorizontalDivider()
                         Spacer(Modifier.height(16.dp))
+                        TagSection(title = "Genres:", tags = anime.genres, onTagClick = onGenreClick)
+                        HorizontalDivider()
+                        Spacer(Modifier.height(16.dp))
 
                         // --- 4. Synopsis & Background (with "Read More") ---
                         ExpandableText(
@@ -211,13 +216,6 @@ fun AnimeDetailScreenContent(
                         )
                         Spacer(Modifier.height(16.dp))
                         HorizontalDivider()
-                        Spacer(Modifier.height(16.dp))
-
-                        // --- 5. Categorization (FlowRows using TagSection) ---
-                        TagSection(title = "Genres:", tags = anime.genres, onTagClick = onGenreClick)
-                        // explicitGenres, themes, demographics are no longer in the model
-                        Spacer(Modifier.height(16.dp))
-                        Divider()
                         Spacer(Modifier.height(16.dp))
 
                         // --- 6. Production Details (FlowRows using TagSection) ---
@@ -395,7 +393,9 @@ fun AnimeDetailScreenContentSuccessPreview() {
             "Adaptation" to listOf(RelationEntry(567, "Sousou no Frieren", "manga","")),
             "Side Story" to listOf(RelationEntry(789, "Frieren: Daily Life", "manga",""))
         ),
-        members = null
+        members = null,
+        alternativeTitle = "alternative title",
+        japaneseTitle = "japanese title",
     )
 
     MaterialTheme { // Wrap with your app's MaterialTheme for correct colors and typography

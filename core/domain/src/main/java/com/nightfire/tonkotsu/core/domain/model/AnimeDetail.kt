@@ -32,6 +32,8 @@ package com.nightfire.tonkotsu.core.domain.model
 data class AnimeDetail(
     val id: Int,
     val title: String,
+    val alternativeTitle: String?,
+    val japaneseTitle: String?,
     val imageUrl: String, // Large image URL for the detail screen
     val synopsis: String,
     val type: String?,

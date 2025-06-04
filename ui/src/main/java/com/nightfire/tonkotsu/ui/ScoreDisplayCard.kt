@@ -21,7 +21,7 @@ import java.util.Locale
 
 @Composable
 fun ScoreDisplayCard(score: Double?, scoredBy: Int?) {
-    if (score == null && scoredBy == null) return
+    // Removed the 'return' check here. The card will always be displayed.
 
     ElevatedCard(
         modifier = Modifier
@@ -40,18 +40,30 @@ fun ScoreDisplayCard(score: Double?, scoredBy: Int?) {
                 modifier = Modifier.size(32.dp)
             )
             Column {
-                score?.let {
+                if (score != null) {
                     Text(
-                        text = String.format(Locale.US, "%.2f", it), // FIX: Specify Locale.US
+                        text = String.format(Locale.US, "%.2f", score),
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
-                }
-                scoredBy?.let {
-                    // FIX: Specify Locale.US
+                    scoredBy?.let {
+                        Text(
+                            text = "${String.format(Locale.US, "%,d", it)} users",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                } else {
+                    // Display "N/A" and "No Score Available" when score is null
                     Text(
-                        text = "${String.format(Locale.US, "%,d", it)} users",
+                        text = "N/A",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = "No Score Available",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
