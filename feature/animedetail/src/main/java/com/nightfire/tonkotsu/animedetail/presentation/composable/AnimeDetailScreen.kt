@@ -188,14 +188,7 @@ fun AnimeDetailScreenContent(
                         Spacer(Modifier.height(16.dp))
 
                         // --- 3. Key Info ---
-                        InfoRow(label = "Type:", value = anime.type)
-                        InfoRow(label = "Episodes:", value = anime.episodes?.toString())
-                        InfoRow(label = "Status:", value = anime.status)
-                        // Airing status was a boolean in old model, now just check if status is "Airing"
-                        InfoRow(label = "Duration:", value = anime.duration)
-                        InfoRow(label = "Rating:", value = anime.rating)
-                        InfoRow(label = "Source:", value = anime.source)
-                        InfoRow(label = "Season:", value = "${anime.season ?: ""} ${anime.year ?: ""}".trim())
+                        AnimeKeyInfo(anime = anime)
                         Spacer(Modifier.height(16.dp))
                         HorizontalDivider()
                         Spacer(Modifier.height(16.dp))
@@ -396,6 +389,8 @@ fun AnimeDetailScreenContentSuccessPreview() {
         members = null,
         alternativeTitle = "alternative title",
         japaneseTitle = "japanese title",
+        premiereDate = null,
+        endDate = null
     )
 
     MaterialTheme { // Wrap with your app's MaterialTheme for correct colors and typography

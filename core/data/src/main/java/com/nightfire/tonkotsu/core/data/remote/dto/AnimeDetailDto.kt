@@ -1,9 +1,14 @@
 package com.nightfire.tonkotsu.core.data.remote.dto
 
+import android.util.Log
 import com.google.gson.annotations.SerializedName
 import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
 import com.nightfire.tonkotsu.core.domain.model.RelationEntry
 import com.nightfire.tonkotsu.core.domain.model.StreamingService
+import java.time.LocalDate
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 data class AnimeDetailDto(
      @SerializedName("mal_id") val malId: Int,
@@ -47,12 +52,37 @@ data class AnimeDetailDto(
 )
 
 fun AnimeDetailDto.toAnimeDetail(): AnimeDetail {
+
+     fun parseDateString(dateString: String?): LocalDate? {
+          return dateString?.let {
+               try {
+                    // Attempt to parse as a full ISO OffsetDateTime
+                    OffsetDateTime.parse(it).toLocalDate()
+               } catch (e: DateTimeParseException) {
+                    // If that fails, try parsing as a simple LocalDate (e.g., "YYYY-MM-DD")
+                    try {
+                         LocalDate.parse(it)
+                    } catch (e: DateTimeParseException) {
+                         // If all specific parsing attempts fail, try as ISO_LOCAL_DATE_TIME (without offset)
+                         try {
+                              LocalDate.parse(it, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                         } catch (e: DateTimeParseException) {
+                              Log.e("AnimeDetailMapper", "Failed to parse date: $it", e)
+                              null
+                         }
+                    }
+               } catch (e: Exception) {
+                    Log.e("AnimeDetailMapper", "An unexpected error occurred parsing date: $it", e)
+                    null
+               }
+          }
+     }
+
      return AnimeDetail(
           id = malId,
           title = title ?: "N/A",
           alternativeTitle = if (titleEnglish != title) titleEnglish else null,
           japaneseTitle = titleJapanese,
-          // Prefer large JPG image, then large WebP, then any JPG, default to empty
           imageUrl = images?.jpg?.largeImageUrl
                ?: images?.webp?.largeImageUrl
                ?: images?.jpg?.imageUrl
@@ -72,6 +102,8 @@ fun AnimeDetailDto.toAnimeDetail(): AnimeDetail {
           source = source,
           season = season,
           year = year,
+          premiereDate = parseDateString(aired?.from), // <-- Use the helper function
+          endDate = parseDateString(aired?.to),
           genres = genres?.mapNotNull { it.name } ?: emptyList(),
           studios = studios?.mapNotNull { it.name } ?: emptyList(),
           producers = producers?.mapNotNull { it.name } ?: emptyList(),

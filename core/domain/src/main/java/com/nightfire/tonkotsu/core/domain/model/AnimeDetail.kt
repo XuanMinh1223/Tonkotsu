@@ -1,5 +1,7 @@
 package com.nightfire.tonkotsu.core.domain.model
 
+import java.time.LocalDate
+
 /**
  * Represents detailed information about a specific anime.
  * This class is typically used to display comprehensive information on an anime detail screen.
@@ -50,6 +52,8 @@ data class AnimeDetail(
     val source: String?,
     val season: String?,
     val year: Int?,
+    val premiereDate: LocalDate?,
+    val endDate: LocalDate?,
     val genres: List<String>,
     val studios: List<String>,
     val producers: List<String>,
