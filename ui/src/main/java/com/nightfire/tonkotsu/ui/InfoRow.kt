@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun InfoRow(label: String, value: String?) {
     value?.takeIf { it.isNotBlank() && it != "N/A" }?.let {
-        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodyLarge,

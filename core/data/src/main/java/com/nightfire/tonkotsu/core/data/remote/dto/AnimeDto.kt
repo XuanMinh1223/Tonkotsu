@@ -33,13 +33,13 @@ data class AnimeDto(
     @SerializedName("season") val season: String?,
     @SerializedName("year") val year: Int?,
     @SerializedName("broadcast") val broadcast: BroadcastDto?,
-    @SerializedName("producers") val producers: List<GenreDto>?,
-    @SerializedName("licensors") val licensors: List<GenreDto>?,
-    @SerializedName("studios") val studios: List<GenreDto>?,
-    @SerializedName("genres") val genres: List<GenreDto>?,
-    @SerializedName("explicit_genres") val explicitGenres: List<GenreDto>?,
-    @SerializedName("themes") val themes: List<GenreDto>?,
-    @SerializedName("demographics") val demographics: List<GenreDto>?
+    @SerializedName("producers") val producers: List<MalSubEntityDto>?,
+    @SerializedName("licensors") val licensors: List<MalSubEntityDto>?,
+    @SerializedName("studios") val studios: List<MalSubEntityDto>?,
+    @SerializedName("genres") val genres: List<MalSubEntityDto>?,
+    @SerializedName("explicit_genres") val explicitGenres: List<MalSubEntityDto>?,
+    @SerializedName("themes") val themes: List<MalSubEntityDto>?,
+    @SerializedName("demographics") val demographics: List<MalSubEntityDto>?
 )
 
 /**

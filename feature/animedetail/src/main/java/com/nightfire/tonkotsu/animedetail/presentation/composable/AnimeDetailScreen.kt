@@ -193,6 +193,8 @@ fun AnimeDetailScreenContent(
                         HorizontalDivider()
                         Spacer(Modifier.height(16.dp))
                         TagSection(title = "Genres:", tags = anime.genres, onTagClick = onGenreClick)
+                        TagSection(title = "Themes:", tags = anime.themes, onTagClick = onGenreClick)
+                        TagSection(title = "Categories:", tags = anime.categories, onTagClick = onGenreClick)
                         HorizontalDivider()
                         Spacer(Modifier.height(16.dp))
 
@@ -390,11 +392,14 @@ fun AnimeDetailScreenContentSuccessPreview() {
         alternativeTitle = "alternative title",
         japaneseTitle = "japanese title",
         premiereDate = null,
-        endDate = null
+        endDate = null,
+        broadcast = "Monday, 12:00 JST",
+        themes = listOf("theme1", "theme2"),
+        categories = listOf("category1", "category2")
     )
 
-    MaterialTheme { // Wrap with your app's MaterialTheme for correct colors and typography
-        Surface { // Provide a Surface to ensure the background matches your theme
+    MaterialTheme {
+        Surface {
             AnimeDetailScreenContent(
                 state = UiState.success(mockAnimeDetail),
                 modifier = Modifier.fillMaxSize()

@@ -22,6 +22,9 @@ fun AnimeKeyInfo(anime: AnimeDetail) {
 
             InfoRow(label = endLabel, value = endDate.toString())
         }
+        anime.broadcast?.let {
+            InfoRow(label = "Broadcast time:", value = it)
+        }
         InfoRow(label = "Duration:", value = anime.duration)
         InfoRow(label = "Rating:", value = anime.rating)
         InfoRow(label = "Source:", value = anime.source)
