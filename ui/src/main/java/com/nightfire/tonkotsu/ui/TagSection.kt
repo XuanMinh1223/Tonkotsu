@@ -21,8 +21,11 @@ import androidx.compose.ui.unit.dp
 fun TagSection(
     title: String,
     tags: List<String>?,
-    onTagClick: (String) -> Unit = {}
+    onTagClick: (String) -> Unit = {},
+    isSecondary: Boolean = false
 ) {
+    val contentColor = if (isSecondary) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onPrimaryContainer
+    val containerColor = if (isSecondary) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.primaryContainer
     tags?.takeIf { it.isNotEmpty() }?.let { tagList ->
         Text(
             text = title,
@@ -39,10 +42,10 @@ fun TagSection(
                 Text(
                     text = tag,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    color = contentColor,
                     modifier = Modifier
                         .background(
-                            MaterialTheme.colorScheme.primaryContainer,
+                            containerColor,
                             MaterialTheme.shapes.small
                         )
                         .padding(horizontal = 10.dp, vertical = 5.dp)

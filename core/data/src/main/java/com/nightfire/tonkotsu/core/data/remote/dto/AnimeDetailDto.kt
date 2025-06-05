@@ -4,7 +4,7 @@ import android.util.Log
 import com.google.gson.annotations.SerializedName
 import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
 import com.nightfire.tonkotsu.core.domain.model.RelationEntry
-import com.nightfire.tonkotsu.core.domain.model.StreamingService
+import com.nightfire.tonkotsu.core.domain.model.NavigableLink
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -123,14 +123,20 @@ fun AnimeDetailDto.toAnimeDetail(): AnimeDetail {
                     )
                } ?: emptyList())
           } ?: emptyMap(),
-          streamingServices = streaming?.map { streamingDto ->
-               StreamingService(
+          streamingLinks = streaming?.map { streamingDto ->
+               NavigableLink(
                     name = streamingDto.name ?: "Unknown",
                     url = streamingDto.url ?: ""
                )
           } ?: emptyList(),
           openingThemes = theme?.openings ?: emptyList(),
-          endingThemes = theme?.endings ?: emptyList()
+          endingThemes = theme?.endings ?: emptyList(),
+          externalLinks = external?.map { externalDto ->
+               NavigableLink(
+                    name = externalDto.name ?: "Unknown",
+                    url = externalDto.url ?: ""
+               )
+          } ?: emptyList()
      )
 }
 

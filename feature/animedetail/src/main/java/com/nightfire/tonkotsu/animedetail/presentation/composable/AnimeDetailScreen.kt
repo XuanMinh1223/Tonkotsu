@@ -1,12 +1,10 @@
 package com.nightfire.tonkotsu.animedetail.presentation.composable
 
 import android.content.Intent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,8 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -45,10 +41,10 @@ import coil.compose.AsyncImage
 import com.nightfire.tonkotsu.animedetail.presentation.AnimeDetailViewModel
 import com.nightfire.tonkotsu.core.common.UiState
 import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
+import com.nightfire.tonkotsu.core.domain.model.NavigableLink
 import com.nightfire.tonkotsu.core.domain.model.RelationEntry
-import com.nightfire.tonkotsu.core.domain.model.StreamingService
+import com.nightfire.tonkotsu.ui.AppHorizontalDivider
 import com.nightfire.tonkotsu.ui.ExpandableText
-import com.nightfire.tonkotsu.ui.InfoRow
 import com.nightfire.tonkotsu.ui.ScoreDisplayCard
 import com.nightfire.tonkotsu.ui.TagSection
 import java.util.Locale
@@ -99,7 +95,6 @@ fun AnimeDetailScreenContent(
                         .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.Start
                 ) {
-                    Spacer(Modifier.height(16.dp))
                     Column(
                         modifier = Modifier.padding(16.dp)
                     ) {
@@ -183,20 +178,15 @@ fun AnimeDetailScreenContent(
                                 }
                             }
                         }
-                        Spacer(Modifier.height(16.dp))
-                        HorizontalDivider()
-                        Spacer(Modifier.height(16.dp))
+                        AppHorizontalDivider()
 
                         // --- 3. Key Info ---
                         AnimeKeyInfo(anime = anime)
-                        Spacer(Modifier.height(16.dp))
-                        HorizontalDivider()
-                        Spacer(Modifier.height(16.dp))
+                        AppHorizontalDivider()
                         TagSection(title = "Genres:", tags = anime.genres, onTagClick = onGenreClick)
                         TagSection(title = "Themes:", tags = anime.themes, onTagClick = onGenreClick)
                         TagSection(title = "Categories:", tags = anime.categories, onTagClick = onGenreClick)
-                        HorizontalDivider()
-                        Spacer(Modifier.height(16.dp))
+                        AppHorizontalDivider()
 
                         // --- 4. Synopsis & Background (with "Read More") ---
                         ExpandableText(
@@ -209,20 +199,16 @@ fun AnimeDetailScreenContent(
                             text = anime.background,
                             modifier = Modifier.padding(top = 16.dp)
                         )
-                        Spacer(Modifier.height(16.dp))
-                        HorizontalDivider()
-                        Spacer(Modifier.height(16.dp))
+                        AppHorizontalDivider()
 
                         // --- 6. Production Details (FlowRows using TagSection) ---
-                        TagSection(title = "Studios:", tags = anime.studios)
-                        TagSection(title = "Producers:", tags = anime.producers)
-                        TagSection(title = "Licensors:", tags = anime.licensors)
-                        Spacer(Modifier.height(16.dp))
+                        TagSection(title = "Studios:", tags = anime.studios, isSecondary = true)
+                        TagSection(title = "Producers:", tags = anime.producers, isSecondary = true)
+                        TagSection(title = "Licensors:", tags = anime.licensors, isSecondary = true)
 
                         // --- 7. External Media & Streaming Services ---
                         anime.trailerYoutubeId?.let { youtubeId ->
-                            HorizontalDivider()
-                            Spacer(Modifier.height(16.dp))
+                            AppHorizontalDivider()
                             Button(
                                 onClick = {
                                     val intent = Intent(Intent.ACTION_VIEW,
@@ -235,44 +221,22 @@ fun AnimeDetailScreenContent(
                                 Spacer(Modifier.width(8.dp))
                                 Text("Watch Trailer")
                             }
-                            Spacer(Modifier.height(16.dp))
                         }
 
-                        anime.streamingServices.takeIf { it.isNotEmpty() }?.let { services ->
+                        anime.streamingLinks.takeIf { it.isNotEmpty() }?.let { services ->
+                            AppHorizontalDivider()
                             Text(
                                 text = "Streaming On:",
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.SemiBold
                             )
-                            Spacer(Modifier.height(8.dp))
-                            FlowRow(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                services.forEach { service ->
-                                    // Assuming StreamingService has a 'name' property
-                                    Text(
-                                        text = service.name, // Adjust if StreamingService has a different display field
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onTertiaryContainer,
-                                        modifier = Modifier
-                                            .background(
-                                                MaterialTheme.colorScheme.tertiaryContainer,
-                                                MaterialTheme.shapes.small
-                                            )
-                                            .padding(horizontal = 10.dp, vertical = 5.dp)
-                                    )
-                                }
-                            }
-                            Spacer(Modifier.height(16.dp))
+                            ExternalUrlSection(services, modifier = Modifier.padding(top = 8.dp, bottom = 16.dp))
                         }
 
 
                         // --- 8. Themes (Opening/Ending) ---
                         anime.openingThemes.takeIf { it.isNotEmpty() }?.let { themes ->
-                            Divider()
-                            Spacer(Modifier.height(16.dp))
+                            AppHorizontalDivider()
                             Text(
                                 text = "Opening Themes:",
                                 style = MaterialTheme.typography.titleLarge,
@@ -284,7 +248,6 @@ fun AnimeDetailScreenContent(
                                     Text(text = "• $theme", style = MaterialTheme.typography.bodyMedium)
                                 }
                             }
-                            Spacer(Modifier.height(16.dp))
                         }
 
                         anime.endingThemes.takeIf { it.isNotEmpty() }?.let { themes ->
@@ -299,13 +262,11 @@ fun AnimeDetailScreenContent(
                                     Text(text = "• $theme", style = MaterialTheme.typography.bodyMedium)
                                 }
                             }
-                            Spacer(Modifier.height(16.dp))
                         }
 
                         // --- 9. Relations (Basic Display) ---
                         anime.relations.takeIf { it.isNotEmpty() }?.let { relationsMap ->
-                            HorizontalDivider()
-                            Spacer(Modifier.height(16.dp))
+                            AppHorizontalDivider()
                             Text(
                                 text = "Relations:",
                                 style = MaterialTheme.typography.titleLarge,
@@ -329,6 +290,15 @@ fun AnimeDetailScreenContent(
                                     }
                                     Spacer(Modifier.height(4.dp))
                                 }
+                            }
+                            anime.externalLinks.takeIf { it.isNotEmpty() }?.let {
+                                AppHorizontalDivider()
+                                Text(
+                                    text = "External Links:",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.SemiBold,
+                                )
+                                ExternalUrlSection(navigableLinks = anime.externalLinks, modifier = Modifier.padding(top = 8.dp, bottom = 16.dp))
                             }
                             Spacer(Modifier.height(16.dp))
                         }
@@ -367,13 +337,13 @@ fun AnimeDetailScreenContentSuccessPreview() {
         producers = listOf("Aniplex", "Shogakukan-Shueisha Productions", "Dentsu"),
         licensors = listOf("Crunchyroll", "Funimation"),
         trailerYoutubeId = "v6QkYchc710", // Example YouTube ID
-        streamingServices = listOf(
-            StreamingService(
+        streamingLinks = listOf(
+            NavigableLink(
                 "Crunchyroll",
                 "https://www.crunchyroll.com/series/G4VNY2882/frieren-beyond-journeys-end"
             ),
-            StreamingService("Netflix", "netflixurl"),
-            StreamingService("Hulu", "https://www.hulu.com/series/frieren")
+            NavigableLink("Netflix", "netflixurl"),
+            NavigableLink("Hulu", "https://www.hulu.com/series/frieren")
         ),
         openingThemes = listOf(
             "\"Yuusha\" by YOASOBI",
@@ -395,7 +365,15 @@ fun AnimeDetailScreenContentSuccessPreview() {
         endDate = null,
         broadcast = "Monday, 12:00 JST",
         themes = listOf("theme1", "theme2"),
-        categories = listOf("category1", "category2")
+        categories = listOf("category1", "category2"),
+        externalLinks = listOf(
+            NavigableLink(
+                "External Link",
+                "https://www.crunchyroll.com/series/G4VNY2882/frieren-beyond-journeys-end"
+            ),
+            NavigableLink("Link 2", "netflixurl"),
+            NavigableLink("Social Media", "https://www.hulu.com/series/frieren")
+        )
     )
 
     MaterialTheme {

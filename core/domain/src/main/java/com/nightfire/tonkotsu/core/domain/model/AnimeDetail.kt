@@ -64,7 +64,8 @@ data class AnimeDetail(
     val background: String?,
     val trailerYoutubeId: String?,
     val relations: Map<String, List<RelationEntry>>,
-    val streamingServices: List<StreamingService>,
+    val streamingLinks: List<NavigableLink>,
     val openingThemes: List<String>,
-    val endingThemes: List<String>
+    val endingThemes: List<String>,
+    val externalLinks: List<NavigableLink>
 )

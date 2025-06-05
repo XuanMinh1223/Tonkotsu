@@ -6,7 +6,7 @@ package com.nightfire.tonkotsu.core.domain.model
  * @property name The name of the streaming service (e.g., "Netflix", "Hulu").
  * @property url The URL of the streaming service.
  */
-data class StreamingService(
+data class NavigableLink(
     val name: String,
     val url: String
 )
