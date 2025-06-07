@@ -7,8 +7,11 @@ import com.nightfire.tonkotsu.core.common.Resource
 import com.nightfire.tonkotsu.core.common.networkBoundResourceFlow
 import com.nightfire.tonkotsu.core.data.remote.api.JikanApi
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeDetailResponse
+import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
+import com.nightfire.tonkotsu.core.data.remote.dto.AnimeEpisodesResponse
 import com.nightfire.tonkotsu.core.data.remote.dto.TopAnimeResponse
 import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeDetail
+import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeEpisode
 import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeOverview
 import com.nightfire.tonkotsu.core.domain.repository.AnimeRepository
 import kotlinx.coroutines.flow.Flow
@@ -49,6 +52,15 @@ class AnimeRepositoryImpl @Inject constructor(
             apiCall = { api.getAnimeDetail(id) },
             mapper = { dto: AnimeDetailResponse ->
                 dto.data.toAnimeDetail()
+            }
+        )
+    }
+
+    override fun getAnimeEpisodes(id: Int): Flow<Resource<List<AnimeEpisode>>> {
+        return networkBoundResourceFlow(
+            apiCall = { api.getAnimeEpisodes(id)},
+            mapper = {dto: AnimeEpisodesResponse ->
+                dto.data.map { it.toAnimeEpisode() }
             }
         )
     }

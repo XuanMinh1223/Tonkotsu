@@ -4,6 +4,7 @@ package com.nightfire.tonkotsu.core.domain.repository
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 import com.nightfire.tonkotsu.core.common.Resource // We'll define this common class next
 import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
+import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -31,8 +32,26 @@ interface AnimeRepository {
         limit: Int? = null
     ): Flow<Resource<List<AnimeOverview>>>
 
+    /**
+     * Retrieves the detailed information for a specific anime.
+     *
+     * @param id The unique identifier of the anime.
+     * @return A [Flow] emitting a [Resource] that wraps either a success ([AnimeDetail])
+     * or a failure (error message).
+     */
     fun getAnimeDetail(
         id: Int
     ) : Flow<Resource<AnimeDetail>>
+
+    /**
+     * Retrieves a list of episodes for a specific anime.
+     *
+     * @param id The ID of the anime for which to fetch episodes.
+     * @return A [Flow] emitting [Resource] that wraps either a success (List<AnimeEpisode>)
+     * or a failure (error message).
+     */
+    fun getAnimeEpisodes(
+        id: Int
+    ): Flow<Resource<List<AnimeEpisode>>>
 
 }
