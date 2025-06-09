@@ -41,6 +41,7 @@ import coil.compose.AsyncImage
 import com.nightfire.tonkotsu.animedetail.presentation.AnimeDetailViewModel
 import com.nightfire.tonkotsu.core.common.UiState
 import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
+import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
 import com.nightfire.tonkotsu.core.domain.model.NavigableLink
 import com.nightfire.tonkotsu.core.domain.model.RelationEntry
 import com.nightfire.tonkotsu.ui.AppHorizontalDivider
@@ -56,13 +57,15 @@ fun AnimeDetailScreen(
 ) {
 
     val animeDetailState by viewModel.animeDetailState.collectAsState()
+    val animeEpisodesState by viewModel.animeEpisodesState.collectAsState()
 
     LaunchedEffect(key1 = malId) {
         viewModel.getAnimeDetail(malId)
     }
     Scaffold(modifier = Modifier.systemBarsPadding()) { innerPadding ->
         AnimeDetailScreenContent(
-            state = animeDetailState,
+            animeDetailState = animeDetailState,
+            animeEpisodesState = animeEpisodesState,
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -71,24 +74,25 @@ fun AnimeDetailScreen(
 @OptIn(ExperimentalLayoutApi::class, ExperimentalLayoutApi::class) // For FlowRow, which TagSection uses
 @Composable
 fun AnimeDetailScreenContent(
-    state: UiState<AnimeDetail>,
+    animeDetailState: UiState<AnimeDetail>,
+    animeEpisodesState: UiState<List<AnimeEpisode>>,
     modifier: Modifier = Modifier,
     onGenreClick: (String) -> Unit = {} // For clickable genres
 ) {
     val context = LocalContext.current
 
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        if (state.isLoading) {
+        if (animeDetailState.isLoading) {
             CircularProgressIndicator()
-        } else if (state.errorMessage != null) {
+        } else if (animeDetailState.errorMessage != null) {
             Text(
-                text = state.errorMessage!!,
+                text = animeDetailState.errorMessage!!,
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(16.dp)
             )
         } else {
-            state.data?.let { anime ->
+            animeDetailState.data?.let { anime ->
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -199,6 +203,8 @@ fun AnimeDetailScreenContent(
                             text = anime.background,
                             modifier = Modifier.padding(top = 16.dp)
                         )
+                        AppHorizontalDivider()
+                        AnimeEpisodesList(animeEpisodesState)
                         AppHorizontalDivider()
 
                         // --- 6. Production Details (FlowRows using TagSection) ---
@@ -379,7 +385,8 @@ fun AnimeDetailScreenContentSuccessPreview() {
     MaterialTheme {
         Surface {
             AnimeDetailScreenContent(
-                state = UiState.success(mockAnimeDetail),
+                animeDetailState = UiState.success(mockAnimeDetail),
+                animeEpisodesState = UiState.loading(),
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -391,7 +398,10 @@ fun AnimeDetailScreenContentSuccessPreview() {
 fun AnimeDetailScreenContentLoadingPreview() {
     MaterialTheme {
         Surface {
-            AnimeDetailScreenContent(state = UiState.loading())
+            AnimeDetailScreenContent(
+                animeDetailState = UiState.loading(),
+                animeEpisodesState = UiState.loading(),
+            )
         }
     }
 }
@@ -401,7 +411,10 @@ fun AnimeDetailScreenContentLoadingPreview() {
 fun AnimeDetailScreenContentErrorPreview() {
     MaterialTheme {
         Surface {
-            AnimeDetailScreenContent(state = UiState.error("Failed to load anime details. Check your internet connection."))
+            AnimeDetailScreenContent(
+                animeDetailState = UiState.error("Failed to load anime details. Check your internet connection."),
+                animeEpisodesState = UiState.error("Failed to load anime details. Check your internet connection."),
+            )
         }
     }
 }
