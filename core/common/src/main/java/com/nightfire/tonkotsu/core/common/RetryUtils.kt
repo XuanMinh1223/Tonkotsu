@@ -5,7 +5,7 @@ import java.io.IOException
 import kotlin.math.pow
 
 object RetryConfig {
-    const val MAX_RETRIES = 3
+    const val MAX_RETRIES = 5
     const val INITIAL_BACKOFF_MILLIS = 1000L
     const val BACKOFF_FACTOR = 2
 }

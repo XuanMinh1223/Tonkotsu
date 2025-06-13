@@ -48,7 +48,15 @@ fun <DomainModel, DtoType> networkBoundResourceFlow(
         // Handle HTTP errors based on the status code from the HttpException
         val errorMessage = when (e.code()) {
             404 -> "Item not found. Please check the ID."
-            429 -> "Rate limit exceeded. Please try again shortly."
+            429 -> {
+                val retryAfterSeconds = e.response()?.headers()?.get("Retry-After")?.toLongOrNull()
+                if (retryAfterSeconds != null && retryAfterSeconds > 0) { // Only mention if non-null and positive
+                    "Rate limit exceeded. Please wait for ${retryAfterSeconds} seconds before retrying."
+                } else {
+                    // This message indicates we're falling back to our internal backoff
+                    "Rate limit exceeded. Trying again with exponential backoff."
+                }
+            }
             in 400..499 -> "Client error ${e.code()}: ${e.message()}."
             in 500..599 -> "Server error ${e.code()}: Please try again later."
             else -> e.localizedMessage ?: "An unexpected HTTP error occurred."
@@ -62,13 +70,23 @@ fun <DomainModel, DtoType> networkBoundResourceFlow(
         emit(Resource.Error(e.localizedMessage ?: "An unknown error occurred."))
     }
 }.retryWhen { cause, attempt ->
-    // Retry logic remains the same
     if (attempt < RetryConfig.MAX_RETRIES && isRateLimitOrNetworkError(cause)) {
-        val delayMillis = calculateBackoffDelay(attempt + 1)
+        var delayMillis = calculateBackoffDelay(attempt + 1)
+
+        // If it's a 429 HttpException, check for Retry-After header and adjust delay
+        if (cause is HttpException && cause.code() == 429) {
+            val retryAfterSeconds = cause.response()?.headers()?.get("Retry-After")?.toLongOrNull()
+            if (retryAfterSeconds != null) {
+                // Wait for at least the Retry-After duration, but don't exceed max backoff
+                // Use maxOf to ensure we wait for at least the calculated backoff OR the Retry-After
+                delayMillis = maxOf(delayMillis, retryAfterSeconds * 1000L)
+            }
+        }
+
         println("Retrying attempt ${attempt + 1} in ${delayMillis}ms due to: ${cause.message}")
         delay(delayMillis)
-        true
+        true // Re-emit the flow to retry
     } else {
-        false
+        false // Do not retry
     }
 }

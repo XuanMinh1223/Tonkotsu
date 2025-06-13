@@ -87,7 +87,9 @@ class AnimeDetailViewModel @Inject constructor(
                     _animeCharactersState.value = UiState.loading()
                 }
                 is Resource.Success -> {
-                    _animeCharactersState.value = UiState.loading()
+                    _animeCharactersState.value = result.data?.let {
+                        UiState.success(it)
+                    } ?: UiState.error(message = result.message ?: "An unexpected error occurred with loading characters.")
                 }
                 is Resource.Error -> {
                     _animeCharactersState.value = UiState.error(

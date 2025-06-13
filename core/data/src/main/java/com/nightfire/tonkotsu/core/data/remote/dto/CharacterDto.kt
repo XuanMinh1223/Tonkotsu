@@ -34,7 +34,9 @@ fun CharacterDto.toCharacter(): Character {
     }
 
     return Character(
-        characterDetail = characterDomain,
+        malId = characterDomain.malId,
+        name = characterDomain.name,
+        imageUrl = characterDomain.imageUrl,
         role = role,
         voiceActors = voiceActorsDomain
     )
