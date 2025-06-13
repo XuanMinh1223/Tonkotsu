@@ -70,23 +70,22 @@ fun <DomainModel, DtoType> networkBoundResourceFlow(
         emit(Resource.Error(e.localizedMessage ?: "An unknown error occurred."))
     }
 }.retryWhen { cause, attempt ->
-    if (attempt < RetryConfig.MAX_RETRIES && isRateLimitOrNetworkError(cause)) {
+    val shouldRetry = (attempt < RetryConfig.MAX_RETRIES && isRateLimitOrNetworkError(cause))
+
+    if (shouldRetry) {
         var delayMillis = calculateBackoffDelay(attempt + 1)
 
-        // If it's a 429 HttpException, check for Retry-After header and adjust delay
         if (cause is HttpException && cause.code() == 429) {
             val retryAfterSeconds = cause.response()?.headers()?.get("Retry-After")?.toLongOrNull()
             if (retryAfterSeconds != null) {
-                // Wait for at least the Retry-After duration, but don't exceed max backoff
-                // Use maxOf to ensure we wait for at least the calculated backoff OR the Retry-After
                 delayMillis = maxOf(delayMillis, retryAfterSeconds * 1000L)
             }
         }
-
         println("Retrying attempt ${attempt + 1} in ${delayMillis}ms due to: ${cause.message}")
         delay(delayMillis)
         true // Re-emit the flow to retry
     } else {
-        false // Do not retry
+        // No more retries, the flow will complete with the last emitted error
+        false
     }
 }

@@ -41,14 +41,14 @@ class HomeViewModel @Inject constructor(
         getPopularAnimeUseCase().onEach { result ->
             when (result) {
                 is Resource.Loading -> {
-                    _popularAnimeState.value = UiState.loading(result.data)
+                    _popularAnimeState.value = UiState.loading()
                 }
                 is Resource.Success -> {
-                    _popularAnimeState.value = UiState.success(result.data ?: emptyList())
+                    _popularAnimeState.value = UiState.success(result.data)
                 }
                 is Resource.Error -> {
                     _popularAnimeState.value = UiState.error(
-                        message = result.message ?: "An unexpected error occurred",
+                        message = result.message,
                         data = result.data
                     )
                 }
@@ -60,14 +60,14 @@ class HomeViewModel @Inject constructor(
         getTopAiringAnimeUseCase().onEach { result ->
             when (result) {
                 is Resource.Loading -> {
-                    _topAiringAnimeState.value = UiState.loading(result.data)
+                    _topAiringAnimeState.value = UiState.loading()
                 }
                 is Resource.Success -> {
-                    _topAiringAnimeState.value = UiState.success(result.data ?: emptyList())
+                    _topAiringAnimeState.value = UiState.success(result.data)
                 }
                 is Resource.Error -> {
                     _topAiringAnimeState.value = UiState.error(
-                        message = result.message ?: "An unexpected error occurred",
+                        message = result.message,
                         data = result.data
                     )
                 }
@@ -79,14 +79,14 @@ class HomeViewModel @Inject constructor(
         getMostAnticipatedAnimeUseCase().onEach { result ->
             when (result) {
                 is Resource.Loading -> {
-                    _mostAnticipatedAnimeState.value = UiState.loading(result.data)
+                    _mostAnticipatedAnimeState.value = UiState.loading()
                 }
                 is Resource.Success -> {
-                    _mostAnticipatedAnimeState.value = UiState.success(result.data ?: emptyList())
+                    _mostAnticipatedAnimeState.value = UiState.success(result.data)
                 }
                 is Resource.Error -> {
                     _mostAnticipatedAnimeState.value = UiState.error(
-                        message = result.message ?: "An unexpected error occurred",
+                        message = result.message,
                         data = result.data
                     )
                 }

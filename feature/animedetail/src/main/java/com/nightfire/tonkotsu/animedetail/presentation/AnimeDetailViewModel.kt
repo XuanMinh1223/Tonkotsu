@@ -40,18 +40,16 @@ class AnimeDetailViewModel @Inject constructor(
                     _animeDetailState.value = UiState.loading()
                 }
                 is Resource.Success -> {
-                    _animeDetailState.value = result.data?.let {
+                    _animeDetailState.value = result.data.let {
                         UiState.success(it)
-                    } ?: UiState.error(message = result.message ?: "An unexpected error occurred with AnimeDetail.")
-
-                    if (result.data != null) {
-                        getAnimeEpisodes(id)
-                        getCharacters(id)
                     }
+
+                    getAnimeEpisodes(id)
+                    getCharacters(id)
                 }
                 is Resource.Error -> {
                     _animeDetailState.value = UiState.error(
-                        message = result.message ?: "An unexpected error occurred loading AnimeDetail.",
+                        message = result.message,
                         data = result.data
                     )
                 }
@@ -66,13 +64,13 @@ class AnimeDetailViewModel @Inject constructor(
                     _animeEpisodesState.value = UiState.loading()
                 }
                 is Resource.Success -> {
-                    _animeEpisodesState.value = result.data?.let {
+                    _animeEpisodesState.value = result.data.let {
                         UiState.success(it)
-                    } ?: UiState.error(message = result.message ?: "An unexpected error occurred with Episodes.")
+                    }
                 }
                 is Resource.Error -> {
                     _animeEpisodesState.value = UiState.error(
-                        message = result.message ?: "An unexpected error occurred loading Episodes.",
+                        message = result.message,
                         data = result.data
                     )
                 }
@@ -87,13 +85,13 @@ class AnimeDetailViewModel @Inject constructor(
                     _animeCharactersState.value = UiState.loading()
                 }
                 is Resource.Success -> {
-                    _animeCharactersState.value = result.data?.let {
+                    _animeCharactersState.value = result.data.let {
                         UiState.success(it)
-                    } ?: UiState.error(message = result.message ?: "An unexpected error occurred with loading characters.")
+                    }
                 }
                 is Resource.Error -> {
                     _animeCharactersState.value = UiState.error(
-                        message = result.message ?: "An unexpected error occurred loading characters.",
+                        message = result.message,
                         data = result.data
                     )
                 }

@@ -10,11 +10,9 @@ package com.nightfire.tonkotsu.core.common
  * @param data Optional data associated with the success or error state.
  * @param message Optional message associated with the error state.
  */
-sealed class Resource<out T>(val data: T? = null, val message: String? = null) {
-
-    class Success<out T>(data: T) : Resource<T>(data)
-
-    class Error<out T>(message: String, data: T? = null) : Resource<T>(data, message)
-
+sealed class Resource<out T> {
     object Loading : Resource<Nothing>()
+    data class Success<out T>(val data: T) : Resource<T>()
+    // Add an 'isRetrying' flag to the Error state
+    data class Error<out T>(val message: String, val data: T? = null, val isRetrying: Boolean = false) : Resource<T>()
 }
