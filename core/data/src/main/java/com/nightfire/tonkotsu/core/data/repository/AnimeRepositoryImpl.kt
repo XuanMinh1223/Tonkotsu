@@ -10,12 +10,15 @@ import com.nightfire.tonkotsu.core.data.remote.dto.AnimeDetailResponse
 import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeEpisodesResponse
 import com.nightfire.tonkotsu.core.data.remote.dto.CharactersResponse
+import com.nightfire.tonkotsu.core.data.remote.dto.ImagesResponseDto
 import com.nightfire.tonkotsu.core.data.remote.dto.TopAnimeResponse
 import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeDetail
 import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeEpisode
 import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeOverview
 import com.nightfire.tonkotsu.core.data.remote.dto.toCharacter
+import com.nightfire.tonkotsu.core.data.remote.dto.toImage
 import com.nightfire.tonkotsu.core.domain.model.Character
+import com.nightfire.tonkotsu.core.domain.model.Image
 import com.nightfire.tonkotsu.core.domain.repository.AnimeRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -68,11 +71,20 @@ class AnimeRepositoryImpl @Inject constructor(
         )
     }
 
-    override fun getCharacters(id: Int): Flow<Resource<List<Character>>> {
+    override fun getAnimeCharacters(id: Int): Flow<Resource<List<Character>>> {
         return networkBoundResourceFlow(
-            apiCall = {api.getCharacters(id)},
+            apiCall = {api.getAnimeCharacters(id)},
             mapper = { dto: CharactersResponse ->
                 dto.data.map { it.toCharacter() }
+            }
+        )
+    }
+
+    override fun getAnimeImages(id: Int): Flow<Resource<List<Image>>> {
+        return networkBoundResourceFlow(
+            apiCall = { api.getAnimeImages(id) },
+            mapper = { dto: ImagesResponseDto ->
+                dto.data.map { it.toImage() }
             }
         )
     }

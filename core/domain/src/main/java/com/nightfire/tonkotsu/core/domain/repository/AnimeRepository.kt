@@ -6,6 +6,7 @@ import com.nightfire.tonkotsu.core.common.Resource // We'll define this common c
 import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
 import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
 import com.nightfire.tonkotsu.core.domain.model.Character
+import com.nightfire.tonkotsu.core.domain.model.Image
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -55,8 +56,11 @@ interface AnimeRepository {
         id: Int
     ): Flow<Resource<List<AnimeEpisode>>>
 
-    fun getCharacters(
+    fun getAnimeCharacters(
         id: Int
     ): Flow<Resource<List<Character>>>
 
+    fun getAnimeImages(
+        id: Int
+    ): Flow<Resource<List<Image>>>
 }

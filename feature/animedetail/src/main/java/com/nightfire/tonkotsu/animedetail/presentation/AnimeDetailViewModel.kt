@@ -9,7 +9,7 @@ import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
 import com.nightfire.tonkotsu.core.domain.model.Character
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeDetailUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeEpisodesUseCase
-import com.nightfire.tonkotsu.core.domain.usecase.GetCharactersUseCase
+import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeCharactersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +21,7 @@ import javax.inject.Inject
 class AnimeDetailViewModel @Inject constructor(
     private val getAnimeDetailUseCase: GetAnimeDetailUseCase,
     private val getAnimeEpisodesUseCase: GetAnimeEpisodesUseCase,
-    private val getCharactersUseCase: GetCharactersUseCase,
+    private val getAnimeCharactersUseCase: GetAnimeCharactersUseCase,
 ) : ViewModel() {
 
     private val _animeDetailState = MutableStateFlow<UiState<AnimeDetail>>(UiState.loading())
@@ -81,7 +81,7 @@ class AnimeDetailViewModel @Inject constructor(
     }
 
     private fun getCharacters(animeId: Int) {
-        getCharactersUseCase(animeId).onEach { result ->
+        getAnimeCharactersUseCase(animeId).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
                     _animeCharactersState.value = UiState.loading()

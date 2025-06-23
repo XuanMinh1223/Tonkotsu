@@ -4,6 +4,7 @@ package com.nightfire.tonkotsu.core.data.remote.api
 import com.nightfire.tonkotsu.core.data.remote.dto.CharactersResponse
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeDetailResponse
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeEpisodesResponse
+import com.nightfire.tonkotsu.core.data.remote.dto.ImagesResponseDto
 import com.nightfire.tonkotsu.core.data.remote.dto.TopAnimeResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -57,7 +58,12 @@ interface JikanApi {
     ): Response<AnimeEpisodesResponse>
 
     @GET("anime/{id}/characters")
-    suspend fun getCharacters(
+    suspend fun getAnimeCharacters(
         @Path("id") malId: Int
     ): Response<CharactersResponse>
+
+    @GET("anime/{id}/pictures")
+    suspend fun getAnimeImages(
+        @Path("id") malId: Int
+    ): Response<ImagesResponseDto>
 }
