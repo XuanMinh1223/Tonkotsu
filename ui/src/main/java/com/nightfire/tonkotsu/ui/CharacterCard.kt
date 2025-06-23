@@ -54,9 +54,6 @@ fun CharacterCard(
                 modifier = Modifier.padding(8.dp)
             )
 
-            // Spacer between image and text
-            Spacer(Modifier.height(8.dp))
-
             // Character Name
             Text(
                 text = character.name,
@@ -76,6 +73,8 @@ fun CharacterCard(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(horizontal = 8.dp)
             )
+
+            Spacer(Modifier.height(8.dp))
         }
     }
 }
