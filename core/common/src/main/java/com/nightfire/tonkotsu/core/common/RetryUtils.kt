@@ -18,7 +18,7 @@ fun isRateLimitOrNetworkError(cause: Throwable): Boolean {
     }
 }
 
-fun calculateBackoffDelay(attempt: Long): Long {
+fun calculateBackoffDelay(attempt: Int): Long {
     val exponent = (attempt - 1).toInt()
     return (RetryConfig.INITIAL_BACKOFF_MILLIS * RetryConfig.BACKOFF_FACTOR.toDouble().pow(exponent)).toLong()
 }

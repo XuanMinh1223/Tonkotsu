@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -47,14 +48,30 @@ fun CharacterListSection(
                 CircularProgressIndicator(modifier = Modifier.size(40.dp))
             }
         } else if (uiState.errorMessage != null) {
-            Text(
-                text = uiState.errorMessage ?: "Failed to load characters.",
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp)
-            )
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = uiState.errorMessage!!,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+                if (uiState.isRetrying) {
+                    Text(
+                        text = "Retrying shortly...",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
+                } else {
+                    // This is a final error, perhaps show a "Retry" button
+                    Button(onClick = { /* ViewModel.retryFetchCharacters() */ }) {
+                        Text("Try Again")
+                    }
+                }
+            }
         } else {
             val characters = uiState.data
             if (characters.isNullOrEmpty()) {

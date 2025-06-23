@@ -26,66 +26,67 @@ fun <DomainModel, DtoType> networkBoundResourceFlow(
 ): Flow<Resource<DomainModel>> = flow {
     emit(Resource.Loading) // Emit Loading state immediately
 
-    try {
-        val response = apiCall() // Execute the actual API call
+    var currentAttempt = 0 // Track attempts within the flow
+    while (currentAttempt <= RetryConfig.MAX_RETRIES) { // Loop for retries
+        try {
+            val response = apiCall() // Execute the actual API call
 
-        if (response.isSuccessful) {
-            val dtoBody = response.body()
-            if (dtoBody != null) {
-                // Map the DTO body to the domain model
-                val data = mapper(dtoBody)
-                emit(Resource.Success(data))
-            } else {
-                // If the response was successful but the body was null, treat as an error
-                emit(Resource.Error("API returned a successful response with a null body."))
-            }
-        } else {
-            // If the response was not successful (e.g., 4xx, 5xx), throw HttpException
-            // This ensures our catch block for HttpException is used for consistent error messages
-            throw HttpException(response)
-        }
-    } catch (e: HttpException) {
-        // Handle HTTP errors based on the status code from the HttpException
-        val errorMessage = when (e.code()) {
-            404 -> "Item not found. Please check the ID."
-            429 -> {
-                val retryAfterSeconds = e.response()?.headers()?.get("Retry-After")?.toLongOrNull()
-                if (retryAfterSeconds != null && retryAfterSeconds > 0) { // Only mention if non-null and positive
-                    "Rate limit exceeded. Please wait for ${retryAfterSeconds} seconds before retrying."
+            if (response.isSuccessful) {
+                val dtoBody = response.body()
+                if (dtoBody != null) {
+                    val data = mapper(dtoBody)
+                    emit(Resource.Success(data))
+                    break // Success, exit loop
                 } else {
-                    // This message indicates we're falling back to our internal backoff
-                    "Rate limit exceeded. Trying again with exponential backoff."
+                    emit(Resource.Error("API returned a successful response with a null body."))
+                    break // Non-retryable error, exit loop
+                }
+            } else {
+                val httpException = HttpException(response)
+                val errorMessage = when (httpException.code()) {
+                    404 -> "Item not found. Please check the ID."
+                    429 -> {
+                        val retryAfterSeconds = httpException.response()?.headers()?.get("Retry-After")?.toLongOrNull()
+                        if (retryAfterSeconds != null && retryAfterSeconds > 0) {
+                            "Rate limit exceeded. Please wait for ${retryAfterSeconds} seconds before retrying."
+                        } else {
+                            "Rate limit exceeded. Trying again with exponential backoff."
+                        }
+                    }
+                    in 400..499 -> "Client error ${httpException.code()}: ${httpException.message()}."
+                    in 500..599 -> "Server error ${httpException.code()}: Please try again later."
+                    else -> httpException.localizedMessage ?: "An unexpected HTTP error occurred."
+                }
+
+                val willRetry = currentAttempt < RetryConfig.MAX_RETRIES && isRateLimitOrNetworkError(httpException)
+                emit(Resource.Error(errorMessage, isRetrying = willRetry)) // Pass isRetrying flag
+
+                if (willRetry) {
+                    val delayMillis = calculateBackoffDelay(currentAttempt + 1)
+                    println("Retrying attempt ${currentAttempt + 1} in ${delayMillis}ms due to: ${httpException.message}")
+                    delay(delayMillis)
+                    currentAttempt++ // Increment attempt for next iteration
+                    emit(Resource.Loading) // Re-emit loading before the next attempt
+                } else {
+                    break // No more retries, exit loop
                 }
             }
-            in 400..499 -> "Client error ${e.code()}: ${e.message()}."
-            in 500..599 -> "Server error ${e.code()}: Please try again later."
-            else -> e.localizedMessage ?: "An unexpected HTTP error occurred."
-        }
-        emit(Resource.Error(errorMessage))
-    } catch (e: IOException) {
-        // Handle network errors (e.g., no internet connection, timeout)
-        emit(Resource.Error(e.localizedMessage ?: "Couldn't reach server. Check your internet connection."))
-    } catch (e: Exception) {
-        // Catch any other unexpected errors
-        emit(Resource.Error(e.localizedMessage ?: "An unknown error occurred."))
-    }
-}.retryWhen { cause, attempt ->
-    val shouldRetry = (attempt < RetryConfig.MAX_RETRIES && isRateLimitOrNetworkError(cause))
-
-    if (shouldRetry) {
-        var delayMillis = calculateBackoffDelay(attempt + 1)
-
-        if (cause is HttpException && cause.code() == 429) {
-            val retryAfterSeconds = cause.response()?.headers()?.get("Retry-After")?.toLongOrNull()
-            if (retryAfterSeconds != null) {
-                delayMillis = maxOf(delayMillis, retryAfterSeconds * 1000L)
+        } catch (e: IOException) {
+            val willRetry = currentAttempt < RetryConfig.MAX_RETRIES && isRateLimitOrNetworkError(e)
+            emit(Resource.Error(e.localizedMessage ?: "Couldn't reach server. Check your internet connection.", isRetrying = willRetry))
+            if (willRetry) {
+                val delayMillis = calculateBackoffDelay(currentAttempt + 1)
+                println("Retrying attempt ${currentAttempt + 1} in ${delayMillis}ms due to: ${e.message}")
+                delay(delayMillis)
+                currentAttempt++
+                emit(Resource.Loading)
+            } else {
+                break
             }
+        } catch (e: Exception) {
+            // General exception, likely not retryable unless specifically handled
+            emit(Resource.Error(e.localizedMessage ?: "An unknown error occurred.", isRetrying = false))
+            break
         }
-        println("Retrying attempt ${attempt + 1} in ${delayMillis}ms due to: ${cause.message}")
-        delay(delayMillis)
-        true // Re-emit the flow to retry
-    } else {
-        // No more retries, the flow will complete with the last emitted error
-        false
     }
 }

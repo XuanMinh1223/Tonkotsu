@@ -50,7 +50,8 @@ class AnimeDetailViewModel @Inject constructor(
                 is Resource.Error -> {
                     _animeDetailState.value = UiState.error(
                         message = result.message,
-                        data = result.data
+                        data = result.data,
+                        isRetrying = result.isRetrying
                     )
                 }
             }
@@ -71,7 +72,8 @@ class AnimeDetailViewModel @Inject constructor(
                 is Resource.Error -> {
                     _animeEpisodesState.value = UiState.error(
                         message = result.message,
-                        data = result.data
+                        data = result.data,
+                        isRetrying = result.isRetrying
                     )
                 }
             }
@@ -92,7 +94,8 @@ class AnimeDetailViewModel @Inject constructor(
                 is Resource.Error -> {
                     _animeCharactersState.value = UiState.error(
                         message = result.message,
-                        data = result.data
+                        data = result.data,
+                        isRetrying = result.isRetrying
                     )
                 }
             }

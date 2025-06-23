@@ -4,13 +4,19 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -49,31 +55,77 @@ fun AnimeEpisodesList(
                 CircularProgressIndicator(modifier = Modifier.size(40.dp))
             }
         } else if (uiState.errorMessage != null) {
-            Text(
-                text = uiState.errorMessage ?: "Failed to load episodes.",
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)
-            )
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = uiState.errorMessage!!,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+                if (uiState.isRetrying) {
+                    Text(
+                        text = "Retrying shortly...",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
+                } else {
+                    // This is a final error, perhaps show a "Retry" button
+                    Button(onClick = { /* ViewModel.retryFetchCharacters() */ }) {
+                        Text("Try Again")
+                    }
+                }
+            }
         } else {
             uiState.data?.let { episodes ->
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp)
-                        .shadow(2.dp, MaterialTheme.shapes.medium)
-                        .clip(MaterialTheme.shapes.medium)
-                        .background(MaterialTheme.colorScheme.surfaceVariant),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    items(episodes.size) { index ->
-                        EpisodeListItem(
-                            modifier = Modifier.padding(horizontal = 8.dp),
-                            episode = episodes[index],
-                        )
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.outline
-                        )
+                if (episodes.isNotEmpty()) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp)
+                            .shadow(2.dp, MaterialTheme.shapes.medium)
+                            .clip(MaterialTheme.shapes.medium)
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        items(episodes.size) { index ->
+                            EpisodeListItem(
+                                modifier = Modifier.padding(horizontal = 8.dp),
+                                episode = episodes[index],
+                            )
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.outline
+                            )
+                        }
+                    }
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(100.dp) // Give it a consistent height even when empty
+                            .padding(vertical = 16.dp)
+                            .clip(MaterialTheme.shapes.medium)
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.List, // Example icon
+                                contentDescription = "No episodes icon",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(32.dp)
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            Text(
+                                text = "No episodes found for this anime.", // More descriptive message
+                                style = MaterialTheme.typography.bodyLarge, // Slightly larger style
+                                color = MaterialTheme.colorScheme.onSurfaceVariant, // Subdued color
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
                     }
                 }
             }
