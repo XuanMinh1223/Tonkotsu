@@ -7,6 +7,7 @@ import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
 import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
 import com.nightfire.tonkotsu.core.domain.model.Character
 import com.nightfire.tonkotsu.core.domain.model.Image
+import com.nightfire.tonkotsu.core.domain.model.Video
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -63,4 +64,8 @@ interface AnimeRepository {
     fun getAnimeImages(
         id: Int
     ): Flow<Resource<List<Image>>>
+
+    fun getAnimeVideos(
+        id: Int
+    ): Flow<Resource<List<Video>>>
 }
