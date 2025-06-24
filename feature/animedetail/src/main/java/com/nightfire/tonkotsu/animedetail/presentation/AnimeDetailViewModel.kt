@@ -7,9 +7,11 @@ import com.nightfire.tonkotsu.core.common.UiState
 import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
 import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
 import com.nightfire.tonkotsu.core.domain.model.Character
+import com.nightfire.tonkotsu.core.domain.model.Image
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeDetailUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeEpisodesUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeCharactersUseCase
+import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeImagesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,6 +24,7 @@ class AnimeDetailViewModel @Inject constructor(
     private val getAnimeDetailUseCase: GetAnimeDetailUseCase,
     private val getAnimeEpisodesUseCase: GetAnimeEpisodesUseCase,
     private val getAnimeCharactersUseCase: GetAnimeCharactersUseCase,
+    private val getAnimeImagesUseCase: GetAnimeImagesUseCase
 ) : ViewModel() {
 
     private val _animeDetailState = MutableStateFlow<UiState<AnimeDetail>>(UiState.loading())
@@ -32,6 +35,9 @@ class AnimeDetailViewModel @Inject constructor(
 
     private val _animeCharactersState = MutableStateFlow<UiState<List<Character>>>(UiState.loading())
     val animeCharactersState: StateFlow<UiState<List<Character>>> = _animeCharactersState
+
+    private val _animeImagesState = MutableStateFlow<UiState<List<Image>>>(UiState.loading())
+    val animeImagesState: StateFlow<UiState<List<Image>>> = _animeImagesState
 
     fun getAnimeDetail(id: Int) {
         getAnimeDetailUseCase(id).onEach { result ->
@@ -46,6 +52,7 @@ class AnimeDetailViewModel @Inject constructor(
 
                     getAnimeEpisodes(id)
                     getCharacters(id)
+                    getImages(id)
                 }
                 is Resource.Error -> {
                     _animeDetailState.value = UiState.error(
@@ -93,6 +100,26 @@ class AnimeDetailViewModel @Inject constructor(
                 }
                 is Resource.Error -> {
                     _animeCharactersState.value = UiState.error(
+                        message = result.message,
+                        data = result.data,
+                        isRetrying = result.isRetrying
+                    )
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getImages(animeId: Int) {
+        getAnimeImagesUseCase(animeId).onEach { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _animeImagesState.value = UiState.loading()
+                }
+                is Resource.Success -> {
+                    _animeImagesState.value = UiState.success(result.data)
+                }
+                is Resource.Error -> {
+                    _animeImagesState.value = UiState.error(
                         message = result.message,
                         data = result.data,
                         isRetrying = result.isRetrying

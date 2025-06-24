@@ -24,7 +24,7 @@ import com.nightfire.tonkotsu.ui.shimmerEffect
 @Composable
 fun CardSkeleton(
     modifier: Modifier = Modifier,
-    cardWidth: Dp = 100.dp,
+    cardWidth: Dp = 120.dp,
     cardHeight: Dp = 180.dp,
     imageWidth: Dp = 90.dp,
     imageHeight: Dp = 120.dp,
