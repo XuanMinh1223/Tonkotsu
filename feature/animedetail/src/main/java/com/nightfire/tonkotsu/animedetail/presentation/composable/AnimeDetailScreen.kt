@@ -192,9 +192,22 @@ fun AnimeDetailScreenContent(
                                 }
                             }
                         }
+                        anime.trailerYoutubeId?.let { youtubeId ->
+                            AppHorizontalDivider()
+                            Button(
+                                onClick = {
+                                    val intent = Intent(Intent.ACTION_VIEW,
+                                        "https://www.youtube.com/watch?v=$youtubeId".toUri())
+                                    context.startActivity(intent)
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(Icons.Default.PlayArrow, contentDescription = "Watch Trailer")
+                                Spacer(Modifier.width(8.dp))
+                                Text("Watch Trailer")
+                            }
+                        }
                         AppHorizontalDivider()
-
-                        // --- 3. Key Info ---
                         AnimeKeyInfo(anime = anime)
                         AppHorizontalDivider()
                         TagSection(title = "Genres:", tags = anime.genres, onTagClick = onGenreClick)
@@ -202,7 +215,6 @@ fun AnimeDetailScreenContent(
                         TagSection(title = "Categories:", tags = anime.categories, onTagClick = onGenreClick)
                         AppHorizontalDivider()
 
-                        // --- 4. Synopsis & Background (with "Read More") ---
                         ExpandableText(
                             title = "Synopsis",
                             text = anime.synopsis
@@ -220,27 +232,10 @@ fun AnimeDetailScreenContent(
                         AppHorizontalDivider()
                         ImageList(animeImagesState)
                         AppHorizontalDivider()
-                        // --- 6. Production Details (FlowRows using TagSection) ---
                         TagSection(title = "Studios:", tags = anime.studios, isSecondary = true)
                         TagSection(title = "Producers:", tags = anime.producers, isSecondary = true)
                         TagSection(title = "Licensors:", tags = anime.licensors, isSecondary = true)
 
-                        // --- 7. External Media & Streaming Services ---
-                        anime.trailerYoutubeId?.let { youtubeId ->
-                            AppHorizontalDivider()
-                            Button(
-                                onClick = {
-                                    val intent = Intent(Intent.ACTION_VIEW,
-                                        "https://www.youtube.com/watch?v=$youtubeId".toUri())
-                                    context.startActivity(intent)
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Icon(Icons.Default.PlayArrow, contentDescription = "Watch Trailer")
-                                Spacer(Modifier.width(8.dp))
-                                Text("Watch Trailer")
-                            }
-                        }
 
                         anime.streamingLinks.takeIf { it.isNotEmpty() }?.let { services ->
                             AppHorizontalDivider()
