@@ -46,12 +46,14 @@ import com.nightfire.tonkotsu.core.domain.model.Character
 import com.nightfire.tonkotsu.core.domain.model.Image
 import com.nightfire.tonkotsu.core.domain.model.NavigableLink
 import com.nightfire.tonkotsu.core.domain.model.RelationEntry
+import com.nightfire.tonkotsu.core.domain.model.Video
 import com.nightfire.tonkotsu.ui.AppHorizontalDivider
 import com.nightfire.tonkotsu.ui.CharacterListSection
 import com.nightfire.tonkotsu.ui.ExpandableText
 import com.nightfire.tonkotsu.ui.ImageList
 import com.nightfire.tonkotsu.ui.ScoreDisplayCard
 import com.nightfire.tonkotsu.ui.TagSection
+import com.nightfire.tonkotsu.ui.VideoList
 import java.util.Locale
 
 @Composable
@@ -64,6 +66,7 @@ fun AnimeDetailScreen(
     val animeEpisodesState by viewModel.animeEpisodesState.collectAsState()
     val animeCharactersState by viewModel.animeCharactersState.collectAsState()
     val animeImagesState by viewModel.animeImagesState.collectAsState()
+    val animeVideosState by viewModel.animeVideosState.collectAsState()
 
     LaunchedEffect(key1 = malId) {
         viewModel.getAnimeDetail(malId)
@@ -74,6 +77,7 @@ fun AnimeDetailScreen(
             animeEpisodesState = animeEpisodesState,
             animeCharactersState = animeCharactersState,
             animeImagesState = animeImagesState,
+            animeVideosState = animeVideosState,
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -86,6 +90,7 @@ fun AnimeDetailScreenContent(
     animeEpisodesState: UiState<List<AnimeEpisode>>,
     animeCharactersState: UiState<List<Character>>,
     animeImagesState: UiState<List<Image>>,
+    animeVideosState: UiState<List<Video>>,
     modifier: Modifier = Modifier,
     onGenreClick: (String) -> Unit = {} // For clickable genres
 ) {
@@ -231,6 +236,8 @@ fun AnimeDetailScreenContent(
                         CharacterListSection(animeCharactersState)
                         AppHorizontalDivider()
                         ImageList(animeImagesState)
+                        AppHorizontalDivider()
+                        VideoList(animeVideosState)
                         AppHorizontalDivider()
                         TagSection(title = "Studios:", tags = anime.studios, isSecondary = true)
                         TagSection(title = "Producers:", tags = anime.producers, isSecondary = true)
@@ -397,7 +404,8 @@ fun AnimeDetailScreenContentSuccessPreview() {
                 animeEpisodesState = UiState.loading(),
                 animeCharactersState = UiState.loading(),
                 animeImagesState = UiState.loading(),
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                animeVideosState = UiState.loading()
             )
         }
     }
@@ -413,6 +421,7 @@ fun AnimeDetailScreenContentLoadingPreview() {
                 animeEpisodesState = UiState.loading(),
                 animeImagesState = UiState.loading(),
                 animeCharactersState = UiState.loading(),
+                animeVideosState = UiState.loading()
             )
         }
     }
@@ -428,6 +437,7 @@ fun AnimeDetailScreenContentErrorPreview() {
                 animeEpisodesState = UiState.error("Failed to load anime details. Check your internet connection."),
                 animeImagesState = UiState.loading(),
                 animeCharactersState = UiState.loading(),
+                animeVideosState = UiState.loading()
                 )
         }
     }
