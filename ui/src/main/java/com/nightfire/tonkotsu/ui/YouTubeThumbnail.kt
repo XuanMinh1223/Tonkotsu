@@ -24,12 +24,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.nightfire.tonkotsu.core.domain.model.Video
 
 @Composable
 fun YouTubeThumbnail(
-    thumbnailUrl: String?,
-    videoUrl: String,
-    onVideoClick: (String) -> Unit = { }
+    video:Video,
+    onVideoClick: (Video) -> Unit = { }
 ) {
 
     Box(
@@ -38,12 +38,12 @@ fun YouTubeThumbnail(
             .aspectRatio(16f / 9f)
             .clip(RoundedCornerShape(4.dp))
             .background(MaterialTheme.colorScheme.background)
-            .clickable { onVideoClick(videoUrl) }
+            .clickable { onVideoClick(video) }
     ) {
-        thumbnailUrl?.let { url ->
+        video.thumbnailUrl?.let { url ->
             AsyncImage(
                 model = url,
-                contentDescription = "YouTube Thumbnail for $videoUrl",
+                contentDescription = "YouTube Thumbnail for ${video.videoUrl}",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
@@ -54,13 +54,11 @@ fun YouTubeThumbnail(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
-
         }
-
 
         Icon(
             imageVector = Icons.Default.PlayArrow,
-            contentDescription = "Play $videoUrl",
+            contentDescription = "Play ${video.videoUrl}",
             tint = Color.White,
             modifier = Modifier
                 .align(Alignment.Center)

@@ -10,7 +10,7 @@ data class PromoVideoDto(
 
 fun PromoVideoDto.toVideo(): Video? {
     val videoDetails = this.trailer
-    val videoUrl = videoDetails?.url
+    val videoUrl = videoDetails?.embedUrl
     val thumbnailUrl = videoDetails?.images?.smallImageUrl
         ?: videoDetails?.images?.imageUrl
 

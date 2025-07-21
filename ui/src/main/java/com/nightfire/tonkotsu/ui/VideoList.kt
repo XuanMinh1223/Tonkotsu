@@ -1,4 +1,4 @@
-package com.nightfire.tonkotsu.ui
+package com.nightfire.tonkotsu.ui // Adjust your package as needed
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items // Use items directly if you don't need index
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -20,13 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.nightfire.tonkotsu.core.common.UiState
-import com.nightfire.tonkotsu.core.domain.model.Video
+import com.nightfire.tonkotsu.core.domain.model.Video // Import your Video domain model
 
 @Composable
 fun VideoList(
-    uiState: UiState<List<Video>>, // Note: Assumes your ViewModel returns List<Character> not CharacterWithVoiceActors
+    uiState: UiState<List<Video>>,
     modifier: Modifier = Modifier,
-    onVideoClick: (Int) -> Unit = {}
+    onVideoClick: (Video) -> Unit = {} // Callback now takes a Video object
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
@@ -40,7 +40,7 @@ fun VideoList(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(180.dp), // Height for the loading indicator in a horizontal list context
+                    .height(180.dp),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(modifier = Modifier.size(40.dp))
@@ -51,12 +51,12 @@ fun VideoList(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = uiState.errorMessage!!,
+                    text = uiState.errorMessage!!, // Consider safer non-null assertion
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
-                if (uiState.isRetrying) {
+                if (uiState.isRetrying) { // Assuming isRetrying is part of UiState.Error
                     Text(
                         text = "Retrying shortly...",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -64,8 +64,7 @@ fun VideoList(
                     )
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
                 } else {
-                    // This is a final error, perhaps show a "Retry" button
-                    Button(onClick = { /* ViewModel.retryFetchCharacters() */ }) {
+                    Button(onClick = { /* ViewModel.retryFetchVideos() */ }) { // You'd need a retry function in ViewModel
                         Text("Try Again")
                     }
                 }
@@ -87,15 +86,14 @@ fun VideoList(
                     contentPadding = PaddingValues(horizontal = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    itemsIndexed(videos) { index, video ->
+                    items(videos) { video -> // Iterate directly over video objects
                         YouTubeThumbnail(
-                            videoUrl = video.videoUrl,
-                            thumbnailUrl = video.thumbnailUrl
+                            video = video, // Pass the full Video object
+                            onVideoClick = onVideoClick // Pass the callback down
                         )
                     }
                 }
             }
         }
     }
-
 }

@@ -1,6 +1,5 @@
 package com.nightfire.tonkotsu.animedetail.presentation.composable
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +27,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -35,7 +37,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.nightfire.tonkotsu.animedetail.presentation.AnimeDetailViewModel
@@ -54,6 +55,8 @@ import com.nightfire.tonkotsu.ui.ImageList
 import com.nightfire.tonkotsu.ui.ScoreDisplayCard
 import com.nightfire.tonkotsu.ui.TagSection
 import com.nightfire.tonkotsu.ui.VideoList
+import com.nightfire.tonkotsu.ui.fullscreenoverlay.FullScreenOverlay
+import com.nightfire.tonkotsu.ui.fullscreenoverlay.OverlayContent
 import java.util.Locale
 
 @Composable
@@ -95,6 +98,7 @@ fun AnimeDetailScreenContent(
     onGenreClick: (String) -> Unit = {} // For clickable genres
 ) {
     val context = LocalContext.current
+    var overlayContent by remember { mutableStateOf<OverlayContent?>(null) }
 
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         if (animeDetailState.isLoading) {
@@ -201,9 +205,13 @@ fun AnimeDetailScreenContent(
                             AppHorizontalDivider()
                             Button(
                                 onClick = {
-                                    val intent = Intent(Intent.ACTION_VIEW,
-                                        "https://www.youtube.com/watch?v=$youtubeId".toUri())
-                                    context.startActivity(intent)
+                                    overlayContent = OverlayContent.VideoFullScreen(
+                                        video = Video(
+                                            videoUrl = anime.trailerYoutubeUrl ?: "https://www.youtube.com/watch?v=$youtubeId",
+                                            thumbnailUrl = "https://img.youtube.com/vi/$youtubeId/hqdefault.jpg" // Standard YouTube thumbnail
+                                        ),
+                                        title = "${anime.title} Trailer"
+                                    )
                                 },
                                 modifier = Modifier.fillMaxWidth()
                             ) {
@@ -237,7 +245,16 @@ fun AnimeDetailScreenContent(
                         AppHorizontalDivider()
                         ImageList(animeImagesState)
                         AppHorizontalDivider()
-                        VideoList(animeVideosState)
+                        VideoList(
+                            uiState = animeVideosState, // Assumed to be collected from ViewModel
+                            onVideoClick = { video -> // This lambda now correctly receives a Video object
+                                overlayContent = OverlayContent.VideoFullScreen(
+                                    video = video,
+                                    title = anime.title // You might want a more specific video title if available
+                                )
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
                         AppHorizontalDivider()
                         TagSection(title = "Studios:", tags = anime.studios, isSecondary = true)
                         TagSection(title = "Producers:", tags = anime.producers, isSecondary = true)
@@ -328,6 +345,12 @@ fun AnimeDetailScreenContent(
             }
         }
     }
+    overlayContent?.let { content ->
+        FullScreenOverlay(
+            content = content,
+            onDismiss = { overlayContent = null } // Dismisses the overlay by setting state to null
+        )
+    }
 }
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 1000) // Set a reasonable height for scrolling
@@ -357,6 +380,7 @@ fun AnimeDetailScreenContentSuccessPreview() {
         studios = listOf("Madhouse"),
         producers = listOf("Aniplex", "Shogakukan-Shueisha Productions", "Dentsu"),
         licensors = listOf("Crunchyroll", "Funimation"),
+        trailerYoutubeUrl = "v6QkYchc710", // Example YouTube ID
         trailerYoutubeId = "v6QkYchc710", // Example YouTube ID
         streamingLinks = listOf(
             NavigableLink(

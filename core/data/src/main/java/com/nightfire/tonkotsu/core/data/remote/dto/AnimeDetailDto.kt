@@ -1,15 +1,10 @@
 package com.nightfire.tonkotsu.core.data.remote.dto
 
-import android.util.Log
 import com.google.gson.annotations.SerializedName
 import com.nightfire.tonkotsu.core.common.utils.parseDateString
 import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
 import com.nightfire.tonkotsu.core.domain.model.RelationEntry
 import com.nightfire.tonkotsu.core.domain.model.NavigableLink
-import java.time.LocalDate
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 
 data class AnimeDetailDto(
      @SerializedName("mal_id") val malId: Int,
@@ -88,6 +83,7 @@ fun AnimeDetailDto.toAnimeDetail(): AnimeDetail {
           producers = producers?.mapNotNull { it.name } ?: emptyList(),
           licensors = licensors?.mapNotNull { it.name } ?: emptyList(),
           background = background,
+          trailerYoutubeUrl = trailer?.embedUrl,
           trailerYoutubeId = trailer?.youtubeId,
           relations = relations?.associate { relationDto ->
                relationDto.relation!! to (relationDto.entry?.map { entryDto ->

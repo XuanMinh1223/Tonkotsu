@@ -28,7 +28,7 @@ import java.time.LocalDate
  * @property producers A list of names of the producers involved in the anime's production.
  * @property licensors A list of names of the licensors of the anime.
  * @property background Additional background information or context about the anime, if available.
- * @property trailerYoutubeId The YouTube video ID for the anime's trailer, if available.
+ * @property trailerYoutubeUrl The YouTube video ID for the anime's trailer, if available.
  * @property relations A map grouping related anime entries by their relation type (e.g., "Sequel", "Prequel").
  */
 data class AnimeDetail(
@@ -62,6 +62,7 @@ data class AnimeDetail(
     val producers: List<String>,
     val licensors: List<String>,
     val background: String?,
+    val trailerYoutubeUrl: String?,
     val trailerYoutubeId: String?,
     val relations: Map<String, List<RelationEntry>>,
     val streamingLinks: List<NavigableLink>,
