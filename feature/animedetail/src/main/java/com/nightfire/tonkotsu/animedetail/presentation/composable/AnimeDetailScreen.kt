@@ -337,11 +337,12 @@ fun AnimeDetailScreenContent(
                         // Character List Section
                         CharacterListSection(animeCharactersState)
                         Spacer(Modifier.height(16.dp)) // Add spacing after character list
-                        AppHorizontalDivider()
-                        Spacer(Modifier.height(16.dp)) // Add spacing after divider
+                         // Add spacing after divider
 
 
                         anime.streamingLinks.takeIf { it.isNotEmpty() }?.let { links ->
+                            AppHorizontalDivider()
+                            Spacer(Modifier.height(16.dp))
                             Text(
                                 text = "Streaming On:",
                                 style = MaterialTheme.typography.titleLarge,
