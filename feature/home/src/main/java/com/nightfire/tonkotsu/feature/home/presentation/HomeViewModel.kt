@@ -3,7 +3,7 @@ package com.nightfire.tonkotsu.feature.home.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nightfire.tonkotsu.core.common.Resource
-import com.nightfire.tonkotsu.core.common.UiState // Import your new UiState
+import com.nightfire.tonkotsu.core.common.UiState // Import your new UiState sealed class
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 import com.nightfire.tonkotsu.core.domain.usecase.GetMostAnticipatedAnimeUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetPopularAnimeUseCase
@@ -22,13 +22,14 @@ class HomeViewModel @Inject constructor(
     private val getMostAnticipatedAnimeUseCase: GetMostAnticipatedAnimeUseCase
 ) : ViewModel() {
 
-    private val _popularAnimeState = MutableStateFlow(UiState<List<AnimeOverview>>())
+    // Initialize with UiState.Loading() for each state flow
+    private val _popularAnimeState = MutableStateFlow<UiState<List<AnimeOverview>>>(UiState.Loading())
     val popularAnimeState: StateFlow<UiState<List<AnimeOverview>>> = _popularAnimeState
 
-    private val _topAiringAnimeState = MutableStateFlow(UiState<List<AnimeOverview>>())
+    private val _topAiringAnimeState = MutableStateFlow<UiState<List<AnimeOverview>>>(UiState.Loading())
     val topAiringAnimeState: StateFlow<UiState<List<AnimeOverview>>> = _topAiringAnimeState
 
-    private val _mostAnticipatedAnimeState = MutableStateFlow(UiState<List<AnimeOverview>>())
+    private val _mostAnticipatedAnimeState = MutableStateFlow<UiState<List<AnimeOverview>>>(UiState.Loading())
     val mostAnticipatedAnimeState: StateFlow<UiState<List<AnimeOverview>>> = _mostAnticipatedAnimeState
 
     init {
@@ -41,15 +42,20 @@ class HomeViewModel @Inject constructor(
         getPopularAnimeUseCase().onEach { result ->
             when (result) {
                 is Resource.Loading -> {
-                    _popularAnimeState.value = UiState.loading()
+                    // Use UiState.Loading data class constructor
+                    _popularAnimeState.value = UiState.Loading()
                 }
                 is Resource.Success -> {
-                    _popularAnimeState.value = UiState.success(result.data)
+                    // Use UiState.Success data class constructor
+                    _popularAnimeState.value = UiState.Success(result.data)
                 }
                 is Resource.Error -> {
-                    _popularAnimeState.value = UiState.error(
-                        message = result.message,
-                        data = result.data
+                    // Use UiState.Error data class constructor
+                    _popularAnimeState.value = UiState.Error(
+                        message = result.message ?: "An unexpected error occurred for Popular Anime.",
+                        data = result.data,
+                        // Determine isRetrying based on your retry logic (e.g., message content)
+                        isRetrying = (result.message?.contains("Rate limit exceeded") == true)
                     )
                 }
             }
@@ -60,15 +66,16 @@ class HomeViewModel @Inject constructor(
         getTopAiringAnimeUseCase().onEach { result ->
             when (result) {
                 is Resource.Loading -> {
-                    _topAiringAnimeState.value = UiState.loading()
+                    _topAiringAnimeState.value = UiState.Loading()
                 }
                 is Resource.Success -> {
-                    _topAiringAnimeState.value = UiState.success(result.data)
+                    _topAiringAnimeState.value = UiState.Success(result.data)
                 }
                 is Resource.Error -> {
-                    _topAiringAnimeState.value = UiState.error(
+                    _topAiringAnimeState.value = UiState.Error(
                         message = result.message,
-                        data = result.data
+                        data = result.data,
+                        isRetrying = (result.message?.contains("Rate limit exceeded") == true)
                     )
                 }
             }
@@ -79,15 +86,16 @@ class HomeViewModel @Inject constructor(
         getMostAnticipatedAnimeUseCase().onEach { result ->
             when (result) {
                 is Resource.Loading -> {
-                    _mostAnticipatedAnimeState.value = UiState.loading()
+                    _mostAnticipatedAnimeState.value = UiState.Loading()
                 }
                 is Resource.Success -> {
-                    _mostAnticipatedAnimeState.value = UiState.success(result.data)
+                    _mostAnticipatedAnimeState.value = UiState.Success(result.data)
                 }
                 is Resource.Error -> {
-                    _mostAnticipatedAnimeState.value = UiState.error(
+                    _mostAnticipatedAnimeState.value = UiState.Error(
                         message = result.message,
-                        data = result.data
+                        data = result.data,
+                        isRetrying = (result.message.contains("Rate limit exceeded"))
                     )
                 }
             }

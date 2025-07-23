@@ -11,6 +11,13 @@ sealed class OverlayContent {
     data class ImageFullScreen(val image: Image) : OverlayContent()
 
     /**
+     * Content for displaying a gallery of images with navigation.
+     * @param images The list of Image domain models in the gallery.
+     * @param initialIndex The index of the image that was initially clicked.
+     */
+    data class ImageGalleryFullScreen(val images: List<Image>, val initialIndex: Int) : OverlayContent()
+
+    /**
      * Content for displaying a video, typically embedded.
      * @param video The Video domain model.
      * @param title An optional title for the video.

@@ -156,21 +156,9 @@ fun HomeScreenContentSuccessPreview() {
     MaterialTheme { // Use your app's theme here (e.g., TonkotsuTheme)
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeScreenContent(
-                popularAnimeState = UiState(
-                    data = provideMockAnimeList(),
-                    isLoading = false,
-                    errorMessage = null
-                ),
-                topAiringAnimeState = UiState(
-                    data = provideMockAnimeList(),
-                    isLoading = false,
-                    errorMessage = null
-                ),
-                mostAnticipatedAnimeState = UiState(
-                    data = provideMockAnimeList(),
-                    isLoading = false,
-                    errorMessage = null
-                ),
+                popularAnimeState = UiState.Success(provideMockAnimeList()),
+                topAiringAnimeState = UiState.Success(provideMockAnimeList()),
+                mostAnticipatedAnimeState = UiState.Success(provideMockAnimeList()),
             )
         }
     }
@@ -182,21 +170,9 @@ fun HomeScreenContentLoadingPreview() {
     MaterialTheme { // Use your app's theme here
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeScreenContent(
-                popularAnimeState = UiState(
-                    data = if (provideMockAnimeList().isNotEmpty()) provideMockAnimeList() else null, // Show stale data if desired
-                    isLoading = true,
-                    errorMessage = null
-                ),
-                topAiringAnimeState = UiState(
-                    data = if (provideMockAnimeList().isNotEmpty()) provideMockAnimeList() else null, // Show stale data if desired
-                    isLoading = true,
-                    errorMessage = null
-                ),
-                mostAnticipatedAnimeState = UiState(
-                    data = if (provideMockAnimeList().isNotEmpty()) provideMockAnimeList() else null, // Show stale data if desired
-                    isLoading = true,
-                    errorMessage = null
-                )
+                popularAnimeState = UiState.Loading(),
+                topAiringAnimeState = UiState.Loading(),
+                mostAnticipatedAnimeState = UiState.Loading()
             )
         }
     }
@@ -208,21 +184,18 @@ fun HomeScreenContentErrorPreview() {
     MaterialTheme { // Use your app's theme here
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeScreenContent(
-                popularAnimeState = UiState(
-                    data = null,
-                    isLoading = false,
-                    errorMessage = "Failed to load anime. Please try again."
+                popularAnimeState = UiState.Error(
+                    message = "Failed to load anime. Please try again.",
+                    isRetrying = false
                 ),
-                topAiringAnimeState = UiState(
-                    data = null,
-                    isLoading = false,
-                    errorMessage = "Failed to load anime. Please try again."
+                topAiringAnimeState = UiState.Error(
+                    message = "Failed to load anime. Please try again.",
+                    isRetrying = false
                 ),
-                mostAnticipatedAnimeState = UiState(
-                    data = null,
-                    isLoading = false,
-                    errorMessage = "Failed to load anime. Please try again."
-                )
+                mostAnticipatedAnimeState = UiState.Error(
+                    message = "Failed to load anime. Please try again.",
+                    isRetrying = false
+                ),
             )
         }
     }

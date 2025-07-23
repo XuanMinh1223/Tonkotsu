@@ -1,5 +1,3 @@
-package com.nightfire.tonkotsu.ui
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items // Use items directly for simpler list iteration
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -19,14 +18,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.nightfire.tonkotsu.core.common.UiState
-import com.nightfire.tonkotsu.core.domain.model.Character
-import androidx.compose.material3.Surface
+import com.nightfire.tonkotsu.core.common.UiState // Import the sealed UiState
+import com.nightfire.tonkotsu.core.domain.model.Character // Your Character domain model
 import com.nightfire.tonkotsu.core.domain.model.VoiceActor // Nested VoiceActor
+import androidx.compose.material3.Surface // For previews
+import com.nightfire.tonkotsu.ui.CharacterCard
 
 @Composable
 fun CharacterListSection(
-    uiState: UiState<List<Character>>, // Note: Assumes your ViewModel returns List<Character> not CharacterWithVoiceActors
+    uiState: UiState<List<Character>>,
     modifier: Modifier = Modifier,
     onCharacterClick: (Int) -> Unit = {} // Assuming characterId for navigation
 ) {
@@ -38,67 +38,74 @@ fun CharacterListSection(
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        if (uiState.isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(180.dp), // Height for the loading indicator in a horizontal list context
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(modifier = Modifier.size(40.dp))
+        when (uiState) { // Use 'when' with the sealed UiState
+            is UiState.Loading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp), // Height for the loading indicator in a horizontal list context
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.size(40.dp))
+                }
             }
-        } else if (uiState.errorMessage != null) {
-            Column(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = uiState.errorMessage!!,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-                if (uiState.isRetrying) {
+            is UiState.Success -> {
+                val characters = uiState.data // 'data' is directly accessible and non-null here
+                if (characters.isNullOrEmpty()) { // Check if the list itself is empty
                     Text(
-                        text = "Retrying shortly...",
+                        text = "No characters available.",
+                        style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodySmall
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp)
                     )
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
                 } else {
-                    // This is a final error, perhaps show a "Retry" button
-                    Button(onClick = { /* ViewModel.retryFetchCharacters() */ }) {
-                        Text("Try Again")
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentPadding = PaddingValues(horizontal = 4.dp), // Padding around the entire row
+                        horizontalArrangement = Arrangement.spacedBy(8.dp) // Spacing between cards
+                    ) {
+                        // Use 'items' directly with the list for simpler iteration
+                        items(characters) { character ->
+                            CharacterCard(character = character, onClick = {
+                                onCharacterClick(character.malId) // Access malId directly from Character
+                            })
+                        }
                     }
                 }
             }
-        } else {
-            val characters = uiState.data
-            if (characters.isNullOrEmpty()) {
-                Text(
-                    text = "No characters available.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp)
-                )
-            } else {
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(horizontal = 4.dp), // Padding around the entire row
-                    horizontalArrangement = Arrangement.spacedBy(8.dp) // Spacing between cards
+            is UiState.Error -> {
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    items(characters.size) { index ->
-                        CharacterCard(character = characters[index], onClick = {
-                            onCharacterClick(characters[index].malId)
-                        })
+                    Text(
+                        text = uiState.message, // 'message' is directly accessible
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(bottom = 4.dp)
+                    )
+                    if (uiState.isRetrying) { // 'isRetrying' is directly accessible
+                        Text(
+                            text = "Retrying shortly...",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
+                    } else {
+                        // This is a final error, perhaps show a "Retry" button
+                        Button(onClick = { /* ViewModel.retryFetchCharacters() */ }) {
+                            Text("Try Again")
+                        }
                     }
                 }
             }
         }
     }
 }
+
+// --- Previews ---
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 350)
 @Composable
@@ -125,59 +132,24 @@ fun CharacterListSectionSuccessPreview() {
                     voiceActors = listOf(
                         VoiceActor(
                             101,
-                            "Atsumi Tanezaki",
-                            "https://cdn.myanimelist.net/images/voiceactors/2/78028.jpg",
+                            "Kana Ichinose",
+                            "https://cdn.myanimelist.net/images/voiceactors/2/78029.jpg",
                             "Japanese"
                         )
                     ),
-                    malId = 1,
-                    name = "Frieren",
-                    imageUrl = "https://cdn.myanimelist.net/images/characters/16/505391.jpg"
+                    malId = 2,
+                    name = "Fern",
+                    imageUrl = "https://cdn.myanimelist.net/images/characters/15/505392.jpg"
                 ),
                 Character(
-                    role = "Main",
-                    voiceActors = listOf(
-                        VoiceActor(
-                            101,
-                            "Atsumi Tanezaki",
-                            "https://cdn.myanimelist.net/images/voiceactors/2/78028.jpg",
-                            "Japanese"
-                        )
-                    ),
-                    malId = 1,
-                    name = "Frieren",
-                    imageUrl = "https://cdn.myanimelist.net/images/characters/16/505391.jpg"
-                ),
-                Character(
-                    role = "Main",
-                    voiceActors = listOf(
-                        VoiceActor(
-                            101,
-                            "Atsumi Tanezaki",
-                            "https://cdn.myanimelist.net/images/voiceactors/2/78028.jpg",
-                            "Japanese"
-                        )
-                    ),
-                    malId = 1,
-                    name = "Frieren",
-                    imageUrl = "https://cdn.myanimelist.net/images/characters/16/505391.jpg"
-                ),
-                Character(
-                    role = "Main",
-                    voiceActors = listOf(
-                        VoiceActor(
-                            101,
-                            "Atsumi Tanezaki",
-                            "https://cdn.myanimelist.net/images/voiceactors/2/78028.jpg",
-                            "Japanese"
-                        )
-                    ),
-                    malId = 1,
-                    name = "Frieren",
-                    imageUrl = "https://cdn.myanimelist.net/images/characters/16/505391.jpg"
+                    role = "Supporting",
+                    voiceActors = emptyList(),
+                    malId = 3,
+                    name = "Stark",
+                    imageUrl = "https://cdn.myanimelist.net/images/characters/14/505393.jpg"
                 ),
             )
-            CharacterListSection(uiState = UiState.success(mockCharacters))
+            CharacterListSection(uiState = UiState.Success(mockCharacters)) // Updated constructor
         }
     }
 }
@@ -187,7 +159,7 @@ fun CharacterListSectionSuccessPreview() {
 fun CharacterListSectionLoadingPreview() {
     MaterialTheme {
         Surface {
-            CharacterListSection(uiState = UiState.loading())
+            CharacterListSection(uiState = UiState.Loading()) // Updated constructor
         }
     }
 }
@@ -197,7 +169,8 @@ fun CharacterListSectionLoadingPreview() {
 fun CharacterListSectionErrorPreview() {
     MaterialTheme {
         Surface {
-            CharacterListSection(uiState = UiState.error("Failed to load characters."))
+            // Updated to reflect the new UiState.Error constructor
+            CharacterListSection(uiState = UiState.Error("Failed to load characters.", isRetrying = false))
         }
     }
 }
@@ -207,7 +180,7 @@ fun CharacterListSectionErrorPreview() {
 fun CharacterListSectionEmptyPreview() {
     MaterialTheme {
         Surface {
-            CharacterListSection(uiState = UiState.success(emptyList()))
+            CharacterListSection(uiState = UiState.Success(emptyList())) // Updated constructor
         }
     }
 }

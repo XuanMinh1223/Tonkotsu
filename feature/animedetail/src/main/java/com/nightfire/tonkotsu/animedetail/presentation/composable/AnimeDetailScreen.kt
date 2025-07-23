@@ -1,5 +1,7 @@
-package com.nightfire.tonkotsu.animedetail.presentation.composable
+package com.nightfire.tonkotsu.animedetail.presentation.composable // Adjust your package as needed
 
+import CharacterListSection
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,15 +12,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -49,12 +49,12 @@ import com.nightfire.tonkotsu.core.domain.model.NavigableLink
 import com.nightfire.tonkotsu.core.domain.model.RelationEntry
 import com.nightfire.tonkotsu.core.domain.model.Video
 import com.nightfire.tonkotsu.ui.AppHorizontalDivider
-import com.nightfire.tonkotsu.ui.CharacterListSection
 import com.nightfire.tonkotsu.ui.ExpandableText
 import com.nightfire.tonkotsu.ui.ImageList
 import com.nightfire.tonkotsu.ui.ScoreDisplayCard
 import com.nightfire.tonkotsu.ui.TagSection
 import com.nightfire.tonkotsu.ui.VideoList
+import com.nightfire.tonkotsu.ui.composables.AnimeEpisodesList
 import com.nightfire.tonkotsu.ui.fullscreenoverlay.FullScreenOverlay
 import com.nightfire.tonkotsu.ui.fullscreenoverlay.OverlayContent
 import java.util.Locale
@@ -86,7 +86,7 @@ fun AnimeDetailScreen(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalLayoutApi::class) // For FlowRow, which TagSection uses
+@OptIn(ExperimentalLayoutApi::class) // For FlowRow, which TagSection uses
 @Composable
 fun AnimeDetailScreenContent(
     animeDetailState: UiState<AnimeDetail>,
@@ -97,21 +97,43 @@ fun AnimeDetailScreenContent(
     modifier: Modifier = Modifier,
     onGenreClick: (String) -> Unit = {} // For clickable genres
 ) {
-    val context = LocalContext.current
+    LocalContext.current
     var overlayContent by remember { mutableStateOf<OverlayContent?>(null) }
 
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        if (animeDetailState.isLoading) {
-            CircularProgressIndicator()
-        } else if (animeDetailState.errorMessage != null) {
-            Text(
-                text = animeDetailState.errorMessage!!,
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(16.dp)
-            )
-        } else {
-            animeDetailState.data?.let { anime ->
+        when (animeDetailState) { // Use 'when' with the sealed UiState
+            is UiState.Loading -> {
+                CircularProgressIndicator() // Or a more elaborate loading screen
+            }
+            is UiState.Error -> {
+                Column(
+                    modifier = Modifier.fillMaxSize().padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = animeDetailState.message, // Access message directly from UiState.Error
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    if (animeDetailState.isRetrying) { // Access isRetrying directly from UiState.Error
+                        Text(
+                            text = "Retrying shortly...",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
+                    } else {
+                        // Provide a way to retry the main detail fetch
+                        Button(onClick = { /* You'll need to pass animeId to ViewModel.getAnimeDetail(animeId) */ }) {
+                            Text("Try Again")
+                        }
+                    }
+                }
+            }
+            is UiState.Success -> {
+                val anime = animeDetailState.data // Data is guaranteed to be non-null in Success state
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -124,19 +146,19 @@ fun AnimeDetailScreenContent(
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.Top // Align items to the top of the row
+                            verticalAlignment = Alignment.Top
                         ) {
                             Column(
                                 modifier = Modifier
-                                    .weight(1f) // This column will take up all available space after the image
-                                    .padding(end = 8.dp) // Add some spacing between the titles and the image
+                                    .weight(1f)
+                                    .padding(end = 8.dp)
                             ) {
                                 Text(
                                     text = anime.title,
                                     style = MaterialTheme.typography.headlineLarge,
                                     fontWeight = FontWeight.Bold
                                 )
-                                anime.alternativeTitle?.let { altTitle -> // <--- Using alternativeTitle
+                                anime.alternativeTitle?.let { altTitle ->
                                     Text(
                                         text = altTitle,
                                         modifier = Modifier.padding(top = 8.dp),
@@ -144,7 +166,7 @@ fun AnimeDetailScreenContent(
                                         fontWeight = FontWeight.Bold
                                     )
                                 }
-                                anime.japaneseTitle?.let { jpTitle -> // <--- Using japaneseTitle
+                                anime.japaneseTitle?.let { jpTitle ->
                                     Text(
                                         text = jpTitle,
                                         modifier = Modifier.padding(top = 8.dp),
@@ -158,9 +180,12 @@ fun AnimeDetailScreenContent(
                                 model = anime.imageUrl,
                                 contentDescription = "${anime.title} Poster",
                                 modifier = Modifier
-                                    .width(150.dp),
-                                contentScale = ContentScale.Fit, // As requested, will fit entire image (may pillarbox)
-                                alignment = Alignment.TopCenter // Ensures the top of the image is visible if it's tall
+                                    .width(150.dp)
+                                    .clickable {
+                                        overlayContent = OverlayContent.ImageFullScreen(Image(anime.imageUrl))
+                                    },
+                                contentScale = ContentScale.Fit,
+                                alignment = Alignment.TopCenter
                             )
                         }
 
@@ -175,8 +200,8 @@ fun AnimeDetailScreenContent(
                                 scoredBy = anime.scoredBy
                             )
                             Column(
-                                horizontalAlignment = Alignment.End, // Right-justify text within this column
-                                verticalArrangement = Arrangement.spacedBy(4.dp) // Space between these stats
+                                horizontalAlignment = Alignment.End,
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
                             ) {
                                 anime.rank?.let {
                                     Text(
@@ -201,33 +226,24 @@ fun AnimeDetailScreenContent(
                                 }
                             }
                         }
-                        anime.trailerYoutubeId?.let { youtubeId ->
-                            AppHorizontalDivider()
-                            Button(
-                                onClick = {
-                                    overlayContent = OverlayContent.VideoFullScreen(
-                                        video = Video(
-                                            videoUrl = anime.trailerYoutubeUrl ?: "https://www.youtube.com/watch?v=$youtubeId",
-                                            thumbnailUrl = "https://img.youtube.com/vi/$youtubeId/hqdefault.jpg" // Standard YouTube thumbnail
-                                        ),
-                                        title = "${anime.title} Trailer"
-                                    )
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Icon(Icons.Default.PlayArrow, contentDescription = "Watch Trailer")
-                                Spacer(Modifier.width(8.dp))
-                                Text("Watch Trailer")
-                            }
-                        }
+                        Spacer(Modifier.height(16.dp)) // Add spacing after stats
                         AppHorizontalDivider()
+                        Spacer(Modifier.height(16.dp)) // Add spacing after divider
+
+                        // --- 3. Key Info ---
                         AnimeKeyInfo(anime = anime)
+                        Spacer(Modifier.height(16.dp)) // Add spacing after key info
                         AppHorizontalDivider()
+                        Spacer(Modifier.height(16.dp)) // Add spacing after divider
+
                         TagSection(title = "Genres:", tags = anime.genres, onTagClick = onGenreClick)
                         TagSection(title = "Themes:", tags = anime.themes, onTagClick = onGenreClick)
                         TagSection(title = "Categories:", tags = anime.categories, onTagClick = onGenreClick)
+                        Spacer(Modifier.height(16.dp)) // Add spacing after tags
                         AppHorizontalDivider()
+                        Spacer(Modifier.height(16.dp)) // Add spacing after divider
 
+                        // --- 4. Synopsis & Background (with "Read More") ---
                         ExpandableText(
                             title = "Synopsis",
                             text = anime.synopsis
@@ -238,43 +254,78 @@ fun AnimeDetailScreenContent(
                             text = anime.background,
                             modifier = Modifier.padding(top = 16.dp)
                         )
+                        Spacer(Modifier.height(16.dp)) // Add spacing after expandable texts
                         AppHorizontalDivider()
-                        AnimeEpisodesList(animeEpisodesState)
+                        Spacer(Modifier.height(16.dp)) // Add spacing after divider
+
+                        // --- 5. Production Details (FlowRows using TagSection) ---
+                        TagSection(title = "Studios:", tags = anime.studios, isSecondary = true)
+                        TagSection(title = "Producers:", tags = anime.producers, isSecondary = true)
+                        TagSection(title = "Licensors:", tags = anime.licensors, isSecondary = true)
+                        Spacer(Modifier.height(16.dp)) // Add spacing after production details
+
+                        // --- 6. External Media & Streaming Services ---
+                        // Removed the single "Watch Trailer" button, now handled by VideoList
                         AppHorizontalDivider()
-                        CharacterListSection(animeCharactersState)
-                        AppHorizontalDivider()
-                        ImageList(animeImagesState)
-                        AppHorizontalDivider()
+                        Spacer(Modifier.height(16.dp))
                         VideoList(
-                            uiState = animeVideosState, // Assumed to be collected from ViewModel
-                            onVideoClick = { video -> // This lambda now correctly receives a Video object
+                            uiState = animeVideosState,
+                            onVideoClick = { video ->
                                 overlayContent = OverlayContent.VideoFullScreen(
                                     video = video,
-                                    title = anime.title // You might want a more specific video title if available
+                                    title = anime.title
                                 )
                             },
                             modifier = Modifier.fillMaxWidth()
                         )
+                        Spacer(Modifier.height(16.dp)) // Add spacing after video list
                         AppHorizontalDivider()
-                        TagSection(title = "Studios:", tags = anime.studios, isSecondary = true)
-                        TagSection(title = "Producers:", tags = anime.producers, isSecondary = true)
-                        TagSection(title = "Licensors:", tags = anime.licensors, isSecondary = true)
+                        Spacer(Modifier.height(16.dp)) // Add spacing after divider
+
+                        // Displaying Anime Images using the ImageList
+                        ImageList(
+                            uiState = animeImagesState,
+                            onImageClick = { clickedImage, index ->
+                                (animeImagesState as? UiState.Success)?.data?.let { imagesList ->
+                                    overlayContent = OverlayContent.ImageGalleryFullScreen(
+                                        images = imagesList,
+                                        initialIndex = index
+                                    )
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Spacer(Modifier.height(16.dp)) // Add spacing after image list
+                        AppHorizontalDivider()
+                        Spacer(Modifier.height(16.dp)) // Add spacing after divider
+
+                        // Anime Episodes List
+                        AnimeEpisodesList(animeEpisodesState)
+                        Spacer(Modifier.height(16.dp)) // Add spacing after episodes list
+                        AppHorizontalDivider()
+                        Spacer(Modifier.height(16.dp)) // Add spacing after divider
+
+                        // Character List Section
+                        CharacterListSection(animeCharactersState)
+                        Spacer(Modifier.height(16.dp)) // Add spacing after character list
+                        AppHorizontalDivider()
+                        Spacer(Modifier.height(16.dp)) // Add spacing after divider
 
 
-                        anime.streamingLinks.takeIf { it.isNotEmpty() }?.let { services ->
-                            AppHorizontalDivider()
+                        anime.streamingLinks.takeIf { it.isNotEmpty() }?.let { links ->
                             Text(
                                 text = "Streaming On:",
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.SemiBold
                             )
-                            ExternalUrlSection(services, modifier = Modifier.padding(top = 8.dp, bottom = 16.dp))
+                            ExternalUrlSection(links, modifier = Modifier.padding(top = 8.dp, bottom = 16.dp))
                         }
 
 
-                        // --- 8. Themes (Opening/Ending) ---
+                        // --- 7. Themes (Opening/Ending) ---
                         anime.openingThemes.takeIf { it.isNotEmpty() }?.let { themes ->
                             AppHorizontalDivider()
+                            Spacer(Modifier.height(16.dp))
                             Text(
                                 text = "Opening Themes:",
                                 style = MaterialTheme.typography.titleLarge,
@@ -286,6 +337,7 @@ fun AnimeDetailScreenContent(
                                     Text(text = "• $theme", style = MaterialTheme.typography.bodyMedium)
                                 }
                             }
+                            Spacer(Modifier.height(16.dp)) // Add spacing after opening themes
                         }
 
                         anime.endingThemes.takeIf { it.isNotEmpty() }?.let { themes ->
@@ -300,11 +352,13 @@ fun AnimeDetailScreenContent(
                                     Text(text = "• $theme", style = MaterialTheme.typography.bodyMedium)
                                 }
                             }
+                            Spacer(Modifier.height(16.dp)) // Add spacing after ending themes
                         }
 
-                        // --- 9. Relations (Basic Display) ---
+                        // --- 8. Relations (Basic Display) ---
                         anime.relations.takeIf { it.isNotEmpty() }?.let { relationsMap ->
                             AppHorizontalDivider()
+                            Spacer(Modifier.height(16.dp))
                             Text(
                                 text = "Relations:",
                                 style = MaterialTheme.typography.titleLarge,
@@ -336,11 +390,13 @@ fun AnimeDetailScreenContent(
                                     style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.SemiBold,
                                 )
-                                ExternalUrlSection(navigableLinks = anime.externalLinks, modifier = Modifier.padding(top = 8.dp, bottom = 16.dp))
+                                ExternalUrlSection(navigableLinks = it, modifier = Modifier.padding(top = 8.dp, bottom = 16.dp))
                             }
                             Spacer(Modifier.height(16.dp))
                         }
-                    }
+                    } // End inner padding Column
+
+                    Spacer(Modifier.height(16.dp)) // Final bottom padding for the entire scrollable Column
                 }
             }
         }
@@ -424,12 +480,12 @@ fun AnimeDetailScreenContentSuccessPreview() {
     MaterialTheme {
         Surface {
             AnimeDetailScreenContent(
-                animeDetailState = UiState.success(mockAnimeDetail),
-                animeEpisodesState = UiState.loading(),
-                animeCharactersState = UiState.loading(),
-                animeImagesState = UiState.loading(),
+                animeDetailState = UiState.Success(mockAnimeDetail), // Updated constructor
+                animeEpisodesState = UiState.Loading(), // Updated constructor
+                animeCharactersState = UiState.Loading(), // Updated constructor
+                animeImagesState = UiState.Loading(), // Updated constructor
                 modifier = Modifier.fillMaxSize(),
-                animeVideosState = UiState.loading()
+                animeVideosState = UiState.Loading() // Updated constructor
             )
         }
     }
@@ -441,11 +497,11 @@ fun AnimeDetailScreenContentLoadingPreview() {
     MaterialTheme {
         Surface {
             AnimeDetailScreenContent(
-                animeDetailState = UiState.loading(),
-                animeEpisodesState = UiState.loading(),
-                animeImagesState = UiState.loading(),
-                animeCharactersState = UiState.loading(),
-                animeVideosState = UiState.loading()
+                animeDetailState = UiState.Loading(), // Updated constructor
+                animeEpisodesState = UiState.Loading(), // Updated constructor
+                animeImagesState = UiState.Loading(), // Updated constructor
+                animeCharactersState = UiState.Loading(), // Updated constructor
+                animeVideosState = UiState.Loading() // Updated constructor
             )
         }
     }
@@ -457,13 +513,18 @@ fun AnimeDetailScreenContentErrorPreview() {
     MaterialTheme {
         Surface {
             AnimeDetailScreenContent(
-                animeDetailState = UiState.error("Failed to load anime details. Check your internet connection."),
-                animeEpisodesState = UiState.error("Failed to load anime details. Check your internet connection."),
-                animeImagesState = UiState.loading(),
-                animeCharactersState = UiState.loading(),
-                animeVideosState = UiState.loading()
-                )
+                animeDetailState = UiState.Error(
+                    "Failed to load anime details. Check your internet connection.",
+                    isRetrying = false
+                ), // Updated constructor
+                animeEpisodesState = UiState.Error(
+                    "Failed to load anime details. Check your internet connection.",
+                    isRetrying = false
+                ), // Updated constructor
+                animeImagesState = UiState.Loading(), // Updated constructor
+                animeCharactersState = UiState.Loading(), // Updated constructor
+                animeVideosState = UiState.Loading() // Updated constructor
+            )
         }
     }
 }
-

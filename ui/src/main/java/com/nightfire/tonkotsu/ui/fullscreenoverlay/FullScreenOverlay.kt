@@ -20,10 +20,18 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,6 +49,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
@@ -138,6 +147,67 @@ fun FullScreenOverlay(
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Fit // Fit the entire image
                             )
+                        }
+                        is OverlayContent.ImageGalleryFullScreen -> {
+                            var currentIndex by remember { mutableStateOf(content.initialIndex) }
+
+                            Box(modifier = Modifier.fillMaxSize()) {
+                                AsyncImage(
+                                    model = content.images[currentIndex].url,
+                                    contentDescription = "Gallery image ${currentIndex + 1} of ${content.images.size}",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Fit
+                                )
+
+                                // Left Arrow
+                                if (currentIndex > 0) {
+                                    IconButton(
+                                        onClick = { currentIndex-- },
+                                        modifier = Modifier
+                                            .align(Alignment.CenterStart)
+                                            .padding(start = 8.dp)
+                                            .background(Color.Black.copy(alpha = 0.4f), CircleShape)
+                                            .size(48.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                            contentDescription = "Previous image",
+                                            tint = Color.White
+                                        )
+                                    }
+                                }
+
+                                // Right Arrow
+                                if (currentIndex < content.images.size - 1) {
+                                    IconButton(
+                                        onClick = { currentIndex++ },
+                                        modifier = Modifier
+                                            .align(Alignment.CenterEnd)
+                                            .padding(end = 8.dp)
+                                            .background(Color.Black.copy(alpha = 0.4f), CircleShape)
+                                            .size(48.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                            contentDescription = "Next image",
+                                            tint = Color.White
+                                        )
+                                    }
+                                }
+
+                                // Image Index Indicator
+                                Text(
+                                    text = "${currentIndex + 1} / ${content.images.size}",
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier
+                                        .align(Alignment.BottomCenter)
+                                        .background(Color.Black.copy(alpha = 0.6f), RoundedCornerShape(4.dp))
+                                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                                        .offset(y = (-16).dp) // Lift it slightly above the bottom edge
+                                )
+                            }
                         }
                         is OverlayContent.VideoFullScreen -> {
                             // Use AndroidView to embed a WebView for video playback

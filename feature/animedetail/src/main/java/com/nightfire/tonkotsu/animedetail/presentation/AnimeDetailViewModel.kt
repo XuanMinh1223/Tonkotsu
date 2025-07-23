@@ -1,9 +1,9 @@
-package com.nightfire.tonkotsu.animedetail.presentation
+package com.nightfire.tonkotsu.animedetail.presentation // Adjust your package as needed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nightfire.tonkotsu.core.common.Resource
-import com.nightfire.tonkotsu.core.common.UiState
+import com.nightfire.tonkotsu.core.common.UiState // Import your new UiState sealed class
 import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
 import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
 import com.nightfire.tonkotsu.core.domain.model.Character
@@ -30,41 +30,47 @@ class AnimeDetailViewModel @Inject constructor(
     private val getAnimeVideosUseCase: GetAnimeVideosUseCase,
 ) : ViewModel() {
 
-    private val _animeDetailState = MutableStateFlow<UiState<AnimeDetail>>(UiState.loading())
+    // Initialize with UiState.Loading() for each state flow
+    private val _animeDetailState = MutableStateFlow<UiState<AnimeDetail>>(UiState.Loading())
     val animeDetailState : StateFlow<UiState<AnimeDetail>> = _animeDetailState
 
-    private val _animeEpisodesState = MutableStateFlow<UiState<List<AnimeEpisode>>>(UiState.loading())
+    private val _animeEpisodesState = MutableStateFlow<UiState<List<AnimeEpisode>>>(UiState.Loading()) // Changed to Episode
     val animeEpisodesState: StateFlow<UiState<List<AnimeEpisode>>> = _animeEpisodesState
 
-    private val _animeCharactersState = MutableStateFlow<UiState<List<Character>>>(UiState.loading())
+    private val _animeCharactersState = MutableStateFlow<UiState<List<Character>>>(UiState.Loading())
     val animeCharactersState: StateFlow<UiState<List<Character>>> = _animeCharactersState
 
-    private val _animeImagesState = MutableStateFlow<UiState<List<Image>>>(UiState.loading())
+    private val _animeImagesState = MutableStateFlow<UiState<List<Image>>>(UiState.Loading())
     val animeImagesState: StateFlow<UiState<List<Image>>> = _animeImagesState
 
-    private val _animeVideosState = MutableStateFlow<UiState<List<Video>>>(UiState.loading())
+    private val _animeVideosState = MutableStateFlow<UiState<List<Video>>>(UiState.Loading())
     val animeVideosState : StateFlow<UiState<List<Video>>> = _animeVideosState
 
     fun getAnimeDetail(id: Int) {
         getAnimeDetailUseCase(id).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
-                    _animeDetailState.value = UiState.loading()
+                    // Use UiState.Loading data class constructor, pass existing data if available
+                    _animeDetailState.value = UiState.Loading()
                 }
                 is Resource.Success -> {
+                    // UiState.Success expects non-null data. Handle null data from Resource.Success.
                     _animeDetailState.value = result.data.let {
-                        UiState.success(it)
+                        UiState.Success(it)
                     }
 
+                    // Only fetch related data if animeDetail was successfully loaded (i.e., result.data is not null)
                     getAnimeEpisodes(id)
                     getCharacters(id)
                     getImages(id)
                     getVideos(id)
                 }
                 is Resource.Error -> {
-                    _animeDetailState.value = UiState.error(
+                    // Use UiState.Error data class constructor
+                    _animeDetailState.value = UiState.Error(
                         message = result.message,
                         data = result.data,
+                        // Assuming Resource.Error has an isRetrying property
                         isRetrying = result.isRetrying
                     )
                 }
@@ -76,15 +82,15 @@ class AnimeDetailViewModel @Inject constructor(
         getAnimeEpisodesUseCase(animeId).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
-                    _animeEpisodesState.value = UiState.loading()
+                    _animeEpisodesState.value = UiState.Loading()
                 }
                 is Resource.Success -> {
                     _animeEpisodesState.value = result.data.let {
-                        UiState.success(it)
+                        UiState.Success(it)
                     }
                 }
                 is Resource.Error -> {
-                    _animeEpisodesState.value = UiState.error(
+                    _animeEpisodesState.value = UiState.Error(
                         message = result.message,
                         data = result.data,
                         isRetrying = result.isRetrying
@@ -98,15 +104,15 @@ class AnimeDetailViewModel @Inject constructor(
         getAnimeCharactersUseCase(animeId).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
-                    _animeCharactersState.value = UiState.loading()
+                    _animeCharactersState.value = UiState.Loading()
                 }
                 is Resource.Success -> {
                     _animeCharactersState.value = result.data.let {
-                        UiState.success(it)
+                        UiState.Success(it)
                     }
                 }
                 is Resource.Error -> {
-                    _animeCharactersState.value = UiState.error(
+                    _animeCharactersState.value = UiState.Error(
                         message = result.message,
                         data = result.data,
                         isRetrying = result.isRetrying
@@ -120,13 +126,15 @@ class AnimeDetailViewModel @Inject constructor(
         getAnimeImagesUseCase(animeId).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
-                    _animeImagesState.value = UiState.loading()
+                    _animeImagesState.value = UiState.Loading()
                 }
                 is Resource.Success -> {
-                    _animeImagesState.value = UiState.success(result.data)
+                    _animeImagesState.value = result.data.let {
+                        UiState.Success(it)
+                    }
                 }
                 is Resource.Error -> {
-                    _animeImagesState.value = UiState.error(
+                    _animeImagesState.value = UiState.Error(
                         message = result.message,
                         data = result.data,
                         isRetrying = result.isRetrying
@@ -140,13 +148,19 @@ class AnimeDetailViewModel @Inject constructor(
         getAnimeVideosUseCase(animeId).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
-                    _animeVideosState.value = UiState.loading()
+                    _animeVideosState.value = UiState.Loading()
                 }
                 is Resource.Success -> {
-                    _animeVideosState.value = UiState.success(result.data)
+                    _animeVideosState.value = result.data?.let {
+                        UiState.Success(it)
+                    } ?: UiState.Error(
+                        message =  "Videos data is null after successful load.",
+                        data = null,
+                        isRetrying = false
+                    )
                 }
                 is Resource.Error -> {
-                    _animeVideosState.value = UiState.error(
+                    _animeVideosState.value = UiState.Error(
                         message = result.message,
                         data = result.data,
                         isRetrying = result.isRetrying

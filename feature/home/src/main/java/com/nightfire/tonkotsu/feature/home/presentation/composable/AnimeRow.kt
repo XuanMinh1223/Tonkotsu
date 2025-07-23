@@ -1,4 +1,4 @@
-package com.nightfire.tonkotsu.feature.home.presentation.composable
+package com.nightfire.tonkotsu.feature.home.presentation.composable // Adjust your package as needed
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.items // Use items directly for simpler list iteration
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator // Import CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -16,7 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.nightfire.tonkotsu.core.common.UiState
+import com.nightfire.tonkotsu.core.common.UiState // Import the sealed UiState
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 import com.nightfire.tonkotsu.ui.ErrorCard
 import com.nightfire.tonkotsu.ui.skeleton.CardRowSkeleton
@@ -27,13 +30,15 @@ import com.nightfire.tonkotsu.ui.skeleton.CardRowSkeleton
  *
  * @param title The title to be displayed above the row of anime cards.
  * @param state The [UiState] representing the current state of the anime data.
- *              This can be loading, error, or success with a list of [AnimeOverview].
+ * This can be loading, error, or success with a list of [AnimeOverview].
  * @param modifier The [Modifier] to be applied to the root Column of this composable.
- *                 Defaults to [Modifier].
+ * Defaults to [Modifier].
  * @param onErrorActionClick A lambda function to be invoked when the action button
- *                           on the error card is clicked. This is typically used for retrying
- *                           the data fetching operation. Defaults to null, in which case the
- *                           action button will not be shown.
+ * on the error card is clicked. This is typically used for retrying
+ * the data fetching operation. Defaults to null, in which case the
+ * action button will not be shown.
+ * @param onCardClick A lambda function to be invoked when an anime card is clicked,
+ * providing the [malId] of the clicked anime.
  */
 @Composable
 fun AnimeRow(
@@ -53,37 +58,57 @@ fun AnimeRow(
             modifier = Modifier.padding(16.dp)
         )
 
-        if (state.isLoading) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                CardRowSkeleton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp) // Apply vertical padding if your actual row has it
-                )
+        when (state) { // Use 'when' with the sealed UiState
+            is UiState.Loading -> {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CardRowSkeleton(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp) // Apply vertical padding if your actual row has it
+                    )
+                }
             }
-        } else if (state.errorMessage != null) {
-            ErrorCard(
-                message = state.errorMessage ?: "An unknown error occurred",
-                modifier = Modifier.padding(16.dp),
-                onActionClick = onErrorActionClick,
-                actionButtonText = "Retry",
-            )
-        } else {
-            // Display the LazyRow when data is successfully loaded
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp), // Space between items
-                contentPadding = PaddingValues(horizontal = 16.dp) // Horizontal padding for the row
-            ) {
-                items(state.data ?: emptyList()) { anime ->
-                    AnimeCard(
-                        anime = anime,
-                        onCardClick = onCardClick
+            is UiState.Error -> {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    ErrorCard(
+                        message = state.message, // 'message' is directly accessible
+                        modifier = Modifier.padding(16.dp),
+                        onActionClick = if (state.isRetrying) null else onErrorActionClick, // Only show retry button if not already retrying
+                        actionButtonText = "Retry",
+                    )
+                    if (state.isRetrying) {
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
+                        Text(
+                            text = "Retrying...",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 4.dp)
                         )
+                    }
+                }
+            }
+            is UiState.Success -> {
+                // Display the LazyRow when data is successfully loaded
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp), // Space between items
+                    contentPadding = PaddingValues(horizontal = 16.dp) // Horizontal padding for the row
+                ) {
+                    // 'data' is directly accessible and non-null here
+                    items(state.data) { anime ->
+                        AnimeCard(
+                            anime = anime,
+                            onCardClick = onCardClick
+                        )
+                    }
                 }
             }
         }
@@ -98,7 +123,7 @@ fun AnimeRowLoadingPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             AnimeRow(
                 title = "Popular Anime (Loading)",
-                state = UiState.loading()
+                state = UiState.Loading() // Updated constructor
             )
         }
     }
@@ -109,9 +134,26 @@ fun AnimeRowLoadingPreview() {
 fun AnimeRowErrorPreview() {
     MaterialTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
+            // Updated constructor to include isRetrying flag
             AnimeRow(
                 title = "Popular Anime (Error)",
-                state = UiState.error("Failed to load anime data. Please try again later.")
+                state = UiState.Error("Failed to load anime data. Please try again later.", isRetrying = false),
+                onErrorActionClick = {} // Provide a dummy action for preview
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, widthDp = 360, heightDp = 280)
+@Composable
+fun AnimeRowErrorRetryingPreview() {
+    MaterialTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            // Preview for retrying state
+            AnimeRow(
+                title = "Popular Anime (Retrying)",
+                state = UiState.Error("Rate limit exceeded. Retrying...", isRetrying = true),
+                onErrorActionClick = {}
             )
         }
     }
@@ -175,7 +217,7 @@ fun AnimeRowSuccessPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             AnimeRow(
                 title = "Popular Anime (Success)",
-                state = UiState.success(sampleAnimeList)
+                state = UiState.Success(sampleAnimeList) // Updated constructor
             )
         }
     }
