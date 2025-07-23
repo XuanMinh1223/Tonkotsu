@@ -149,65 +149,7 @@ fun FullScreenOverlay(
                             )
                         }
                         is OverlayContent.ImageGalleryFullScreen -> {
-                            var currentIndex by remember { mutableStateOf(content.initialIndex) }
-
-                            Box(modifier = Modifier.fillMaxSize()) {
-                                AsyncImage(
-                                    model = content.images[currentIndex].url,
-                                    contentDescription = "Gallery image ${currentIndex + 1} of ${content.images.size}",
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentScale = ContentScale.Fit
-                                )
-
-                                // Left Arrow
-                                if (currentIndex > 0) {
-                                    IconButton(
-                                        onClick = { currentIndex-- },
-                                        modifier = Modifier
-                                            .align(Alignment.CenterStart)
-                                            .padding(start = 8.dp)
-                                            .background(Color.Black.copy(alpha = 0.4f), CircleShape)
-                                            .size(48.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                            contentDescription = "Previous image",
-                                            tint = Color.White
-                                        )
-                                    }
-                                }
-
-                                // Right Arrow
-                                if (currentIndex < content.images.size - 1) {
-                                    IconButton(
-                                        onClick = { currentIndex++ },
-                                        modifier = Modifier
-                                            .align(Alignment.CenterEnd)
-                                            .padding(end = 8.dp)
-                                            .background(Color.Black.copy(alpha = 0.4f), CircleShape)
-                                            .size(48.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                            contentDescription = "Next image",
-                                            tint = Color.White
-                                        )
-                                    }
-                                }
-
-                                // Image Index Indicator
-                                Text(
-                                    text = "${currentIndex + 1} / ${content.images.size}",
-                                    color = Color.White,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier
-                                        .align(Alignment.BottomCenter)
-                                        .background(Color.Black.copy(alpha = 0.6f), RoundedCornerShape(4.dp))
-                                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                                        .offset(y = (-16).dp) // Lift it slightly above the bottom edge
-                                )
-                            }
+                            ImageGalleryFullScreen(content)
                         }
                         is OverlayContent.VideoFullScreen -> {
                             // Use AndroidView to embed a WebView for video playback
