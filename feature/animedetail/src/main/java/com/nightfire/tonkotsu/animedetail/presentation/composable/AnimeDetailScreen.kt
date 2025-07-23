@@ -121,12 +121,14 @@ fun AnimeDetailScreenContent(
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     if (animeDetailState.isRetrying) { // Access isRetrying directly from UiState.Error
-                        Text(
-                            text = "Retrying shortly...",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                        CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(180.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(modifier = Modifier.size(40.dp))
+                        }
                     } else {
                         // Provide a way to retry the main detail fetch
                         Button(onClick = { /* You'll need to pass animeId to ViewModel.getAnimeDetail(animeId) */ }) {

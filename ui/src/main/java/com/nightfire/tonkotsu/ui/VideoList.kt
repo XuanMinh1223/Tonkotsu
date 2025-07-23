@@ -81,18 +81,20 @@ fun VideoList(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = uiState.message, // 'message' is directly accessible
+                        text = uiState.message,
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(bottom = 4.dp)
                     )
-                    if (uiState.isRetrying) { // 'isRetrying' is directly accessible
-                        Text(
-                            text = "Retrying shortly...",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                        CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
+                    if (uiState.isRetrying) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(180.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(modifier = Modifier.size(40.dp))
+                        }
                     } else {
                         Button(onClick = { /* ViewModel.retryFetchVideos() */ }) { // You'd need a retry function in ViewModel
                             Text("Try Again")

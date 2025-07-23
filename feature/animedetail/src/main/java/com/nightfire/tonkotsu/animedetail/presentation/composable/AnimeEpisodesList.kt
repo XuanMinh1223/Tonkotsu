@@ -119,12 +119,14 @@ fun AnimeEpisodesList(
                         modifier = Modifier.padding(bottom = 4.dp)
                     )
                     if (uiState.isRetrying) { // 'isRetrying' is directly accessible
-                        Text(
-                            text = "Retrying shortly...",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                        CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(180.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(modifier = Modifier.size(40.dp))
+                        }
                     } else {
                         // This is a final error, perhaps show a "Retry" button
                         Button(onClick = { /* ViewModel.retryFetchEpisodes() */ }) { // You'd need a retry function in ViewModel
