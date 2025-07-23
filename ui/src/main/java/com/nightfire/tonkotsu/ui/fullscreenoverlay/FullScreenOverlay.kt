@@ -62,6 +62,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.AsyncImage
 import com.nightfire.tonkotsu.core.domain.model.Image
 import com.nightfire.tonkotsu.core.domain.model.Video
+import kotlinx.coroutines.delay
 
 @SuppressLint("SetJavaScriptEnabled") // WebView requires JavaScript to be enabled for YouTube embeds
 @Composable
@@ -75,6 +76,13 @@ fun FullScreenOverlay(
 
     LaunchedEffect(Unit) {
         isVisible = true // Trigger animation when composable enters composition
+    }
+
+    LaunchedEffect(isVisible) {
+        if (!isVisible) {
+            delay(300) // duration of exit animation
+            onDismiss()
+        }
     }
 
     // Capture lifecycle to manage WebView state (pause/resume)
@@ -123,7 +131,7 @@ fun FullScreenOverlay(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.End
                 ) {
-                    IconButton(onClick = onDismiss) {
+                    IconButton(onClick = { isVisible = false }) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Close overlay",
