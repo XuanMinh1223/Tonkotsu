@@ -286,11 +286,16 @@ fun AnimeDetailScreenContent(
                         ImageList(
                             uiState = animeImagesState,
                             onImageClick = { clickedImage, index ->
+                                // Check if there's only one image or multiple to decide overlay type
                                 (animeImagesState as? UiState.Success)?.data?.let { imagesList ->
-                                    overlayContent = OverlayContent.ImageGalleryFullScreen(
-                                        images = imagesList,
-                                        initialIndex = index
-                                    )
+                                    if (imagesList.size == 1) {
+                                        overlayContent = OverlayContent.ImageFullScreen(clickedImage)
+                                    } else {
+                                        overlayContent = OverlayContent.ImageGalleryFullScreen(
+                                            images = imagesList,
+                                            initialIndex = index
+                                        )
+                                    }
                                 }
                             },
                             modifier = Modifier.fillMaxWidth()
