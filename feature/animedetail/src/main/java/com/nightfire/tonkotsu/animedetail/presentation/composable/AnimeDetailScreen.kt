@@ -17,8 +17,11 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -227,6 +230,27 @@ fun AnimeDetailScreenContent(
                             }
                         }
                         Spacer(Modifier.height(16.dp)) // Add spacing after stats
+                        anime.trailerYoutubeId?.let { youtubeId ->
+                            AppHorizontalDivider()
+                            Spacer(Modifier.height(16.dp))
+                            Button(
+                                onClick = {
+                                    overlayContent = OverlayContent.VideoFullScreen(
+                                        video = Video(
+                                            videoUrl = anime.trailerYoutubeUrl ?: "https://www.youtube.com/watch?v=$youtubeId",
+                                            thumbnailUrl = "https://img.youtube.com/vi/$youtubeId/hqdefault.jpg" // Standard YouTube thumbnail
+                                        ),
+                                        title = "${anime.title} Trailer"
+                                    )
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(Icons.Default.PlayArrow, contentDescription = "Watch Trailer")
+                                Spacer(Modifier.width(8.dp))
+                                Text("Watch Trailer")
+                            }
+                            Spacer(Modifier.height(16.dp))
+                        }
                         AppHorizontalDivider()
                         Spacer(Modifier.height(16.dp)) // Add spacing after divider
 
@@ -286,16 +310,11 @@ fun AnimeDetailScreenContent(
                         ImageList(
                             uiState = animeImagesState,
                             onImageClick = { clickedImage, index ->
-                                // Check if there's only one image or multiple to decide overlay type
                                 (animeImagesState as? UiState.Success)?.data?.let { imagesList ->
-                                    if (imagesList.size == 1) {
-                                        overlayContent = OverlayContent.ImageFullScreen(clickedImage)
-                                    } else {
-                                        overlayContent = OverlayContent.ImageGalleryFullScreen(
-                                            images = imagesList,
-                                            initialIndex = index
-                                        )
-                                    }
+                                    overlayContent = OverlayContent.ImageGalleryFullScreen(
+                                        images = imagesList,
+                                        initialIndex = index
+                                    )
                                 }
                             },
                             modifier = Modifier.fillMaxWidth()
