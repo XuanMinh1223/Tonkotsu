@@ -4,11 +4,6 @@ import com.nightfire.tonkotsu.core.domain.model.Image
 import com.nightfire.tonkotsu.core.domain.model.Video
 
 sealed class OverlayContent {
-    /**
-     * Content for displaying a single image.
-     * @param image The Image domain model.
-     */
-    data class ImageFullScreen(val image: Image) : OverlayContent()
 
     /**
      * Content for displaying a gallery of images with navigation.

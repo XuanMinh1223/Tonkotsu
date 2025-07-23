@@ -140,14 +140,6 @@ fun FullScreenOverlay(
                     contentAlignment = Alignment.Center // Center content by default
                 ) {
                     when (content) {
-                        is OverlayContent.ImageFullScreen -> {
-                            AsyncImage(
-                                model = content.image.url,
-                                contentDescription = "Full screen image", // More descriptive content description
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Fit // Fit the entire image
-                            )
-                        }
                         is OverlayContent.ImageGalleryFullScreen -> {
                             ImageGalleryFullScreen(content)
                         }
@@ -231,21 +223,6 @@ fun FullScreenOverlay(
 }
 
 // --- Previews ---
-
-@Preview(showBackground = true)
-@Composable
-fun FullScreenImageOverlayPreview() {
-    MaterialTheme {
-        Surface {
-            FullScreenOverlay(
-                content = OverlayContent.ImageFullScreen(
-                    Image(url = "https://cdn.myanimelist.net/images/anime/10/78745.jpg")
-                ),
-                onDismiss = {}
-            )
-        }
-    }
-}
 
 @Preview(showBackground = true)
 @Composable

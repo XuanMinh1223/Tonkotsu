@@ -185,7 +185,10 @@ fun AnimeDetailScreenContent(
                                 modifier = Modifier
                                     .width(150.dp)
                                     .clickable {
-                                        overlayContent = OverlayContent.ImageFullScreen(Image(anime.imageUrl))
+                                        overlayContent = OverlayContent.ImageGalleryFullScreen(
+                                            images = listOf(Image(anime.imageUrl)),
+                                            initialIndex = 0
+                                        )
                                     },
                                 contentScale = ContentScale.Fit,
                                 alignment = Alignment.TopCenter
