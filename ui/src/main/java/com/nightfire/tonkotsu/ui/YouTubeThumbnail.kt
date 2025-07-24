@@ -24,21 +24,21 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.nightfire.tonkotsu.core.domain.model.Video
+import com.nightfire.tonkotsu.core.domain.model.Video // Import your Video domain model
 
 @Composable
 fun YouTubeThumbnail(
-    video:Video,
-    onVideoClick: (Video) -> Unit = { }
+    video: Video, // Pass the full Video object
+    index: Int, // Pass the index of this video in its list
+    onVideoClick: (Video, Int) -> Unit = { _, _ -> } // Callback now takes Video and Int
 ) {
-
     Box(
         modifier = Modifier
             .width(200.dp)
             .aspectRatio(16f / 9f)
             .clip(RoundedCornerShape(4.dp))
             .background(MaterialTheme.colorScheme.background)
-            .clickable { onVideoClick(video) }
+            .clickable { onVideoClick(video, index) } // Pass the full Video object and index on click
     ) {
         video.thumbnailUrl?.let { url ->
             AsyncImage(
