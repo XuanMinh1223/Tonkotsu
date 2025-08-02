@@ -56,8 +56,8 @@ import com.nightfire.tonkotsu.ui.ExpandableText
 import com.nightfire.tonkotsu.ui.ImageList
 import com.nightfire.tonkotsu.ui.ScoreDisplayCard
 import com.nightfire.tonkotsu.ui.TagSection
-import com.nightfire.tonkotsu.ui.VideoList
 import com.nightfire.tonkotsu.ui.composables.AnimeEpisodesList
+import com.nightfire.tonkotsu.ui.composables.VideoList
 import com.nightfire.tonkotsu.ui.fullscreenoverlay.FullScreenOverlay
 import com.nightfire.tonkotsu.ui.fullscreenoverlay.OverlayContent
 import java.util.Locale
@@ -241,10 +241,10 @@ fun AnimeDetailScreenContent(
                             Button(
                                 onClick = {
                                     overlayContent = OverlayContent.VideoFullScreen(
-                                        video = Video(
+                                        videos = listOf(Video(
                                             videoUrl = anime.trailerYoutubeUrl ?: "https://www.youtube.com/watch?v=$youtubeId",
                                             thumbnailUrl = "https://img.youtube.com/vi/$youtubeId/hqdefault.jpg" // Standard YouTube thumbnail
-                                        ),
+                                        )),
                                         title = "${anime.title} Trailer"
                                     )
                                 },
@@ -299,11 +299,24 @@ fun AnimeDetailScreenContent(
                         Spacer(Modifier.height(16.dp))
                         VideoList(
                             uiState = animeVideosState,
-                            onVideoClick = { video ->
-                                overlayContent = OverlayContent.VideoFullScreen(
-                                    video = video,
-                                    title = anime.title
-                                )
+                            onVideoClick = { clickedVideo, index -> // Now receives Video and Int
+                                (animeVideosState as? UiState.Success)?.data?.let { videosList ->
+                                    if (videosList.size == 1) {
+                                        // If there's only one video in the list, open it directly
+                                        overlayContent = OverlayContent.VideoFullScreen(
+                                            videos = listOf(clickedVideo), // Still pass as a list of one
+                                            initialIndex = 0,
+                                            title = anime.title // Use anime title or clickedVideo.title if available
+                                        )
+                                    } else {
+                                        // If multiple videos, open the gallery
+                                        overlayContent = OverlayContent.VideoFullScreen(
+                                            videos = videosList, // Pass the full list
+                                            initialIndex = index, // Pass the clicked index
+                                            title = anime.title // Use anime title or a gallery title
+                                        )
+                                    }
+                                }
                             },
                             modifier = Modifier.fillMaxWidth()
                         )

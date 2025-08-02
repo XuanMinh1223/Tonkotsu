@@ -126,52 +126,9 @@ fun FullScreenOverlay(
                             ImageGalleryFullScreen(content)
                         }
                         is OverlayContent.VideoFullScreen -> {
-                            // Use AndroidView to embed a WebView for video playback
-                            // Prioritize embedUrl for YouTube if available
-                            val videoToLoad = content.video.videoUrl
-
-                            if (videoToLoad.isNotBlank()) {
-                                AndroidView(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .fillMaxHeight(0.5f) // Take half of the available height for video
-                                        .clip(MaterialTheme.shapes.medium),
-                                    factory = { context ->
-                                        WebView(context).apply {
-                                            layoutParams = ViewGroup.LayoutParams(
-                                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                                ViewGroup.LayoutParams.MATCH_PARENT
-                                            )
-                                            webViewClient = WebViewClient()
-                                            webChromeClient =
-                                                WebChromeClient() // Needed for full-screen video
-                                            settings.javaScriptEnabled = true // Enable JavaScript for YouTube embeds
-                                            settings.loadWithOverviewMode = true
-                                            settings.useWideViewPort = true
-                                            loadUrl(videoToLoad)
-                                        }
-                                    },
-                                    update = { webView ->
-                                        // Update logic here if URL changes (though for this overlay, it won't)
-                                        // You could also use webView.loadUrl(videoToLoad) here if the URL might change.
-                                    }
-                                )
-                                content.title?.let { title ->
-                                    Spacer(Modifier.height(8.dp))
-                                    Text(
-                                        text = title,
-                                        style = MaterialTheme.typography.titleLarge,
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.align(Alignment.BottomCenter) // Position title below video
-                                    )
-                                }
-                            } else {
-                                Text(
-                                    text = "Video URL not available.",
-                                    color = MaterialTheme.colorScheme.error,
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
+                            VideoGalleryFullScreen(
+                                content = content
+                            )
                         }
                         is OverlayContent.ReviewFullScreen -> {
                             Column(
@@ -213,10 +170,10 @@ fun FullScreenVideoOverlayPreview() {
         Surface {
             FullScreenOverlay(
                 content = OverlayContent.VideoFullScreen(
-                    Video(
+                    listOf(Video(
                         videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
                         thumbnailUrl = null // Not used for playback, but part of the model
-                    ),
+                    )),
                     title = "Example Anime Trailer"
                 ),
                 onDismiss = {}

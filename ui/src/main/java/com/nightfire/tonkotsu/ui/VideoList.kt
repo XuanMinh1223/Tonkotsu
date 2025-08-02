@@ -1,4 +1,4 @@
-package com.nightfire.tonkotsu.ui // Adjust your package as needed
+package com.nightfire.tonkotsu.ui.composables // Adjust your package as needed
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items // Use items directly if you don't need index
+import androidx.compose.foundation.lazy.itemsIndexed // Use itemsIndexed to get the index
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -20,15 +20,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.nightfire.tonkotsu.core.common.UiState // Import the sealed UiState
-import com.nightfire.tonkotsu.core.domain.model.Video // Import your Video domain model
+import com.nightfire.tonkotsu.core.common.UiState
+import com.nightfire.tonkotsu.core.domain.model.Video
 import androidx.compose.material3.Surface // For previews
+import com.nightfire.tonkotsu.ui.YouTubeThumbnail
 
 @Composable
 fun VideoList(
     uiState: UiState<List<Video>>,
     modifier: Modifier = Modifier,
-    onVideoClick: (Video) -> Unit = {} // Callback now takes a Video object
+    onVideoClick: (Video, Int) -> Unit = { _, _ -> } // Callback now takes Video and Int
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
@@ -51,7 +52,7 @@ fun VideoList(
             }
             is UiState.Success -> {
                 val videos = uiState.data // 'data' is directly accessible and non-null here
-                if (videos.isEmpty()) { // Check if the list itself is empty
+                if (videos.isNullOrEmpty()) { // Check if the list itself is empty
                     Text(
                         text = "No videos available.",
                         style = MaterialTheme.typography.bodyMedium,
@@ -66,9 +67,10 @@ fun VideoList(
                         contentPadding = PaddingValues(horizontal = 4.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(videos) { video -> // Iterate directly over video objects
+                        itemsIndexed(videos) { index, video -> // Use itemsIndexed to get the index
                             YouTubeThumbnail(
-                                video = video, // Pass the full Video object
+                                video = video,
+                                index = index, // Pass the index to YouTubeThumbnail
                                 onVideoClick = onVideoClick // Pass the callback down
                             )
                         }
@@ -87,16 +89,14 @@ fun VideoList(
                         modifier = Modifier.padding(bottom = 4.dp)
                     )
                     if (uiState.isRetrying) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(180.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(modifier = Modifier.size(40.dp))
-                        }
+                        Text(
+                            text = "Retrying shortly...",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
                     } else {
-                        Button(onClick = { /* ViewModel.retryFetchVideos() */ }) { // You'd need a retry function in ViewModel
+                        Button(onClick = { /* ViewModel.retryFetchVideos() */ }) {
                             Text("Try Again")
                         }
                     }
@@ -112,7 +112,6 @@ fun VideoList(
 fun VideoListSuccessPreview() {
     MaterialTheme {
         Surface {
-            // Assuming YouTubeThumbnail is accessible or mocked for preview
             val mockVideos = listOf(
                 Video(videoUrl = "https://www.youtube.com/watch?v=video1", thumbnailUrl = "https://img.youtube.com/vi/video1/hqdefault.jpg"),
                 Video(videoUrl = "https://www.youtube.com/watch?v=video2", thumbnailUrl = "https://img.youtube.com/vi/video2/hqdefault.jpg"),

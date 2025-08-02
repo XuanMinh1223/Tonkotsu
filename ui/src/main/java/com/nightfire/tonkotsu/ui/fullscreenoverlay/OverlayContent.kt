@@ -17,7 +17,7 @@ sealed class OverlayContent {
      * @param video The Video domain model.
      * @param title An optional title for the video.
      */
-    data class VideoFullScreen(val video: Video, val title: String?) : OverlayContent()
+    data class VideoFullScreen(val videos: List<Video>, val title: String?,  val initialIndex: Int = 0) : OverlayContent()
 
     /**
      * Content for displaying a full text review.
