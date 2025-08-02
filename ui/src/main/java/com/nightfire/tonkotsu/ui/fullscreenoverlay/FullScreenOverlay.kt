@@ -85,32 +85,6 @@ fun FullScreenOverlay(
         }
     }
 
-    // Capture lifecycle to manage WebView state (pause/resume)
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_PAUSE -> {
-                    // Pause WebView when app goes to background
-                    // This logic assumes the WebView itself will be paused through AndroidView's update
-                    // For more direct control, you might need to manage WebView state via a reference.
-                }
-
-                Lifecycle.Event.ON_RESUME -> {
-                    // Resume WebView when app comes to foreground
-                    // This logic assumes the WebView itself will be resumed through AndroidView's update
-                }
-
-                else -> {}
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
-
-
     AnimatedVisibility(
         visible = isVisible,
         enter =  fadeIn(),
