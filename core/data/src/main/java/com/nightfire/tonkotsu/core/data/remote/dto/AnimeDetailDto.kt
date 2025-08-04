@@ -1,7 +1,7 @@
 package com.nightfire.tonkotsu.core.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
-import com.nightfire.tonkotsu.core.common.utils.parseDateString
+import com.nightfire.tonkotsu.core.common.utils.parseDateTimeString
 import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
 import com.nightfire.tonkotsu.core.domain.model.RelationEntry
 import com.nightfire.tonkotsu.core.domain.model.NavigableLink
@@ -74,8 +74,8 @@ fun AnimeDetailDto.toAnimeDetail(): AnimeDetail {
           season = season,
           year = year,
           broadcast = broadcast?.string,
-          premiereDate = parseDateString(aired?.from), // <-- Use the helper function
-          endDate = parseDateString(aired?.to),
+          premiereDate = parseDateTimeString(aired?.from), // <-- Use the helper function
+          endDate = parseDateTimeString(aired?.to),
           genres = genres?.mapNotNull { it.name } ?: emptyList(),
           themes = themes?.mapNotNull { it.name } ?: emptyList(),
           categories = demographics?.mapNotNull { it.name } ?: emptyList(),

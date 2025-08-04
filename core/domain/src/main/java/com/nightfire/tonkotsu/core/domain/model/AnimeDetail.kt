@@ -1,6 +1,7 @@
 package com.nightfire.tonkotsu.core.domain.model
 
 import java.time.LocalDate
+import java.time.OffsetDateTime
 
 /**
  * Represents detailed information about a specific anime.
@@ -53,8 +54,8 @@ data class AnimeDetail(
     val season: String?,
     val year: Int?,
     val broadcast: String?,
-    val premiereDate: LocalDate?,
-    val endDate: LocalDate?,
+    val premiereDate: OffsetDateTime?,
+    val endDate: OffsetDateTime?,
     val genres: List<String>,
     val themes: List<String>,
     val categories: List<String>,

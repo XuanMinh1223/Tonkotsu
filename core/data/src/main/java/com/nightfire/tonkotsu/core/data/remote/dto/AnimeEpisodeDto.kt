@@ -1,7 +1,7 @@
 package com.nightfire.tonkotsu.core.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
-import com.nightfire.tonkotsu.core.common.utils.parseDateString
+import com.nightfire.tonkotsu.core.common.utils.parseDateTimeString
 import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
 
 data class AnimeEpisodeDto(
@@ -25,7 +25,7 @@ fun AnimeEpisodeDto.toAnimeEpisode(): AnimeEpisode {
         title = title ?: "N/A", // Default title if null
         titleJapanese = titleJapanese,
         titleRomanji = titleRomanji,
-        airedDate = parseDateString(aired), // Parse the 'aired' string to LocalDate
+        airedDate = parseDateTimeString(aired), // Parse the 'aired' string to LocalDate
         score = score,
         isFiller = filler == true, // Default to false if filler is null
         isRecap = recap == true,   // Default to false if recap is null

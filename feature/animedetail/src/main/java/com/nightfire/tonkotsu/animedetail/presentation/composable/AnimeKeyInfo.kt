@@ -5,11 +5,12 @@ import androidx.compose.runtime.Composable
 import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
 import com.nightfire.tonkotsu.ui.InfoRow
 import java.time.LocalDate
+import java.time.OffsetDateTime
 
 @Composable
 fun AnimeKeyInfo(anime: AnimeDetail) {
     Column {
-        val today = LocalDate.now()
+        val today = OffsetDateTime.now()
         InfoRow(label = "Type:", value = anime.type)
         InfoRow(label = "Episodes:", value = anime.episodes?.toString())
         InfoRow(label = "Status:", value = anime.status)

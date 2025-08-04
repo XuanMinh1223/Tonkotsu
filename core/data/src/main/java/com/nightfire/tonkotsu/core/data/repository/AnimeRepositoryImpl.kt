@@ -20,6 +20,7 @@ import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeOverview
 import com.nightfire.tonkotsu.core.data.remote.dto.toCharacter
 import com.nightfire.tonkotsu.core.data.remote.dto.toImage
 import com.nightfire.tonkotsu.core.data.remote.dto.toVideoList
+import com.nightfire.tonkotsu.core.domain.model.AnimeReview
 import com.nightfire.tonkotsu.core.domain.model.Character
 import com.nightfire.tonkotsu.core.domain.model.Image
 import com.nightfire.tonkotsu.core.domain.model.Video
@@ -100,5 +101,9 @@ class AnimeRepositoryImpl @Inject constructor(
                 dto.data?.toVideoList() ?: emptyList()
             }
         )
+    }
+
+    override fun getAnimeReviews(id: Int): Flow<Resource<List<AnimeReview>>> {
+        TODO("Not yet implemented")
     }
 }
