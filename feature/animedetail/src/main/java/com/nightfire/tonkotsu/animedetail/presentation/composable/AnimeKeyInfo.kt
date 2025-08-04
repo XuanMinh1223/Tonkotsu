@@ -6,6 +6,7 @@ import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
 import com.nightfire.tonkotsu.ui.InfoRow
 import java.time.LocalDate
 import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun AnimeKeyInfo(anime: AnimeDetail) {
@@ -16,7 +17,9 @@ fun AnimeKeyInfo(anime: AnimeDetail) {
         InfoRow(label = "Status:", value = anime.status)
         anime.premiereDate?.let { premiereDate ->
             val premiereLabel = if (premiereDate.isAfter(today)) "Airs:" else "Premiered:"
-            InfoRow(label = premiereLabel, value = premiereDate.toString())
+            val customFormatter = DateTimeFormatter.ofPattern("MMMM d, yyyy") // e.g., "April 1, 2023"
+            val formattedPremiereDate = premiereDate.format(customFormatter)
+            InfoRow(label = premiereLabel, value = formattedPremiereDate)
         }
         anime.endDate?.let { endDate ->
             val endLabel = if (endDate.isAfter(today)) "Ends:" else "Ended:"

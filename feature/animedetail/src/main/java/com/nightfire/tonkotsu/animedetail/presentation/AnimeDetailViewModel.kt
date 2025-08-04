@@ -13,6 +13,7 @@ import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeDetailUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeEpisodesUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeCharactersUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeImagesUseCase
+import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeReviewsUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeVideosUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +29,7 @@ class AnimeDetailViewModel @Inject constructor(
     private val getAnimeCharactersUseCase: GetAnimeCharactersUseCase,
     private val getAnimeImagesUseCase: GetAnimeImagesUseCase,
     private val getAnimeVideosUseCase: GetAnimeVideosUseCase,
+    private val getAnimeReviewsUseCase: GetAnimeReviewsUseCase,
 ) : ViewModel() {
 
     // Initialize with UiState.Loading() for each state flow
@@ -64,6 +66,7 @@ class AnimeDetailViewModel @Inject constructor(
                     getCharacters(id)
                     getImages(id)
                     getVideos(id)
+                    getReviews(id)
                 }
                 is Resource.Error -> {
                     // Use UiState.Error data class constructor
@@ -165,6 +168,24 @@ class AnimeDetailViewModel @Inject constructor(
                         data = result.data,
                         isRetrying = result.isRetrying
                     )
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getReviews(animeId: Int) {
+        getAnimeReviewsUseCase(animeId).onEach { result ->
+            when (result) {
+                is Resource.Loading -> {
+
+                }
+
+                is Resource.Success -> {
+
+                }
+
+                is Resource.Error -> {
+
                 }
             }
         }.launchIn(viewModelScope)

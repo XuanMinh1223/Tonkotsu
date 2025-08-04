@@ -89,11 +89,6 @@ fun VideoList(
                         modifier = Modifier.padding(bottom = 4.dp)
                     )
                     if (uiState.isRetrying) {
-                        Text(
-                            text = "Retrying shortly...",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodySmall
-                        )
                         CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
                     } else {
                         Button(onClick = { /* ViewModel.retryFetchVideos() */ }) {
