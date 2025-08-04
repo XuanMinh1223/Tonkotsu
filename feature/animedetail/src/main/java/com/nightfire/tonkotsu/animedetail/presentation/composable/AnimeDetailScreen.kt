@@ -46,6 +46,7 @@ import com.nightfire.tonkotsu.animedetail.presentation.AnimeDetailViewModel
 import com.nightfire.tonkotsu.core.common.UiState
 import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
 import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
+import com.nightfire.tonkotsu.core.domain.model.AnimeReview
 import com.nightfire.tonkotsu.core.domain.model.Character
 import com.nightfire.tonkotsu.core.domain.model.Image
 import com.nightfire.tonkotsu.core.domain.model.NavigableLink
@@ -57,6 +58,7 @@ import com.nightfire.tonkotsu.ui.ImageList
 import com.nightfire.tonkotsu.ui.ScoreDisplayCard
 import com.nightfire.tonkotsu.ui.TagSection
 import com.nightfire.tonkotsu.ui.composables.AnimeEpisodesList
+import com.nightfire.tonkotsu.ui.composables.AnimeReviewList
 import com.nightfire.tonkotsu.ui.composables.VideoList
 import com.nightfire.tonkotsu.ui.fullscreenoverlay.FullScreenOverlay
 import com.nightfire.tonkotsu.ui.fullscreenoverlay.OverlayContent
@@ -73,6 +75,7 @@ fun AnimeDetailScreen(
     val animeCharactersState by viewModel.animeCharactersState.collectAsState()
     val animeImagesState by viewModel.animeImagesState.collectAsState()
     val animeVideosState by viewModel.animeVideosState.collectAsState()
+    val animeReviewsState by viewModel.animeReviewsState.collectAsState()
 
     LaunchedEffect(key1 = malId) {
         viewModel.getAnimeDetail(malId)
@@ -84,6 +87,7 @@ fun AnimeDetailScreen(
             animeCharactersState = animeCharactersState,
             animeImagesState = animeImagesState,
             animeVideosState = animeVideosState,
+            animeReviewsState = animeReviewsState,
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -97,6 +101,7 @@ fun AnimeDetailScreenContent(
     animeCharactersState: UiState<List<Character>>,
     animeImagesState: UiState<List<Image>>,
     animeVideosState: UiState<List<Video>>,
+    animeReviewsState: UiState<List<AnimeReview>>, // Defaulting to Loading state
     modifier: Modifier = Modifier,
     onGenreClick: (String) -> Unit = {} // For clickable genres
 ) {
@@ -350,8 +355,11 @@ fun AnimeDetailScreenContent(
                         // Character List Section
                         CharacterListSection(animeCharactersState)
                         Spacer(Modifier.height(16.dp)) // Add spacing after character list
-                         // Add spacing after divider
-
+                        AppHorizontalDivider()
+                        Spacer(Modifier.height(16.dp)) // Add spacing after divider
+                        AnimeReviewList(
+                            uiState = animeReviewsState,
+                        )
 
                         anime.streamingLinks.takeIf { it.isNotEmpty() }?.let { links ->
                             AppHorizontalDivider()
@@ -528,7 +536,8 @@ fun AnimeDetailScreenContentSuccessPreview() {
                 animeCharactersState = UiState.Loading(), // Updated constructor
                 animeImagesState = UiState.Loading(), // Updated constructor
                 modifier = Modifier.fillMaxSize(),
-                animeVideosState = UiState.Loading() // Updated constructor
+                animeVideosState = UiState.Loading(),
+                animeReviewsState = UiState.Loading(),
             )
         }
     }
@@ -544,6 +553,7 @@ fun AnimeDetailScreenContentLoadingPreview() {
                 animeEpisodesState = UiState.Loading(), // Updated constructor
                 animeImagesState = UiState.Loading(), // Updated constructor
                 animeCharactersState = UiState.Loading(), // Updated constructor
+                animeReviewsState = UiState.Loading(),
                 animeVideosState = UiState.Loading() // Updated constructor
             )
         }
@@ -559,14 +569,15 @@ fun AnimeDetailScreenContentErrorPreview() {
                 animeDetailState = UiState.Error(
                     "Failed to load anime details. Check your internet connection.",
                     isRetrying = false
-                ), // Updated constructor
+                ),
                 animeEpisodesState = UiState.Error(
                     "Failed to load anime details. Check your internet connection.",
                     isRetrying = false
-                ), // Updated constructor
-                animeImagesState = UiState.Loading(), // Updated constructor
-                animeCharactersState = UiState.Loading(), // Updated constructor
-                animeVideosState = UiState.Loading() // Updated constructor
+                ),
+                animeImagesState = UiState.Loading(),
+                animeCharactersState = UiState.Loading(),
+                animeReviewsState = UiState.Loading(),
+                animeVideosState = UiState.Loading()
             )
         }
     }

@@ -13,7 +13,10 @@ data class AnimeReviewDto(
     @SerializedName("review") val review: String?,
     @SerializedName("score") val score: Int?,
     @SerializedName("user") val user: ReviewUserDto?,
-    @SerializedName("anime") val anime: AnimeSummaryDto?
+    @SerializedName("anime") val anime: AnimeSummaryDto?,
+    @SerializedName("episodes_watched")val episodesWatched: Int?,
+    @SerializedName("is_spoiler")val isSpoiler: Boolean,     // Default to false if not present
+    @SerializedName("is_preliminary")val isPreliminary: Boolean  // Default to false if not present
 )
 
 fun AnimeReviewDto.toAnimeReview(): AnimeReview {
@@ -27,6 +30,9 @@ fun AnimeReviewDto.toAnimeReview(): AnimeReview {
         reviewContent = this.review,
         score = this.score,
         user = this.user.toReviewUser(),
-        reviewedAnime = this.anime.toReviewedAnimeSummary()
+        reviewedAnime = this.anime.toReviewedAnimeSummary(),
+        episodesWatched = this.episodesWatched,
+        isSpoiler = this.isSpoiler,
+        isPreliminary = this.isPreliminary
     )
 }

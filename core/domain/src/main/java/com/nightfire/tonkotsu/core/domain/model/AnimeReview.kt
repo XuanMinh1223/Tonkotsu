@@ -12,7 +12,10 @@ data class AnimeReview(
     val reviewContent: String?,
     val score: Int?,
     val user: ReviewUser,
-    val reviewedAnime: ReviewedAnimeSummary // Information about the anime being reviewed
+    val reviewedAnime: ReviewedAnimeSummary, // Information about the anime being reviewed
+    val isSpoiler: Boolean,
+    val isPreliminary: Boolean,
+    val episodesWatched: Int?,
 )
 
 data class ReviewReactions(

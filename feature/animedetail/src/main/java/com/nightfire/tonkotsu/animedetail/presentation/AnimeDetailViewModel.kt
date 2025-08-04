@@ -6,6 +6,7 @@ import com.nightfire.tonkotsu.core.common.Resource
 import com.nightfire.tonkotsu.core.common.UiState // Import your new UiState sealed class
 import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
 import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
+import com.nightfire.tonkotsu.core.domain.model.AnimeReview
 import com.nightfire.tonkotsu.core.domain.model.Character
 import com.nightfire.tonkotsu.core.domain.model.Image
 import com.nightfire.tonkotsu.core.domain.model.Video
@@ -47,6 +48,9 @@ class AnimeDetailViewModel @Inject constructor(
 
     private val _animeVideosState = MutableStateFlow<UiState<List<Video>>>(UiState.Loading())
     val animeVideosState : StateFlow<UiState<List<Video>>> = _animeVideosState
+
+    private val _animeReviewsState = MutableStateFlow<UiState<List<AnimeReview>>>(UiState.Loading())
+    val animeReviewsState : StateFlow<UiState<List<AnimeReview>>> = _animeReviewsState
 
     fun getAnimeDetail(id: Int) {
         getAnimeDetailUseCase(id).onEach { result ->
@@ -177,15 +181,21 @@ class AnimeDetailViewModel @Inject constructor(
         getAnimeReviewsUseCase(animeId).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
-
+                    _animeReviewsState.value = UiState.Loading()
                 }
 
                 is Resource.Success -> {
-
+                    _animeReviewsState.value = result.data.let {
+                        UiState.Success(it)
+                    }
                 }
 
                 is Resource.Error -> {
-
+                    _animeReviewsState.value = UiState.Error(
+                        message = result.message,
+                        data = result.data,
+                        isRetrying = result.isRetrying
+                    )
                 }
             }
         }.launchIn(viewModelScope)

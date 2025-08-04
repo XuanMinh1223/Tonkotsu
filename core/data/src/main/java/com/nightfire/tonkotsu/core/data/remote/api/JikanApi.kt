@@ -78,6 +78,8 @@ interface JikanApi {
     @GET("anime/{id}/reviews")
     suspend fun getAnimeReviews(
         @Path("id") malId: Int,
-        @Query("page") page: Int? = null
+        @Query("page") page: Int? = 1,
+        @Query("preliminary") preliminary: Boolean? = true,
+        @Query("spoiler") spoiler: Boolean? = true
     ): Response<AnimeReviewsResponseDto>
 }
