@@ -32,6 +32,8 @@ import com.nightfire.tonkotsu.animedetail.presentation.composable.EpisodeListIte
 import com.nightfire.tonkotsu.core.common.UiState // Import the sealed UiState
 import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
 import java.time.LocalDate
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 @Composable
 fun AnimeEpisodesList(
@@ -150,7 +152,7 @@ fun EpisodeListSectionSuccessPreview() {
             title = "The Journey Begins",
             titleJapanese = "旅の始まり",
             titleRomanji = "Tabi no Hajimari",
-            airedDate = LocalDate.of(2023, 10, 6),
+            airedDate = OffsetDateTime.of(2023, 10, 6, 0, 0, 0, 0, ZoneOffset.UTC), 
             score = 8.5,
             isFiller = false,
             isRecap = false,
@@ -162,7 +164,7 @@ fun EpisodeListSectionSuccessPreview() {
             title = "Forest of Whispers",
             titleJapanese = "ささやきの森",
             titleRomanji = "Sasayaki no Mori",
-            airedDate = LocalDate.of(2023, 10, 13),
+            airedDate = OffsetDateTime.of(2023, 10, 6, 0, 0, 0, 0, ZoneOffset.UTC), 
             score = 8.2,
             isFiller = true,
             isRecap = false,
@@ -174,7 +176,7 @@ fun EpisodeListSectionSuccessPreview() {
             title = "Memory of a Hero",
             titleJapanese = "英雄の記憶",
             titleRomanji = "Eiyuu no Kioku",
-            airedDate = LocalDate.of(2023, 10, 20),
+            airedDate = OffsetDateTime.of(2023, 10, 6, 0, 0, 0, 0, ZoneOffset.UTC), 
             score = 8.7,
             isFiller = false,
             isRecap = true,
@@ -186,7 +188,7 @@ fun EpisodeListSectionSuccessPreview() {
             title = "New Companions",
             titleJapanese = "新たな仲間",
             titleRomanji = "Arata na Nakama",
-            airedDate = LocalDate.of(2023, 10, 27),
+            airedDate = OffsetDateTime.of(2023, 10, 6, 0, 0, 0, 0, ZoneOffset.UTC), 
             score = 8.9,
             isFiller = false,
             isRecap = false,
@@ -198,7 +200,7 @@ fun EpisodeListSectionSuccessPreview() {
             title = "Clash of Fate",
             titleJapanese = "運命の衝突",
             titleRomanji = "Unmei no Shoutotsu",
-            airedDate = LocalDate.of(2023, 11, 3),
+            airedDate = OffsetDateTime.of(2023, 10, 6, 0, 0, 0, 0, ZoneOffset.UTC), 
             score = 9.0,
             isFiller = false,
             isRecap = false,

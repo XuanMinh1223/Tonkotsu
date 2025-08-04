@@ -9,6 +9,7 @@ import com.nightfire.tonkotsu.core.data.remote.api.JikanApi
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeDetailResponse
 import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeEpisodesResponse
+import com.nightfire.tonkotsu.core.data.remote.dto.AnimeReviewsResponseDto
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeVideosResponseDto
 import com.nightfire.tonkotsu.core.data.remote.dto.CharactersResponse
 import com.nightfire.tonkotsu.core.data.remote.dto.ImagesResponseDto
@@ -17,6 +18,7 @@ import com.nightfire.tonkotsu.core.data.remote.dto.VideoDataDto
 import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeDetail
 import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeEpisode
 import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeOverview
+import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeReview
 import com.nightfire.tonkotsu.core.data.remote.dto.toCharacter
 import com.nightfire.tonkotsu.core.data.remote.dto.toImage
 import com.nightfire.tonkotsu.core.data.remote.dto.toVideoList
@@ -104,6 +106,11 @@ class AnimeRepositoryImpl @Inject constructor(
     }
 
     override fun getAnimeReviews(id: Int): Flow<Resource<List<AnimeReview>>> {
-        TODO("Not yet implemented")
+        return networkBoundResourceFlow(
+            apiCall = { api.getAnimeReviews(id)},
+            mapper = { dto: AnimeReviewsResponseDto ->
+                dto.data.map { it.toAnimeReview() }
+            }
+        )
     }
 }
