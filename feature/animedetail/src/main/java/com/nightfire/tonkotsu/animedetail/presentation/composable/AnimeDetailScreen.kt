@@ -356,7 +356,6 @@ fun AnimeDetailScreenContent(
                         CharacterListSection(animeCharactersState)
                         Spacer(Modifier.height(16.dp)) // Add spacing after character list
                         AppHorizontalDivider()
-                        Spacer(Modifier.height(16.dp)) // Add spacing after divider
                         AnimeReviewList(
                             uiState = animeReviewsState,
                             onReviewClick = { clickedReview, index ->

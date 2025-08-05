@@ -93,7 +93,7 @@ fun ReviewGalleryFullScreen(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.7f) // Allocate height for the pager
+            .fillMaxHeight() // Allocate height for the pager
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = {
@@ -163,27 +163,6 @@ fun ReviewGalleryFullScreen(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                     contentDescription = "Next review",
                     tint = Color.White
-                )
-            }
-        }
-
-        // Page indicator only if more than one review
-        if (content.reviews.size > 1) {
-            AnimatedVisibility(
-                visible = controlsVisible,
-                enter = fadeIn(),
-                exit = fadeOut(),
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .offset(y = 16.dp) // Offset to not overlap with close button
-            ) {
-                Text(
-                    text = "${pagerState.currentPage + 1} / ${content.reviews.size}",
-                    color = Color.White,
-                    style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier
-                        .background(Color.Black.copy(alpha = 0.6f), RoundedCornerShape(4.dp))
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
                 )
             }
         }

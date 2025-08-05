@@ -42,7 +42,6 @@ fun AnimeReviewList(
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
                 .padding(top = 8.dp) // Extra top padding if it's part of a larger screen
         )
 
