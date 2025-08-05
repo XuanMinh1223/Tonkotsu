@@ -23,6 +23,7 @@ import com.nightfire.tonkotsu.core.domain.model.Character // Your Character doma
 import com.nightfire.tonkotsu.core.domain.model.VoiceActor // Nested VoiceActor
 import androidx.compose.material3.Surface // For previews
 import com.nightfire.tonkotsu.ui.CharacterCard
+import com.nightfire.tonkotsu.ui.ErrorCard
 
 @Composable
 fun CharacterListSection(
@@ -76,31 +77,11 @@ fun CharacterListSection(
                 }
             }
             is UiState.Error -> {
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    if (uiState.isRetrying) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(180.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(modifier = Modifier.size(40.dp))
-                        }
-                    } else {
-                        Text(
-                            text = uiState.message, // 'message' is directly accessible
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(bottom = 4.dp)
-                        )
-                        Button(onClick = { /* ViewModel.retryFetchCharacters() */ }) {
-                            Text("Try Again")
-                        }
-                    }
-                }
+                ErrorCard(
+                    message = uiState.message, // 'message' is directly accessible
+                    modifier = Modifier.padding(16.dp),
+                    actionButtonText = "Retry",
+                )
             }
         }
     }
@@ -171,7 +152,7 @@ fun CharacterListSectionErrorPreview() {
     MaterialTheme {
         Surface {
             // Updated to reflect the new UiState.Error constructor
-            CharacterListSection(uiState = UiState.Error("Failed to load characters.", isRetrying = false))
+            CharacterListSection(uiState = UiState.Error("Failed to load characters.", ))
         }
     }
 }

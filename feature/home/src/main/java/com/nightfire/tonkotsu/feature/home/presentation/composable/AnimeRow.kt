@@ -1,18 +1,12 @@
 package com.nightfire.tonkotsu.feature.home.presentation.composable // Adjust your package as needed
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items // Use items directly for simpler list iteration
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator // Import CircularProgressIndicator
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -21,7 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.nightfire.tonkotsu.core.common.UiState // Import the sealed UiState
+import com.nightfire.tonkotsu.core.common.UiState
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 import com.nightfire.tonkotsu.ui.ErrorCard
 import com.nightfire.tonkotsu.ui.skeleton.CardRowSkeleton
@@ -80,23 +74,12 @@ fun AnimeRow(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    if (state.isRetrying) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(180.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(modifier = Modifier.size(40.dp))
-                        }
-                    } else {
-                        ErrorCard(
-                            message = state.message, // 'message' is directly accessible
-                            modifier = Modifier.padding(16.dp),
-                            onActionClick = onErrorActionClick, // Only show retry button if not already retrying
-                            actionButtonText = "Retry",
-                        )
-                    }
+                    ErrorCard(
+                        message = state.message, // 'message' is directly accessible
+                        modifier = Modifier.padding(16.dp),
+                        onActionClick = onErrorActionClick, // Only show retry button if not already retrying
+                        actionButtonText = "Retry",
+                    )
                 }
             }
             is UiState.Success -> {
@@ -138,30 +121,15 @@ fun AnimeRowLoadingPreview() {
 fun AnimeRowErrorPreview() {
     MaterialTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-            // Updated constructor to include isRetrying flag
             AnimeRow(
                 title = "Popular Anime (Error)",
-                state = UiState.Error("Failed to load anime data. Please try again later.", isRetrying = false),
+                state = UiState.Error("Failed to load anime data. Please try again later.", ),
                 onErrorActionClick = {} // Provide a dummy action for preview
             )
         }
     }
 }
 
-@Preview(showBackground = true, widthDp = 360, heightDp = 280)
-@Composable
-fun AnimeRowErrorRetryingPreview() {
-    MaterialTheme {
-        Surface(color = MaterialTheme.colorScheme.background) {
-            // Preview for retrying state
-            AnimeRow(
-                title = "Popular Anime (Retrying)",
-                state = UiState.Error("Rate limit exceeded. Retrying...", isRetrying = true),
-                onErrorActionClick = {}
-            )
-        }
-    }
-}
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 280)
 @Composable

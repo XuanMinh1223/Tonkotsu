@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.nightfire.tonkotsu.core.common.UiState
 import com.nightfire.tonkotsu.core.domain.model.Video
 import androidx.compose.material3.Surface // For previews
+import com.nightfire.tonkotsu.ui.ErrorCard
 import com.nightfire.tonkotsu.ui.YouTubeThumbnail
 
 @Composable
@@ -78,25 +79,11 @@ fun VideoList(
                 }
             }
             is UiState.Error -> {
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-
-                    if (uiState.isRetrying) {
-                        CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
-                    } else {
-                        Text(
-                            text = uiState.message,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(bottom = 4.dp)
-                        )
-                        Button(onClick = { /* ViewModel.retryFetchVideos() */ }) {
-                            Text("Try Again")
-                        }
-                    }
-                }
+                ErrorCard(
+                    message = uiState.message, // 'message' is directly accessible
+                    modifier = Modifier.padding(16.dp),
+                    actionButtonText = "Retry",
+                )
             }
         }
     }
@@ -133,7 +120,7 @@ fun VideoListLoadingPreview() {
 fun VideoListErrorPreview() {
     MaterialTheme {
         Surface {
-            VideoList(uiState = UiState.Error("Failed to load videos.", isRetrying = false))
+            VideoList(uiState = UiState.Error("Failed to load videos.", ))
         }
     }
 }

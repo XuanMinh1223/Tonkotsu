@@ -23,7 +23,6 @@ sealed class UiState<out T> {
      * Represents an error state.
      * @param message The error message to display to the user.
      * @param data Optional data that might still be present, even in an error state.
-     * @param isRetrying A flag indicating if the operation is currently attempting a retry.
      */
-    data class Error<out T>(val message: String, val data: T? = null, val isRetrying: Boolean = false) : UiState<T>()
+    data class Error<out T>(val message: String, val data: T? = null) : UiState<T>()
 }

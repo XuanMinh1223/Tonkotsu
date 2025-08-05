@@ -3,13 +3,11 @@ package com.nightfire.tonkotsu.core.common
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.delay
 import retrofit2.HttpException
 import retrofit2.Response // Import Retrofit's Response class!
 import java.io.IOException
 
-// Make sure RetryConfig, isRateLimitOrNetworkError, calculateBackoffDelay are also accessible
 
 /**
  * A generic helper function to wrap network calls that return Retrofit's Response<DTO>.
@@ -59,7 +57,6 @@ fun <DomainModel, DtoType> networkBoundResourceFlow(
                 }
 
                 val willRetry = currentAttempt < RetryConfig.MAX_RETRIES && isRateLimitOrNetworkError(httpException)
-                emit(Resource.Error(errorMessage, isRetrying = willRetry)) // Pass isRetrying flag
 
                 if (willRetry) {
                     val delayMillis = calculateBackoffDelay(currentAttempt + 1)
@@ -68,12 +65,13 @@ fun <DomainModel, DtoType> networkBoundResourceFlow(
                     currentAttempt++ // Increment attempt for next iteration
                     emit(Resource.Loading) // Re-emit loading before the next attempt
                 } else {
+                    emit(Resource.Error(errorMessage))
                     break // No more retries, exit loop
                 }
             }
         } catch (e: IOException) {
             val willRetry = currentAttempt < RetryConfig.MAX_RETRIES && isRateLimitOrNetworkError(e)
-            emit(Resource.Error(e.localizedMessage ?: "Couldn't reach server. Check your internet connection.", isRetrying = willRetry))
+            emit(Resource.Error(e.localizedMessage ?: "Couldn't reach server. Check your internet connection."))
             if (willRetry) {
                 val delayMillis = calculateBackoffDelay(currentAttempt + 1)
                 println("Retrying attempt ${currentAttempt + 1} in ${delayMillis}ms due to: ${e.message}")
@@ -85,7 +83,7 @@ fun <DomainModel, DtoType> networkBoundResourceFlow(
             }
         } catch (e: Exception) {
             // General exception, likely not retryable unless specifically handled
-            emit(Resource.Error(e.localizedMessage ?: "An unknown error occurred.", isRetrying = false))
+            emit(Resource.Error(e.localizedMessage ?: "An unknown error occurred.", ))
             break
         }
     }

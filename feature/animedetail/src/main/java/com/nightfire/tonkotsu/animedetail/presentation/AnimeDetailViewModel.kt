@@ -77,8 +77,6 @@ class AnimeDetailViewModel @Inject constructor(
                     _animeDetailState.value = UiState.Error(
                         message = result.message,
                         data = result.data,
-                        // Assuming Resource.Error has an isRetrying property
-                        isRetrying = result.isRetrying
                     )
                 }
             }
@@ -100,7 +98,7 @@ class AnimeDetailViewModel @Inject constructor(
                     _animeEpisodesState.value = UiState.Error(
                         message = result.message,
                         data = result.data,
-                        isRetrying = result.isRetrying
+                        
                     )
                 }
             }
@@ -122,7 +120,7 @@ class AnimeDetailViewModel @Inject constructor(
                     _animeCharactersState.value = UiState.Error(
                         message = result.message,
                         data = result.data,
-                        isRetrying = result.isRetrying
+                        
                     )
                 }
             }
@@ -144,7 +142,7 @@ class AnimeDetailViewModel @Inject constructor(
                     _animeImagesState.value = UiState.Error(
                         message = result.message,
                         data = result.data,
-                        isRetrying = result.isRetrying
+                        
                     )
                 }
             }
@@ -163,14 +161,14 @@ class AnimeDetailViewModel @Inject constructor(
                     } ?: UiState.Error(
                         message =  "Videos data is null after successful load.",
                         data = null,
-                        isRetrying = false
+                        
                     )
                 }
                 is Resource.Error -> {
                     _animeVideosState.value = UiState.Error(
                         message = result.message,
                         data = result.data,
-                        isRetrying = result.isRetrying
+                        
                     )
                 }
             }
@@ -194,7 +192,7 @@ class AnimeDetailViewModel @Inject constructor(
                     _animeReviewsState.value = UiState.Error(
                         message = result.message,
                         data = result.data,
-                        isRetrying = result.isRetrying
+                        
                     )
                 }
             }

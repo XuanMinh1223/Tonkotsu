@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,6 +24,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.nightfire.tonkotsu.core.common.UiState
 import com.nightfire.tonkotsu.core.domain.model.AnimeReview
+import com.nightfire.tonkotsu.ui.ErrorCard
 
 @Composable
 fun AnimeReviewList(
@@ -97,20 +97,11 @@ fun AnimeReviewList(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        text = uiState.message,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(bottom = 8.dp)
+                    ErrorCard(
+                        message = uiState.message, // 'message' is directly accessible
+                        modifier = Modifier.padding(16.dp),
+                        actionButtonText = "Retry",
                     )
-                    if (uiState.isRetrying) {
-                        CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
-                    } else {
-                        Button(onClick = onRetry) {
-                            Text("Try Again")
-                        }
-                    }
                 }
             }
         }

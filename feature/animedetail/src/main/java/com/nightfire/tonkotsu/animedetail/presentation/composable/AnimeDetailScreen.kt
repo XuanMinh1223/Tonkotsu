@@ -53,6 +53,7 @@ import com.nightfire.tonkotsu.core.domain.model.NavigableLink
 import com.nightfire.tonkotsu.core.domain.model.RelationEntry
 import com.nightfire.tonkotsu.core.domain.model.Video
 import com.nightfire.tonkotsu.ui.AppHorizontalDivider
+import com.nightfire.tonkotsu.ui.ErrorCard
 import com.nightfire.tonkotsu.ui.ExpandableText
 import com.nightfire.tonkotsu.ui.ImageList
 import com.nightfire.tonkotsu.ui.ScoreDisplayCard
@@ -114,33 +115,11 @@ fun AnimeDetailScreenContent(
                 CircularProgressIndicator() // Or a more elaborate loading screen
             }
             is UiState.Error -> {
-                Column(
-                    modifier = Modifier.fillMaxSize().padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = animeDetailState.message, // Access message directly from UiState.Error
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    if (animeDetailState.isRetrying) { // Access isRetrying directly from UiState.Error
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(180.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(modifier = Modifier.size(40.dp))
-                        }
-                    } else {
-                        // Provide a way to retry the main detail fetch
-                        Button(onClick = { /* You'll need to pass animeId to ViewModel.getAnimeDetail(animeId) */ }) {
-                            Text("Try Again")
-                        }
-                    }
-                }
+                ErrorCard(
+                    message = animeDetailState.message, // 'message' is directly accessible
+                    modifier = Modifier.padding(16.dp),
+                    actionButtonText = "Retry",
+                )
             }
             is UiState.Success -> {
                 val anime = animeDetailState.data // Data is guaranteed to be non-null in Success state
@@ -562,11 +541,11 @@ fun AnimeDetailScreenContentErrorPreview() {
             AnimeDetailScreenContent(
                 animeDetailState = UiState.Error(
                     "Failed to load anime details. Check your internet connection.",
-                    isRetrying = false
+                    
                 ),
                 animeEpisodesState = UiState.Error(
                     "Failed to load anime details. Check your internet connection.",
-                    isRetrying = false
+                    
                 ),
                 animeImagesState = UiState.Loading(),
                 animeCharactersState = UiState.Loading(),

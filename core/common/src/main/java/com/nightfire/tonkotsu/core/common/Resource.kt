@@ -13,6 +13,5 @@ package com.nightfire.tonkotsu.core.common
 sealed class Resource<out T> {
     object Loading : Resource<Nothing>()
     data class Success<out T>(val data: T) : Resource<T>()
-    // Add an 'isRetrying' flag to the Error state
-    data class Error<out T>(val message: String, val data: T? = null, val isRetrying: Boolean = false) : Resource<T>()
+    data class Error<out T>(val message: String, val data: T? = null) : Resource<T>()
 }

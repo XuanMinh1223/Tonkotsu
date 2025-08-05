@@ -186,15 +186,15 @@ fun HomeScreenContentErrorPreview() {
             HomeScreenContent(
                 popularAnimeState = UiState.Error(
                     message = "Failed to load anime. Please try again.",
-                    isRetrying = false
+                    
                 ),
                 topAiringAnimeState = UiState.Error(
                     message = "Failed to load anime. Please try again.",
-                    isRetrying = false
+                    
                 ),
                 mostAnticipatedAnimeState = UiState.Error(
                     message = "Failed to load anime. Please try again.",
-                    isRetrying = false
+                    
                 ),
             )
         }

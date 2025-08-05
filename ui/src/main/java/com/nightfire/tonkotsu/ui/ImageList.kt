@@ -54,14 +54,7 @@ fun ImageList(
 
         when (uiState) {
             is UiState.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(180.dp), // Height for the loading indicator in a horizontal list context
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(modifier = Modifier.size(40.dp))
-                }
+                ImageListSkeleton()
             }
             is UiState.Success -> {
                 val images = uiState.data
@@ -98,32 +91,31 @@ fun ImageList(
                 }
             }
             is UiState.Error -> {
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    if (uiState.isRetrying) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(180.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(modifier = Modifier.size(40.dp))
-                        }
-                    } else {
-                        Text(
-                            text = uiState.message,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(bottom = 4.dp)
-                        )
-                        Button(onClick = { /* ViewModel.retryFetchImages() */ }) { // You'd need a retry function in ViewModel
-                            Text("Try Again")
-                        }
-                    }
-                }
+                ErrorCard(
+                    message = uiState.message, // 'message' is directly accessible
+                    modifier = Modifier.padding(16.dp),
+                    actionButtonText = "Retry",
+                )
             }
+        }
+    }
+}
+
+@Composable
+fun ImageListSkeleton() {
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(5) { // Show 5 skeleton items
+            Box(
+                modifier = Modifier
+                    .width(120.dp)
+                    .height(180.dp)
+                    .clip(MaterialTheme.shapes.small)
+                    .shimmerEffect() // Apply the shimmer effect here
+            )
         }
     }
 }

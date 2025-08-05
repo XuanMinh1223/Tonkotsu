@@ -114,25 +114,14 @@ fun AnimeEpisodesList(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    if (uiState.isRetrying) { // 'isRetrying' is directly accessible
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(180.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(modifier = Modifier.size(40.dp))
-                        }
-                    } else {
-                        Text(
-                            text = uiState.message, // 'message' is directly accessible
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(bottom = 4.dp)
-                        )
-                        Button(onClick = { /* ViewModel.retryFetchEpisodes() */ }) { // You'd need a retry function in ViewModel
-                            Text("Try Again")
-                        }
+                    Text(
+                        text = uiState.message, // 'message' is directly accessible
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(bottom = 4.dp)
+                    )
+                    Button(onClick = { /* ViewModel.retryFetchEpisodes() */ }) { // You'd need a retry function in ViewModel
+                        Text("Try Again")
                     }
                 }
             }
@@ -233,7 +222,7 @@ fun EpisodeListSectionErrorPreview() {
     MaterialTheme {
         Surface {
             // Updated to reflect the new UiState.Error constructor
-            AnimeEpisodesList(uiState = UiState.Error("Failed to fetch episodes. Please try again.", isRetrying = false))
+            AnimeEpisodesList(uiState = UiState.Error("Failed to fetch episodes. Please try again.",))
         }
     }
 }

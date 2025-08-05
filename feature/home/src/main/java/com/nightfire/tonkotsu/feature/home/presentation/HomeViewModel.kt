@@ -54,8 +54,6 @@ class HomeViewModel @Inject constructor(
                     _popularAnimeState.value = UiState.Error(
                         message = result.message ?: "An unexpected error occurred for Popular Anime.",
                         data = result.data,
-                        // Determine isRetrying based on your retry logic (e.g., message content)
-                        isRetrying = (result.message?.contains("Rate limit exceeded") == true)
                     )
                 }
             }
@@ -75,7 +73,6 @@ class HomeViewModel @Inject constructor(
                     _topAiringAnimeState.value = UiState.Error(
                         message = result.message,
                         data = result.data,
-                        isRetrying = (result.message?.contains("Rate limit exceeded") == true)
                     )
                 }
             }
@@ -95,7 +92,6 @@ class HomeViewModel @Inject constructor(
                     _mostAnticipatedAnimeState.value = UiState.Error(
                         message = result.message,
                         data = result.data,
-                        isRetrying = (result.message.contains("Rate limit exceeded"))
                     )
                 }
             }
