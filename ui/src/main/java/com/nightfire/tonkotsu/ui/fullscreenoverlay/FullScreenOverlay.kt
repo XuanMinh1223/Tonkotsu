@@ -30,7 +30,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nightfire.tonkotsu.core.domain.model.Video
-import com.nightfire.tonkotsu.ui.fullscreenoverlay.OverlayContent.ReviewFullScreen
 import kotlinx.coroutines.delay
 
 @SuppressLint("SetJavaScriptEnabled") // WebView requires JavaScript to be enabled for YouTube embeds
@@ -40,7 +39,6 @@ fun FullScreenOverlay(
     onDismiss: () -> Unit
 ) {
     // Controls animation for the overlay
-    val density = LocalDensity.current
     var isVisible by remember { mutableStateOf(false) } // State for animation
 
     LaunchedEffect(Unit) {
@@ -87,8 +85,8 @@ fun FullScreenOverlay(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(16.dp), // Padding for the content itself
-                    contentAlignment = Alignment.Center // Center content by default
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     when (content) {
                         is OverlayContent.ImageGalleryFullScreen -> {

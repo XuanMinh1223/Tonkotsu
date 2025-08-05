@@ -1,5 +1,6 @@
 package com.nightfire.tonkotsu.ui.composables // Or your appropriate UI package
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,9 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -32,7 +32,8 @@ fun AnimeReviewList(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     rowHeight: Dp = 220.dp,
-    onRetry: () -> Unit = {}
+    onRetry: () -> Unit = {},
+    onReviewClick: (AnimeReview, Int) -> Unit = { _, _ -> }
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         // You might want a section title, similar to VideoList
@@ -76,10 +77,14 @@ fun AnimeReviewList(
                         contentPadding = contentPadding,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(reviews, key = { review -> review.reviewId ?: review.hashCode() }) { review ->
+                        itemsIndexed(reviews) { index, review ->
                             AnimeReviewItem(
                                 review = review,
-                                modifier = Modifier.fillMaxHeight()
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .clickable {
+                                        onReviewClick(review, index)
+                                    }
                                 )
                         }
                     }

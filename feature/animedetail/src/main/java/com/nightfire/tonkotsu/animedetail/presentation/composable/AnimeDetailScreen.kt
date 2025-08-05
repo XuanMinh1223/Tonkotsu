@@ -359,6 +359,14 @@ fun AnimeDetailScreenContent(
                         Spacer(Modifier.height(16.dp)) // Add spacing after divider
                         AnimeReviewList(
                             uiState = animeReviewsState,
+                            onReviewClick = { clickedReview, index ->
+                                (animeReviewsState as? UiState.Success)?.data?.let { reviewsList ->
+                                    overlayContent = OverlayContent.ReviewFullScreen(
+                                        reviews = reviewsList,
+                                        initialIndex = index
+                                    )
+                                }
+                            }
                         )
 
                         anime.streamingLinks.takeIf { it.isNotEmpty() }?.let { links ->
