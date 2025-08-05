@@ -262,20 +262,16 @@ fun AnimeDetailScreenContent(
                             Spacer(Modifier.height(16.dp))
                         }
                         AppHorizontalDivider()
-                        Spacer(Modifier.height(16.dp)) // Add spacing after divider
-
                         // --- 3. Key Info ---
                         AnimeKeyInfo(anime = anime)
                         Spacer(Modifier.height(16.dp)) // Add spacing after key info
                         AppHorizontalDivider()
-                        Spacer(Modifier.height(16.dp)) // Add spacing after divider
 
                         TagSection(title = "Genres:", tags = anime.genres, onTagClick = onGenreClick)
                         TagSection(title = "Themes:", tags = anime.themes, onTagClick = onGenreClick)
                         TagSection(title = "Categories:", tags = anime.categories, onTagClick = onGenreClick)
                         Spacer(Modifier.height(16.dp)) // Add spacing after tags
                         AppHorizontalDivider()
-                        Spacer(Modifier.height(16.dp)) // Add spacing after divider
 
                         // --- 4. Synopsis & Background (with "Read More") ---
                         ExpandableText(
@@ -290,8 +286,6 @@ fun AnimeDetailScreenContent(
                         )
                         Spacer(Modifier.height(16.dp)) // Add spacing after expandable texts
                         AppHorizontalDivider()
-                        Spacer(Modifier.height(16.dp)) // Add spacing after divider
-
                         // --- 5. Production Details (FlowRows using TagSection) ---
                         TagSection(title = "Studios:", tags = anime.studios, isSecondary = true)
                         TagSection(title = "Producers:", tags = anime.producers, isSecondary = true)
@@ -301,7 +295,6 @@ fun AnimeDetailScreenContent(
                         // --- 6. External Media & Streaming Services ---
                         // Removed the single "Watch Trailer" button, now handled by VideoList
                         AppHorizontalDivider()
-                        Spacer(Modifier.height(16.dp))
                         VideoList(
                             uiState = animeVideosState,
                             onVideoClick = { clickedVideo, index -> // Now receives Video and Int
@@ -327,8 +320,6 @@ fun AnimeDetailScreenContent(
                         )
                         Spacer(Modifier.height(16.dp)) // Add spacing after video list
                         AppHorizontalDivider()
-                        Spacer(Modifier.height(16.dp)) // Add spacing after divider
-
                         // Displaying Anime Images using the ImageList
                         ImageList(
                             uiState = animeImagesState,
@@ -344,14 +335,11 @@ fun AnimeDetailScreenContent(
                         )
                         Spacer(Modifier.height(16.dp)) // Add spacing after image list
                         AppHorizontalDivider()
-                        Spacer(Modifier.height(16.dp)) // Add spacing after divider
 
                         // Anime Episodes List
                         AnimeEpisodesList(animeEpisodesState)
                         Spacer(Modifier.height(16.dp)) // Add spacing after episodes list
                         AppHorizontalDivider()
-                        Spacer(Modifier.height(16.dp)) // Add spacing after divider
-
                         // Character List Section
                         CharacterListSection(animeCharactersState)
                         Spacer(Modifier.height(16.dp)) // Add spacing after character list
