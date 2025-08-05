@@ -1,5 +1,6 @@
 package com.nightfire.tonkotsu.ui.fullscreenoverlay
 
+import com.nightfire.tonkotsu.core.domain.model.AnimeReview
 import com.nightfire.tonkotsu.core.domain.model.Image
 import com.nightfire.tonkotsu.core.domain.model.Video
 
@@ -20,11 +21,13 @@ sealed class OverlayContent {
     data class VideoFullScreen(val videos: List<Video>, val title: String?,  val initialIndex: Int = 0) : OverlayContent()
 
     /**
-     * Content for displaying a full text review.
-     * @param title The title of the review.
-     * @param content The full text content of the review.
-     * @param author The author of the review.
+     * Content for displaying a gallery of reviews with navigation.
+     * @param reviews The list of ReviewData models in the gallery.
+     * @param initialIndex The index of the review that was initially clicked.
      */
-    data class ReviewFullScreen(val title: String, val content: String, val author: String) : OverlayContent()
+    data class ReviewFullScreen(
+        val reviews: List<AnimeReview>,
+        val initialIndex: Int
+    ) : OverlayContent()
 
 }

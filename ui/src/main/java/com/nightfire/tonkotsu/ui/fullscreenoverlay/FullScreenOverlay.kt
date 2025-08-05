@@ -1,46 +1,24 @@
 package com.nightfire.tonkotsu.ui.fullscreenoverlay
 
 import android.annotation.SuppressLint
-import android.view.ViewGroup
-import android.webkit.WebChromeClient
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,20 +26,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import coil.compose.AsyncImage
-import com.nightfire.tonkotsu.core.domain.model.Image
 import com.nightfire.tonkotsu.core.domain.model.Video
+import com.nightfire.tonkotsu.ui.fullscreenoverlay.OverlayContent.ReviewFullScreen
 import kotlinx.coroutines.delay
 
 @SuppressLint("SetJavaScriptEnabled") // WebView requires JavaScript to be enabled for YouTube embeds
@@ -131,28 +100,9 @@ fun FullScreenOverlay(
                             )
                         }
                         is OverlayContent.ReviewFullScreen -> {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .verticalScroll(rememberScrollState())
-                                    .padding(vertical = 8.dp)
-                            ) {
-                                Text(
-                                    text = content.title,
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    text = "by ${content.author}",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                Spacer(Modifier.height(16.dp))
-                                Text(
-                                    text = content.content,
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
+                            ReviewGalleryFullScreen(
+                                content = content
+                            )
                         }
                     }
                 }
@@ -187,14 +137,7 @@ fun FullScreenVideoOverlayPreview() {
 fun FullScreenReviewOverlayPreview() {
     MaterialTheme {
         Surface {
-            FullScreenOverlay(
-                content = OverlayContent.ReviewFullScreen(
-                    title = "An Epic Journey",
-                    content = "This anime is a masterpiece! The story depth, character development, and animation quality are top-notch. I particularly enjoyed the philosophical themes explored throughout the series. Every episode left me wanting more. Highly recommended for fans of fantasy and adventure genres. The ending was truly satisfying and brought a great conclusion to all the character arcs.",
-                    author = "AnimeFanatic99"
-                ),
-                onDismiss = {}
-            )
+
         }
     }
 }
