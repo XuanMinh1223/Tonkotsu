@@ -371,7 +371,7 @@ fun AnimeDetailScreenContent(
                         // --- 7. Themes (Opening/Ending) ---
                         anime.openingThemes.takeIf { it.isNotEmpty() }?.let { themes ->
                             AppHorizontalDivider()
-                            Spacer(Modifier.height(16.dp))
+                            Spacer(Modifier.height(8.dp))
                             Text(
                                 text = "Opening Themes:",
                                 style = MaterialTheme.typography.titleLarge,
@@ -404,7 +404,6 @@ fun AnimeDetailScreenContent(
                         // --- 8. Relations (Basic Display) ---
                         anime.relations.takeIf { it.isNotEmpty() }?.let { relationsMap ->
                             AppHorizontalDivider()
-                            Spacer(Modifier.height(16.dp))
                             Text(
                                 text = "Relations:",
                                 style = MaterialTheme.typography.titleLarge,
