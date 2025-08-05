@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -59,7 +58,6 @@ import com.nightfire.tonkotsu.ui.ImageList
 import com.nightfire.tonkotsu.ui.ScoreDisplayCard
 import com.nightfire.tonkotsu.ui.TagSection
 import com.nightfire.tonkotsu.ui.composables.AnimeEpisodesList
-import com.nightfire.tonkotsu.ui.composables.AnimeReviewList
 import com.nightfire.tonkotsu.ui.composables.VideoList
 import com.nightfire.tonkotsu.ui.fullscreenoverlay.FullScreenOverlay
 import com.nightfire.tonkotsu.ui.fullscreenoverlay.OverlayContent

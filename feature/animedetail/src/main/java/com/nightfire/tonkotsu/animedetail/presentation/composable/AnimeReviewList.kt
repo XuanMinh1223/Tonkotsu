@@ -1,4 +1,4 @@
-package com.nightfire.tonkotsu.ui.composables // Or your appropriate UI package
+package com.nightfire.tonkotsu.animedetail.presentation.composable // Or your appropriate UI package
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.nightfire.tonkotsu.core.common.UiState
 import com.nightfire.tonkotsu.core.domain.model.AnimeReview
 import com.nightfire.tonkotsu.ui.ErrorCard
+import com.nightfire.tonkotsu.ui.composables.AnimeReviewItem
 import com.nightfire.tonkotsu.ui.shimmerEffect
 
 @Composable
@@ -78,7 +79,7 @@ fun AnimeReviewList(
                                     .clickable {
                                         onReviewClick(review, index)
                                     }
-                                )
+                            )
                         }
                     }
                 }
