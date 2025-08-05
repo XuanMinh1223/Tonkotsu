@@ -4,20 +4,20 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -25,12 +25,12 @@ import androidx.compose.ui.unit.dp
 import com.nightfire.tonkotsu.core.common.UiState
 import com.nightfire.tonkotsu.core.domain.model.AnimeReview
 import com.nightfire.tonkotsu.ui.ErrorCard
+import com.nightfire.tonkotsu.ui.shimmerEffect
 
 @Composable
 fun AnimeReviewList(
     uiState: UiState<List<AnimeReview>>,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp),
     rowHeight: Dp = 220.dp,
     onRetry: () -> Unit = {},
     onReviewClick: (AnimeReview, Int) -> Unit = { _, _ -> }
@@ -47,14 +47,9 @@ fun AnimeReviewList(
 
         when (uiState) {
             is UiState.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 32.dp), // Provide some space for the loader
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(modifier = Modifier.size(40.dp))
-                }
+                AnimeReviewListSkeleton(
+                    rowHeight = rowHeight
+                )
             }
             is UiState.Success -> {
                 val reviews = uiState.data
@@ -73,7 +68,6 @@ fun AnimeReviewList(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(rowHeight),
-                        contentPadding = contentPadding,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         itemsIndexed(reviews) { index, review ->
@@ -104,6 +98,29 @@ fun AnimeReviewList(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun AnimeReviewListSkeleton(
+    rowHeight: Dp,
+    width: Dp =300.dp,
+) {
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(rowHeight), // Maintain height for consistent loading experience
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(5) {
+            Box(
+                modifier = Modifier
+                    .width(width)
+                    .fillMaxHeight()
+                    .clip(RoundedCornerShape(12.dp)) // Match AnimeReviewItem corner radius
+                    .shimmerEffect()
+            )
         }
     }
 }

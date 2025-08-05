@@ -2,28 +2,33 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items // Use items directly for simpler list iteration
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.nightfire.tonkotsu.core.common.UiState // Import the sealed UiState
-import com.nightfire.tonkotsu.core.domain.model.Character // Your Character domain model
-import com.nightfire.tonkotsu.core.domain.model.VoiceActor // Nested VoiceActor
-import androidx.compose.material3.Surface // For previews
+import com.nightfire.tonkotsu.core.common.UiState
+import com.nightfire.tonkotsu.core.domain.model.Character
+import com.nightfire.tonkotsu.core.domain.model.VoiceActor
 import com.nightfire.tonkotsu.ui.CharacterCard
 import com.nightfire.tonkotsu.ui.ErrorCard
+import com.nightfire.tonkotsu.ui.shimmerEffect
 
 @Composable
 fun CharacterListSection(
@@ -41,18 +46,11 @@ fun CharacterListSection(
 
         when (uiState) { // Use 'when' with the sealed UiState
             is UiState.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(180.dp), // Height for the loading indicator in a horizontal list context
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(modifier = Modifier.size(40.dp))
-                }
+                CharacterListSkeleton()
             }
             is UiState.Success -> {
                 val characters = uiState.data // 'data' is directly accessible and non-null here
-                if (characters.isNullOrEmpty()) { // Check if the list itself is empty
+                if (characters.isEmpty()) { // Check if the list itself is empty
                     Text(
                         text = "No characters available.",
                         style = MaterialTheme.typography.bodyMedium,
@@ -87,6 +85,71 @@ fun CharacterListSection(
     }
 }
 
+@Composable
+fun CharacterListSkeleton(modifier: Modifier = Modifier) {
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(5) {
+            Card(
+                modifier = modifier
+                    .width(160.dp)
+                    .height(260.dp),
+                shape = MaterialTheme.shapes.medium,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Image placeholder
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(150.dp)
+                            .clip(MaterialTheme.shapes.medium)
+                            .shimmerEffect()
+                    )
+
+                    Spacer(Modifier.height(8.dp))
+
+                    // Name placeholder
+                    Box(
+                        modifier = Modifier
+                            .width(100.dp)
+                            .height(20.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .shimmerEffect()
+                    )
+                    Spacer(Modifier.height(4.dp))
+
+                    // Role placeholder
+                    Box(
+                        modifier = Modifier
+                            .width(70.dp)
+                            .height(16.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .shimmerEffect()
+                    )
+                    Spacer(Modifier.height(8.dp))
+
+                    // Voice Actor section placeholder (optional, can be simpler)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.8f) // Smaller width for VA section
+                            .height(32.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .shimmerEffect()
+                    )
+                }
+            }
+        }
+    }
+}
 // --- Previews ---
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 350)
