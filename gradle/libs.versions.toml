@@ -6,6 +6,7 @@ compileSdk = "35"
 espressoCore = "3.6.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
+materialIconsExtended = "1.7.8"
 minSdk = "26"
 targetSdk = "35"
 # ALIGNMENT POINT 1: Update Kotlin to a version compatible with newer Compose Compiler
@@ -61,6 +62,7 @@ lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtim
 # Compose
 activity-compose = { group = "androidx.activity", name = "activity-compose" } # Removed version.ref, managed by BOM
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 ui = { group = "androidx.compose.ui", name = "ui" } # Managed by BOM
 ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" } # Managed by BOM
 ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" } # Managed by BOM

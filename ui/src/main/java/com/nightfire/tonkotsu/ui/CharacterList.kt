@@ -80,12 +80,6 @@ fun CharacterListSection(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = uiState.message, // 'message' is directly accessible
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(bottom = 4.dp)
-                    )
                     if (uiState.isRetrying) {
                         Box(
                             modifier = Modifier
@@ -96,7 +90,12 @@ fun CharacterListSection(
                             CircularProgressIndicator(modifier = Modifier.size(40.dp))
                         }
                     } else {
-                        // This is a final error, perhaps show a "Retry" button
+                        Text(
+                            text = uiState.message, // 'message' is directly accessible
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        )
                         Button(onClick = { /* ViewModel.retryFetchCharacters() */ }) {
                             Text("Try Again")
                         }

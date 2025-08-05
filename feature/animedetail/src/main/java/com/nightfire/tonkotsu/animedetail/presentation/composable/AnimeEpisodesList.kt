@@ -114,12 +114,6 @@ fun AnimeEpisodesList(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = uiState.message, // 'message' is directly accessible
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(bottom = 4.dp)
-                    )
                     if (uiState.isRetrying) { // 'isRetrying' is directly accessible
                         Box(
                             modifier = Modifier
@@ -130,7 +124,12 @@ fun AnimeEpisodesList(
                             CircularProgressIndicator(modifier = Modifier.size(40.dp))
                         }
                     } else {
-                        // This is a final error, perhaps show a "Retry" button
+                        Text(
+                            text = uiState.message, // 'message' is directly accessible
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        )
                         Button(onClick = { /* ViewModel.retryFetchEpisodes() */ }) { // You'd need a retry function in ViewModel
                             Text("Try Again")
                         }

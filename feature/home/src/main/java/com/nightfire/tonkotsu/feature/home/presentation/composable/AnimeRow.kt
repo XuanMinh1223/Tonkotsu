@@ -80,12 +80,6 @@ fun AnimeRow(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    ErrorCard(
-                        message = state.message, // 'message' is directly accessible
-                        modifier = Modifier.padding(16.dp),
-                        onActionClick = if (state.isRetrying) null else onErrorActionClick, // Only show retry button if not already retrying
-                        actionButtonText = "Retry",
-                    )
                     if (state.isRetrying) {
                         Box(
                             modifier = Modifier
@@ -95,6 +89,13 @@ fun AnimeRow(
                         ) {
                             CircularProgressIndicator(modifier = Modifier.size(40.dp))
                         }
+                    } else {
+                        ErrorCard(
+                            message = state.message, // 'message' is directly accessible
+                            modifier = Modifier.padding(16.dp),
+                            onActionClick = onErrorActionClick, // Only show retry button if not already retrying
+                            actionButtonText = "Retry",
+                        )
                     }
                 }
             }
