@@ -9,11 +9,13 @@ import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
 import com.nightfire.tonkotsu.core.domain.model.AnimeReview
 import com.nightfire.tonkotsu.core.domain.model.Character
 import com.nightfire.tonkotsu.core.domain.model.Image
+import com.nightfire.tonkotsu.core.domain.model.Recommendation
 import com.nightfire.tonkotsu.core.domain.model.Video
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeDetailUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeEpisodesUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeCharactersUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeImagesUseCase
+import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeRecommendationsUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeReviewsUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeVideosUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,6 +33,7 @@ class AnimeDetailViewModel @Inject constructor(
     private val getAnimeImagesUseCase: GetAnimeImagesUseCase,
     private val getAnimeVideosUseCase: GetAnimeVideosUseCase,
     private val getAnimeReviewsUseCase: GetAnimeReviewsUseCase,
+    private val getAnimeRecommendationsUseCase: GetAnimeRecommendationsUseCase,
 ) : ViewModel() {
 
     // Initialize with UiState.Loading() for each state flow
@@ -52,6 +55,9 @@ class AnimeDetailViewModel @Inject constructor(
     private val _animeReviewsState = MutableStateFlow<UiState<List<AnimeReview>>>(UiState.Loading())
     val animeReviewsState : StateFlow<UiState<List<AnimeReview>>> = _animeReviewsState
 
+    private val _animeRecommendationsState = MutableStateFlow<UiState<List<Recommendation>>>(UiState.Loading())
+    val animeRecommendationsState : StateFlow<UiState<List<Recommendation>>> = _animeRecommendationsState
+
     fun getAnimeDetail(id: Int) {
         getAnimeDetailUseCase(id).onEach { result ->
             when (result) {
@@ -65,15 +71,14 @@ class AnimeDetailViewModel @Inject constructor(
                         UiState.Success(it)
                     }
 
-                    // Only fetch related data if animeDetail was successfully loaded (i.e., result.data is not null)
                     getAnimeEpisodes(id)
                     getCharacters(id)
                     getImages(id)
                     getVideos(id)
                     getReviews(id)
+                    getRecommendations(id)
                 }
                 is Resource.Error -> {
-                    // Use UiState.Error data class constructor
                     _animeDetailState.value = UiState.Error(
                         message = result.message,
                         data = result.data,
@@ -156,13 +161,9 @@ class AnimeDetailViewModel @Inject constructor(
                     _animeVideosState.value = UiState.Loading()
                 }
                 is Resource.Success -> {
-                    _animeVideosState.value = result.data?.let {
+                    _animeVideosState.value = result.data.let {
                         UiState.Success(it)
-                    } ?: UiState.Error(
-                        message =  "Videos data is null after successful load.",
-                        data = null,
-                        
-                    )
+                    }
                 }
                 is Resource.Error -> {
                     _animeVideosState.value = UiState.Error(
@@ -183,9 +184,7 @@ class AnimeDetailViewModel @Inject constructor(
                 }
 
                 is Resource.Success -> {
-                    _animeReviewsState.value = result.data.let {
-                        UiState.Success(it)
-                    }
+                    _animeReviewsState.value = UiState.Success(result.data)
                 }
 
                 is Resource.Error -> {
@@ -194,6 +193,27 @@ class AnimeDetailViewModel @Inject constructor(
                         data = result.data,
                         
                     )
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getRecommendations(animeId: Int) {
+        getAnimeRecommendationsUseCase(animeId).onEach { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _animeRecommendationsState.value = UiState.Loading()
+                }
+
+                is Resource.Success -> {
+                    _animeRecommendationsState.value = UiState.Success(result.data)
+                }
+
+                is Resource.Error -> {
+                    _animeRecommendationsState.value = UiState.Error(
+                        message = result.message,
+                        data = result.data,
+                        )
                 }
             }
         }.launchIn(viewModelScope)

@@ -13,18 +13,20 @@ import com.nightfire.tonkotsu.core.data.remote.dto.AnimeReviewsResponseDto
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeVideosResponseDto
 import com.nightfire.tonkotsu.core.data.remote.dto.CharactersResponse
 import com.nightfire.tonkotsu.core.data.remote.dto.ImagesResponseDto
+import com.nightfire.tonkotsu.core.data.remote.dto.RecommendationResponseDto
 import com.nightfire.tonkotsu.core.data.remote.dto.TopAnimeResponse
-import com.nightfire.tonkotsu.core.data.remote.dto.VideoDataDto
 import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeDetail
 import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeEpisode
 import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeOverview
 import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeReview
 import com.nightfire.tonkotsu.core.data.remote.dto.toCharacter
 import com.nightfire.tonkotsu.core.data.remote.dto.toImage
+import com.nightfire.tonkotsu.core.data.remote.dto.toRecommendation
 import com.nightfire.tonkotsu.core.data.remote.dto.toVideoList
 import com.nightfire.tonkotsu.core.domain.model.AnimeReview
 import com.nightfire.tonkotsu.core.domain.model.Character
 import com.nightfire.tonkotsu.core.domain.model.Image
+import com.nightfire.tonkotsu.core.domain.model.Recommendation
 import com.nightfire.tonkotsu.core.domain.model.Video
 import com.nightfire.tonkotsu.core.domain.repository.AnimeRepository
 import kotlinx.coroutines.flow.Flow
@@ -72,7 +74,7 @@ class AnimeRepositoryImpl @Inject constructor(
     override fun getAnimeEpisodes(id: Int): Flow<Resource<List<AnimeEpisode>>> {
         return networkBoundResourceFlow(
             apiCall = { api.getAnimeEpisodes(id)},
-            mapper = {dto: AnimeEpisodesResponse ->
+            mapper = { dto: AnimeEpisodesResponse ->
                 dto.data.map { it.toAnimeEpisode() }
             }
         )
@@ -106,6 +108,7 @@ class AnimeRepositoryImpl @Inject constructor(
     }
 
     override fun getAnimeReviews(id: Int): Flow<Resource<List<AnimeReview>>> {
+
         return networkBoundResourceFlow(
             apiCall = { api.getAnimeReviews(id)},
             mapper = { dto: AnimeReviewsResponseDto ->
@@ -113,4 +116,13 @@ class AnimeRepositoryImpl @Inject constructor(
             }
         )
     }
+
+    override fun getAnimeRecommendations(animeId: Int): Flow<Resource<List<Recommendation>>> {
+        return networkBoundResourceFlow(
+            apiCall = { api.getAnimeRecommendations(animeId) },
+            mapper = { dto: RecommendationResponseDto ->
+                dto.data.map { it.toRecommendation() } }
+        )
+    }
+
 }

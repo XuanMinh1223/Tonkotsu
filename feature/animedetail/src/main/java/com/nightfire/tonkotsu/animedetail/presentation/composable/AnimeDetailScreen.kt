@@ -49,6 +49,7 @@ import com.nightfire.tonkotsu.core.domain.model.AnimeReview
 import com.nightfire.tonkotsu.core.domain.model.Character
 import com.nightfire.tonkotsu.core.domain.model.Image
 import com.nightfire.tonkotsu.core.domain.model.NavigableLink
+import com.nightfire.tonkotsu.core.domain.model.Recommendation
 import com.nightfire.tonkotsu.core.domain.model.RelationEntry
 import com.nightfire.tonkotsu.core.domain.model.Video
 import com.nightfire.tonkotsu.ui.AppHorizontalDivider
@@ -76,6 +77,7 @@ fun AnimeDetailScreen(
     val animeImagesState by viewModel.animeImagesState.collectAsState()
     val animeVideosState by viewModel.animeVideosState.collectAsState()
     val animeReviewsState by viewModel.animeReviewsState.collectAsState()
+    val animeRecommendationState by viewModel.animeRecommendationsState.collectAsState()
 
     LaunchedEffect(key1 = malId) {
         viewModel.getAnimeDetail(malId)
@@ -88,6 +90,7 @@ fun AnimeDetailScreen(
             animeImagesState = animeImagesState,
             animeVideosState = animeVideosState,
             animeReviewsState = animeReviewsState,
+            animeRecommendationState = animeRecommendationState,
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -102,6 +105,7 @@ fun AnimeDetailScreenContent(
     animeImagesState: UiState<List<Image>>,
     animeVideosState: UiState<List<Video>>,
     animeReviewsState: UiState<List<AnimeReview>>,
+    animeRecommendationState: UiState<List<Recommendation>>,
     modifier: Modifier = Modifier,
     onGenreClick: (String) -> Unit = {}
 ) {
@@ -333,6 +337,8 @@ fun AnimeDetailScreenContent(
                             }
                         )
 
+                        RecommendationList(animeRecommendationState)
+
                         anime.streamingLinks.takeIf { it.isNotEmpty() }?.let { links ->
                             AppHorizontalDivider()
                             Spacer(Modifier.height(16.dp))
@@ -509,6 +515,7 @@ fun AnimeDetailScreenContentSuccessPreview() {
                 modifier = Modifier.fillMaxSize(),
                 animeVideosState = UiState.Loading(),
                 animeReviewsState = UiState.Loading(),
+                animeRecommendationState = UiState.Loading(),
             )
         }
     }
@@ -525,8 +532,9 @@ fun AnimeDetailScreenContentLoadingPreview() {
                 animeImagesState = UiState.Loading(), // Updated constructor
                 animeCharactersState = UiState.Loading(), // Updated constructor
                 animeReviewsState = UiState.Loading(),
-                animeVideosState = UiState.Loading() // Updated constructor
-            )
+                animeVideosState = UiState.Loading(),
+                animeRecommendationState = UiState.Loading(),
+                )
         }
     }
 }
@@ -548,8 +556,10 @@ fun AnimeDetailScreenContentErrorPreview() {
                 animeImagesState = UiState.Loading(),
                 animeCharactersState = UiState.Loading(),
                 animeReviewsState = UiState.Loading(),
-                animeVideosState = UiState.Loading()
-            )
+                animeVideosState = UiState.Loading(),
+                animeRecommendationState = UiState.Loading(),
+
+                )
         }
     }
 }

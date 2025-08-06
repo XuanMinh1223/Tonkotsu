@@ -8,6 +8,7 @@ import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
 import com.nightfire.tonkotsu.core.domain.model.AnimeReview
 import com.nightfire.tonkotsu.core.domain.model.Character
 import com.nightfire.tonkotsu.core.domain.model.Image
+import com.nightfire.tonkotsu.core.domain.model.Recommendation
 import com.nightfire.tonkotsu.core.domain.model.Video
 import kotlinx.coroutines.flow.Flow
 
@@ -73,4 +74,9 @@ interface AnimeRepository {
     fun getAnimeReviews(
         id: Int
     ): Flow<Resource<List<AnimeReview>>>
+
+    fun getAnimeRecommendations(
+        animeId: Int
+    ): Flow<Resource<List<Recommendation>>>
+
 }

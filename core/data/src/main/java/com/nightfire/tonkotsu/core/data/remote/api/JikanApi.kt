@@ -8,6 +8,7 @@ import com.nightfire.tonkotsu.core.data.remote.dto.AnimeReviewsResponseDto
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeSummaryDto
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeVideosResponseDto
 import com.nightfire.tonkotsu.core.data.remote.dto.ImagesResponseDto
+import com.nightfire.tonkotsu.core.data.remote.dto.RecommendationResponseDto
 import com.nightfire.tonkotsu.core.data.remote.dto.TopAnimeResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -82,4 +83,10 @@ interface JikanApi {
         @Query("preliminary") preliminary: Boolean? = true,
         @Query("spoiler") spoiler: Boolean? = true
     ): Response<AnimeReviewsResponseDto>
+
+    @GET("anime/{id}/recommendations")
+    suspend fun getAnimeRecommendations(
+        @Path("id") animeId: Int
+    ): Response<RecommendationResponseDto>
+
 }
