@@ -318,9 +318,11 @@ fun AnimeDetailScreenContent(
                         AppHorizontalDivider()
 
                         // Anime Episodes List
-                        AnimeEpisodesList(animeEpisodesState)
-                        Spacer(Modifier.height(16.dp)) // Add spacing after episodes list
-                        AppHorizontalDivider()
+                        if (animeDetailState.data.type == "TV") {
+                            AnimeEpisodesList(animeEpisodesState)
+                            Spacer(Modifier.height(16.dp)) // Add spacing after episodes list
+                            AppHorizontalDivider()
+                        }
                         // Character List Section
                         CharacterListSection(animeCharactersState)
                         Spacer(Modifier.height(16.dp)) // Add spacing after character list
