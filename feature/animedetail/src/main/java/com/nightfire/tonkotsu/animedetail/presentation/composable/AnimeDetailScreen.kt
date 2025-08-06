@@ -91,6 +91,8 @@ fun AnimeDetailScreen(
             animeVideosState = animeVideosState,
             animeReviewsState = animeReviewsState,
             animeRecommendationState = animeRecommendationState,
+            onRecommendationClick = viewModel::onRecommendationClick,
+            onRelationClick = viewModel::onRelationClick,
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -107,7 +109,9 @@ fun AnimeDetailScreenContent(
     animeReviewsState: UiState<List<AnimeReview>>,
     animeRecommendationState: UiState<List<Recommendation>>,
     modifier: Modifier = Modifier,
-    onGenreClick: (String) -> Unit = {}
+    onGenreClick: (String) -> Unit = {},
+    onRecommendationClick: (Int) -> Unit = {},
+    onRelationClick: (RelationEntry) -> Unit = {}
 ) {
     var overlayContent by remember { mutableStateOf<OverlayContent?>(null) }
 
@@ -339,7 +343,10 @@ fun AnimeDetailScreenContent(
                             }
                         )
 
-                        RecommendationList(animeRecommendationState)
+                        RecommendationList(
+                            uiState = animeRecommendationState,
+                            onRecommendationClick = onRecommendationClick
+                        )
 
                         anime.streamingLinks.takeIf { it.isNotEmpty() }?.let { links ->
                             AppHorizontalDivider()
@@ -389,6 +396,7 @@ fun AnimeDetailScreenContent(
                         // --- 8. Relations (Basic Display) ---
                         anime.relations.takeIf { it.isNotEmpty() }?.let { relationsMap ->
                             AppHorizontalDivider()
+                            Spacer(Modifier.height(16.dp)) // Add spacing after divider
                             Text(
                                 text = "Relations:",
                                 style = MaterialTheme.typography.titleLarge,
@@ -404,17 +412,25 @@ fun AnimeDetailScreenContent(
                                         modifier = Modifier.padding(start = 8.dp)
                                     )
                                     entries.forEach { entry ->
+                                        // Make the entry name clickable
                                         Text(
                                             text = "• ${entry.name}",
                                             style = MaterialTheme.typography.bodyMedium,
-                                            modifier = Modifier.padding(start = 16.dp)
+                                            color = MaterialTheme.colorScheme.primary, // Make text color distinct
+                                            modifier = Modifier
+                                                .padding(start = 16.dp)
+                                                .clickable {
+                                                    onRelationClick(entry)
+                                                }
                                         )
                                     }
                                     Spacer(Modifier.height(4.dp))
                                 }
                             }
                             anime.externalLinks.takeIf { it.isNotEmpty() }?.let {
+                                Spacer(Modifier.height(16.dp)) // Add spacing before External Links divider
                                 AppHorizontalDivider()
+                                Spacer(Modifier.height(16.dp)) // Add spacing after divider
                                 Text(
                                     text = "External Links:",
                                     style = MaterialTheme.typography.titleLarge,

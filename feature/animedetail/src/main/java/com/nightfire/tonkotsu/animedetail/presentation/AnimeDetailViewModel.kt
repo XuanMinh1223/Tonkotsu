@@ -10,6 +10,7 @@ import com.nightfire.tonkotsu.core.domain.model.AnimeReview
 import com.nightfire.tonkotsu.core.domain.model.Character
 import com.nightfire.tonkotsu.core.domain.model.Image
 import com.nightfire.tonkotsu.core.domain.model.Recommendation
+import com.nightfire.tonkotsu.core.domain.model.RelationEntry
 import com.nightfire.tonkotsu.core.domain.model.Video
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeDetailUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeEpisodesUseCase
@@ -86,6 +87,16 @@ class AnimeDetailViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun onRelationClick(relationEntry: RelationEntry) {
+        when (relationEntry.type) {
+            "anime" -> getAnimeDetail(id = relationEntry.id)
+        }
+    }
+
+    fun onRecommendationClick(malId: Int) {
+        getAnimeDetail(id = malId)
     }
 
     private fun getAnimeEpisodes(animeId: Int) {
