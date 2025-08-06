@@ -35,7 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,6 +55,7 @@ import com.nightfire.tonkotsu.ui.AppHorizontalDivider
 import com.nightfire.tonkotsu.ui.ErrorCard
 import com.nightfire.tonkotsu.ui.ExpandableText
 import com.nightfire.tonkotsu.ui.ImageList
+import com.nightfire.tonkotsu.ui.R
 import com.nightfire.tonkotsu.ui.ScoreDisplayCard
 import com.nightfire.tonkotsu.ui.TagSection
 import com.nightfire.tonkotsu.ui.composables.AnimeEpisodesList
@@ -100,11 +101,10 @@ fun AnimeDetailScreenContent(
     animeCharactersState: UiState<List<Character>>,
     animeImagesState: UiState<List<Image>>,
     animeVideosState: UiState<List<Video>>,
-    animeReviewsState: UiState<List<AnimeReview>>, // Defaulting to Loading state
+    animeReviewsState: UiState<List<AnimeReview>>,
     modifier: Modifier = Modifier,
-    onGenreClick: (String) -> Unit = {} // For clickable genres
+    onGenreClick: (String) -> Unit = {}
 ) {
-    LocalContext.current
     var overlayContent by remember { mutableStateOf<OverlayContent?>(null) }
 
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -120,7 +120,7 @@ fun AnimeDetailScreenContent(
                 )
             }
             is UiState.Success -> {
-                val anime = animeDetailState.data // Data is guaranteed to be non-null in Success state
+                val anime = animeDetailState.data
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -162,7 +162,6 @@ fun AnimeDetailScreenContent(
                                     )
                                 }
                             }
-
                             AsyncImage(
                                 model = anime.imageUrl,
                                 contentDescription = "${anime.title} Poster",
@@ -174,6 +173,7 @@ fun AnimeDetailScreenContent(
                                             initialIndex = 0
                                         )
                                     },
+                                placeholder = painterResource(id = R.drawable.placeholder_image),
                                 contentScale = ContentScale.Fit,
                                 alignment = Alignment.TopCenter
                             )
