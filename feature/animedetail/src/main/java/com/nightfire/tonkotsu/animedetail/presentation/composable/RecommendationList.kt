@@ -89,6 +89,12 @@ fun RecommendationList(
                             })
                         }
                     }
+                } else {
+                    Text(
+                        text = "No recommendations yet.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(vertical = 16.dp)
+                    )
                 }
             }
             is UiState.Error -> {
