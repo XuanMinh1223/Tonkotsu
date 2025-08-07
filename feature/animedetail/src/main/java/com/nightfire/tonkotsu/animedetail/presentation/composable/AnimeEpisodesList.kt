@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.nightfire.tonkotsu.animedetail.presentation.composable.EpisodeListItem
 import com.nightfire.tonkotsu.core.common.UiState // Import the sealed UiState
 import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
+import com.nightfire.tonkotsu.ui.AppHorizontalDivider
 import com.nightfire.tonkotsu.ui.shimmerEffect
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -139,6 +140,8 @@ fun AnimeEpisodesList(
                 }
             }
         }
+        Spacer(Modifier.height(16.dp))
+        AppHorizontalDivider()
     }
 }
 

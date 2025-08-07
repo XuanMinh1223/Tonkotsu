@@ -247,8 +247,6 @@ fun AnimeDetailScreenContent(
                         // Anime Episodes List
                         if (anime.type?.lowercase() != "movie") {
                             AnimeEpisodesList(animeEpisodesState)
-                            Spacer(Modifier.height(16.dp))
-                            AppHorizontalDivider()
                         }
                         // Character List Section
                         CharacterListSection(animeCharactersState)
