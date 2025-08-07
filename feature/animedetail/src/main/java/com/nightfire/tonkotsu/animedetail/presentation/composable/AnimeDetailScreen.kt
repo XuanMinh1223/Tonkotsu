@@ -31,6 +31,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -113,7 +114,7 @@ fun AnimeDetailScreenContent(
     onRecommendationClick: (Int) -> Unit = {},
     onRelationClick: (RelationEntry) -> Unit = {}
 ) {
-    var overlayContent by remember { mutableStateOf<OverlayContent?>(null) }
+    var overlayContent by rememberSaveable  { mutableStateOf<OverlayContent?>(null) }
 
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         when (animeDetailState) { // Use 'when' with the sealed UiState
@@ -138,92 +139,17 @@ fun AnimeDetailScreenContent(
                     Column(
                         modifier = Modifier.padding(16.dp)
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.Top
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(end = 8.dp)
-                            ) {
-                                Text(
-                                    text = anime.title,
-                                    style = MaterialTheme.typography.headlineLarge,
-                                    fontWeight = FontWeight.Bold
+                        AnimeTitleSection(
+                            anime = anime,
+                            onImageClick = {
+                                overlayContent = OverlayContent.ImageGalleryFullScreen(
+                                    images = listOf(Image(anime.imageUrl)),
+                                    initialIndex = 0
                                 )
-                                anime.alternativeTitle?.let { altTitle ->
-                                    Text(
-                                        text = altTitle,
-                                        modifier = Modifier.padding(top = 8.dp),
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                }
-                                anime.japaneseTitle?.let { jpTitle ->
-                                    Text(
-                                        text = jpTitle,
-                                        modifier = Modifier.padding(top = 8.dp),
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                }
                             }
-                            AsyncImage(
-                                model = anime.imageUrl,
-                                contentDescription = "${anime.title} Poster",
-                                modifier = Modifier
-                                    .width(150.dp)
-                                    .clickable {
-                                        overlayContent = OverlayContent.ImageGalleryFullScreen(
-                                            images = listOf(Image(anime.imageUrl)),
-                                            initialIndex = 0
-                                        )
-                                    },
-                                placeholder = painterResource(id = R.drawable.placeholder_image),
-                                contentScale = ContentScale.Fit,
-                                alignment = Alignment.TopCenter
-                            )
-                        }
-
+                        )
                         // --- 2. Core Stats ---
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            ScoreDisplayCard(
-                                score = anime.score,
-                                scoredBy = anime.scoredBy
-                            )
-                            Column(
-                                horizontalAlignment = Alignment.End,
-                                verticalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                anime.rank?.let {
-                                    Text(
-                                        text = "Rank: #$it",
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        fontWeight = FontWeight.Medium
-                                    )
-                                }
-                                anime.popularity?.let {
-                                    Text(
-                                        text = "Popularity: #$it",
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        fontWeight = FontWeight.Medium
-                                    )
-                                }
-                                anime.favorites?.let {
-                                    Text(
-                                        text = "Favorites: ${String.format(Locale.US, "%,d", it)}",
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        fontWeight = FontWeight.Medium
-                                    )
-                                }
-                            }
-                        }
+                        AnimeCoreStats(anime = anime)
                         anime.trailerYoutubeId?.let { youtubeId ->
                             Spacer(Modifier.height(16.dp))
                             Button(
@@ -319,7 +245,7 @@ fun AnimeDetailScreenContent(
                         AppHorizontalDivider()
 
                         // Anime Episodes List
-                        if (animeDetailState.data.type?.lowercase() != "movie") {
+                        if (anime.type?.lowercase() != "movie") {
                             AnimeEpisodesList(animeEpisodesState)
                             Spacer(Modifier.height(16.dp))
                             AppHorizontalDivider()
@@ -437,8 +363,7 @@ fun AnimeDetailScreenContent(
                             }
                             Spacer(Modifier.height(16.dp))
                         }
-                    } // End inner padding Column
-
+                    }
                     Spacer(Modifier.height(16.dp)) // Final bottom padding for the entire scrollable Column
                 }
             }
