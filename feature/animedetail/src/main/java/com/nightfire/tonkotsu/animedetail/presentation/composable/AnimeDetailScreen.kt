@@ -119,7 +119,7 @@ fun AnimeDetailScreenContent(
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         when (animeDetailState) { // Use 'when' with the sealed UiState
             is UiState.Loading -> {
-                CircularProgressIndicator() // Or a more elaborate loading screen
+                AnimeDetailSkeletonScreen()
             }
             is UiState.Error -> {
                 ErrorCard(
