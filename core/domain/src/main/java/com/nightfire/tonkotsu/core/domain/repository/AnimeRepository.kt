@@ -1,6 +1,7 @@
 // core/domain/src/main/java/com/nightfire.tonkotsu.core.domain.repository/AnimeRepository.kt
 package com.nightfire.tonkotsu.core.domain.repository
 
+import androidx.paging.PagingData
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 import com.nightfire.tonkotsu.core.common.Resource // We'll define this common class next
 import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
@@ -58,7 +59,7 @@ interface AnimeRepository {
      */
     fun getAnimeEpisodes(
         id: Int
-    ): Flow<Resource<List<AnimeEpisode>>>
+    ): Flow<PagingData<AnimeEpisode>>
 
     fun getAnimeCharacters(
         id: Int

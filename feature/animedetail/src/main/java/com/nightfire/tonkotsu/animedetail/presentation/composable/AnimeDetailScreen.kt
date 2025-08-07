@@ -1,12 +1,9 @@
 package com.nightfire.tonkotsu.animedetail.presentation.composable // Adjust your package as needed
 
 import CharacterListSection
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,7 +16,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -30,18 +26,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.nightfire.tonkotsu.animedetail.presentation.AnimeDetailViewModel
 import com.nightfire.tonkotsu.core.common.UiState
 import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
@@ -57,15 +50,12 @@ import com.nightfire.tonkotsu.ui.AppHorizontalDivider
 import com.nightfire.tonkotsu.ui.ErrorCard
 import com.nightfire.tonkotsu.ui.ExpandableText
 import com.nightfire.tonkotsu.ui.ImageList
-import com.nightfire.tonkotsu.ui.R
-import com.nightfire.tonkotsu.ui.ScoreDisplayCard
 import com.nightfire.tonkotsu.ui.TagSection
 import com.nightfire.tonkotsu.ui.composables.AnimeEpisodesList
 import com.nightfire.tonkotsu.ui.composables.VideoList
 import com.nightfire.tonkotsu.ui.fullscreenoverlay.FullScreenOverlay
 import com.nightfire.tonkotsu.ui.fullscreenoverlay.OverlayContent
-import java.util.Locale
-
+import androidx.paging.compose.collectAsLazyPagingItems
 @Composable
 fun AnimeDetailScreen(
     malId: Int,
@@ -79,6 +69,9 @@ fun AnimeDetailScreen(
     val animeVideosState by viewModel.animeVideosState.collectAsState()
     val animeReviewsState by viewModel.animeReviewsState.collectAsState()
     val animeRecommendationState by viewModel.animeRecommendationsState.collectAsState()
+
+    val animeEpisodes = viewModel.animeEpisodes.collectAsState().value
+    val lazyPagingEpisodes = viewModel.animeEpisodes.collectAsLazyPagingItems()
 
     LaunchedEffect(key1 = malId) {
         viewModel.getAnimeDetail(malId)

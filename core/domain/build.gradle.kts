@@ -40,4 +40,8 @@ dependencies {
     // Testing dependencies
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
+
+    //paging
+    implementation(libs.paging.runtime) // latest as of Aug 2025
+
 }

@@ -76,4 +76,7 @@ dependencies {
 
     // --- Other common libraries (e.g., Coil for image loading) ---
     implementation(libs.coil.compose)
+    implementation(libs.paging.runtime)
+    implementation(libs.paging.compose) // or latest
+
 }

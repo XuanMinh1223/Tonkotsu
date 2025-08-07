@@ -1,10 +1,14 @@
 package com.nightfire.tonkotsu.core.data.repository
 
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview   // Ensure this is imported
 import com.nightfire.tonkotsu.core.common.Resource
 import com.nightfire.tonkotsu.core.common.networkBoundResourceFlow
+import com.nightfire.tonkotsu.core.data.paging.AnimeEpisodesPagingSource
 import com.nightfire.tonkotsu.core.data.remote.api.JikanApi
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeDetailResponse
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeEpisodeDetailDto
@@ -75,13 +79,16 @@ class AnimeRepositoryImpl @Inject constructor(
         )
     }
 
-    override fun getAnimeEpisodes(id: Int): Flow<Resource<List<AnimeEpisode>>> {
-        return networkBoundResourceFlow(
-            apiCall = { api.getAnimeEpisodes(id)},
-            mapper = { dto: AnimeEpisodesResponse ->
-                dto.data.map { it.toAnimeEpisode() }
+    override fun getAnimeEpisodes(id: Int): Flow<PagingData<AnimeEpisode>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 100,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                AnimeEpisodesPagingSource(api, id)
             }
-        )
+        ).flow
     }
 
     override fun getAnimeCharacters(id: Int): Flow<Resource<List<Character>>> {

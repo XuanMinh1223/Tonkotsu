@@ -2,6 +2,8 @@ package com.nightfire.tonkotsu.animedetail.presentation // Adjust your package a
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.nightfire.tonkotsu.core.common.Resource
 import com.nightfire.tonkotsu.core.common.UiState // Import your new UiState sealed class
 import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
@@ -40,6 +42,9 @@ class AnimeDetailViewModel @Inject constructor(
     // Initialize with UiState.Loading() for each state flow
     private val _animeDetailState = MutableStateFlow<UiState<AnimeDetail>>(UiState.Loading())
     val animeDetailState : StateFlow<UiState<AnimeDetail>> = _animeDetailState
+
+    private val _animeEpisodes = MutableStateFlow<PagingData<AnimeEpisode>>(PagingData.empty())
+    val animeEpisodes : StateFlow<PagingData<AnimeEpisode>> = _animeEpisodes
 
     private val _animeEpisodesState = MutableStateFlow<UiState<List<AnimeEpisode>>>(UiState.Loading()) // Changed to Episode
     val animeEpisodesState: StateFlow<UiState<List<AnimeEpisode>>> = _animeEpisodesState
@@ -100,25 +105,12 @@ class AnimeDetailViewModel @Inject constructor(
     }
 
     private fun getAnimeEpisodes(animeId: Int) {
-        getAnimeEpisodesUseCase(animeId).onEach { result ->
-            when (result) {
-                is Resource.Loading -> {
-                    _animeEpisodesState.value = UiState.Loading()
-                }
-                is Resource.Success -> {
-                    _animeEpisodesState.value = result.data.let {
-                        UiState.Success(it)
-                    }
-                }
-                is Resource.Error -> {
-                    _animeEpisodesState.value = UiState.Error(
-                        message = result.message,
-                        data = result.data,
-                        
-                    )
-                }
+        getAnimeEpisodesUseCase(animeId)
+            .cachedIn(viewModelScope) // Required to cache paging across recompositions
+            .onEach { pagingData ->
+                _animeEpisodes.value = pagingData
             }
-        }.launchIn(viewModelScope)
+            .launchIn(viewModelScope)
     }
 
     private fun getCharacters(animeId: Int) {

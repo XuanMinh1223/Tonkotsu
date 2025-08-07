@@ -8,6 +8,8 @@ junit = "4.13.2"
 junitVersion = "1.2.1"
 materialIconsExtended = "1.7.8"
 minSdk = "26"
+pagingCompose = "3.3.6"
+pagingRuntime = "3.3.6"
 targetSdk = "35"
 # ALIGNMENT POINT 1: Update Kotlin to a version compatible with newer Compose Compiler
 kotlin = "1.9.23" # Updated to 1.9.23 for better compatibility with 1.5.12 Compose Compiler
@@ -63,6 +65,8 @@ lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtim
 activity-compose = { group = "androidx.activity", name = "activity-compose" } # Removed version.ref, managed by BOM
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
+paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
+paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "pagingRuntime" }
 ui = { group = "androidx.compose.ui", name = "ui" } # Managed by BOM
 ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" } # Managed by BOM
 ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" } # Managed by BOM
