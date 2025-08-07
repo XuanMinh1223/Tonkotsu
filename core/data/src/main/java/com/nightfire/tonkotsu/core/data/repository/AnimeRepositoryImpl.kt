@@ -7,6 +7,8 @@ import com.nightfire.tonkotsu.core.common.Resource
 import com.nightfire.tonkotsu.core.common.networkBoundResourceFlow
 import com.nightfire.tonkotsu.core.data.remote.api.JikanApi
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeDetailResponse
+import com.nightfire.tonkotsu.core.data.remote.dto.AnimeEpisodeDetailDto
+import com.nightfire.tonkotsu.core.data.remote.dto.AnimeEpisodeDetailResponseDto
 import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeEpisodesResponse
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeReviewsResponseDto
@@ -17,12 +19,14 @@ import com.nightfire.tonkotsu.core.data.remote.dto.RecommendationResponseDto
 import com.nightfire.tonkotsu.core.data.remote.dto.TopAnimeResponse
 import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeDetail
 import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeEpisode
+import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeEpisodeDetail
 import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeOverview
 import com.nightfire.tonkotsu.core.data.remote.dto.toAnimeReview
 import com.nightfire.tonkotsu.core.data.remote.dto.toCharacter
 import com.nightfire.tonkotsu.core.data.remote.dto.toImage
 import com.nightfire.tonkotsu.core.data.remote.dto.toRecommendation
 import com.nightfire.tonkotsu.core.data.remote.dto.toVideoList
+import com.nightfire.tonkotsu.core.domain.model.AnimeEpisodeDetail
 import com.nightfire.tonkotsu.core.domain.model.AnimeReview
 import com.nightfire.tonkotsu.core.domain.model.Character
 import com.nightfire.tonkotsu.core.domain.model.Image
@@ -125,4 +129,18 @@ class AnimeRepositoryImpl @Inject constructor(
         )
     }
 
+    override fun getAnimeEpisodeDetail(
+        animeId: Int,
+        episodeId: Int
+    ): Flow<Resource<AnimeEpisodeDetail>> {
+        return networkBoundResourceFlow(
+            apiCall = { api.getAnimeEpisodeDetail(
+                malId = animeId,
+                episodeId = episodeId
+            ) },
+            mapper = { dto: AnimeEpisodeDetailResponseDto ->
+                dto.data.toAnimeEpisodeDetail()
+            },
+        )
+    }
 }

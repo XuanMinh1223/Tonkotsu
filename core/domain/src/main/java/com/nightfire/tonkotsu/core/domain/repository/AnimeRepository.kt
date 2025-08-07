@@ -5,6 +5,7 @@ import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 import com.nightfire.tonkotsu.core.common.Resource // We'll define this common class next
 import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
 import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
+import com.nightfire.tonkotsu.core.domain.model.AnimeEpisodeDetail
 import com.nightfire.tonkotsu.core.domain.model.AnimeReview
 import com.nightfire.tonkotsu.core.domain.model.Character
 import com.nightfire.tonkotsu.core.domain.model.Image
@@ -78,5 +79,10 @@ interface AnimeRepository {
     fun getAnimeRecommendations(
         animeId: Int
     ): Flow<Resource<List<Recommendation>>>
+
+    fun getAnimeEpisodeDetail(
+        animeId: Int,
+        episodeId: Int
+    ): Flow<Resource<AnimeEpisodeDetail>>
 
 }
