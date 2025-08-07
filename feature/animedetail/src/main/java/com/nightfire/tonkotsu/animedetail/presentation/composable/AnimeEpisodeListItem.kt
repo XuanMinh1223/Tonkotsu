@@ -9,11 +9,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.Locale
 
 @Composable
@@ -65,10 +69,20 @@ fun EpisodeListItem(
             }
         }
 
-        // Aired date
-        episode.airedDate?.let { date ->
+        val outputFormatter = DateTimeFormatter.ofPattern("MMMM d, yyyy")
+
+        val formattedDate = remember(episode.airedDate) {
+            try {
+                episode.airedDate?.format(outputFormatter)
+            } catch (e: DateTimeParseException) {
+                println("Error formatting date: ${episode.airedDate}, ${e.message}")
+                null
+            }
+        }
+
+        formattedDate?.let {
             Text(
-                text = "Aired: ${date}",
+                text = "Aired: $it",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 4.dp)
@@ -87,7 +101,10 @@ fun EpisodeListItem(
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onErrorContainer,
                     modifier = Modifier
-                        .background(MaterialTheme.colorScheme.errorContainer, MaterialTheme.shapes.small)
+                        .background(
+                            MaterialTheme.colorScheme.errorContainer,
+                            MaterialTheme.shapes.small
+                        )
                         .padding(horizontal = 6.dp, vertical = 2.dp)
                 )
             }
@@ -97,7 +114,10 @@ fun EpisodeListItem(
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSecondaryContainer,
                     modifier = Modifier
-                        .background(MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.shapes.small)
+                        .background(
+                            MaterialTheme.colorScheme.secondaryContainer,
+                            MaterialTheme.shapes.small
+                        )
                         .padding(horizontal = 6.dp, vertical = 2.dp)
                 )
             }

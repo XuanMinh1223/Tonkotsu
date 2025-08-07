@@ -4,13 +4,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material3.Button
@@ -31,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.nightfire.tonkotsu.animedetail.presentation.composable.EpisodeListItem
 import com.nightfire.tonkotsu.core.common.UiState // Import the sealed UiState
 import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
+import com.nightfire.tonkotsu.ui.shimmerEffect
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
@@ -50,18 +55,26 @@ fun AnimeEpisodesList(
 
         when (uiState) { // Use 'when' with the sealed UiState
             is UiState.Loading -> {
-                Box(
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(100.dp), // Give it a fixed height for loading indicator
-                    contentAlignment = Alignment.Center
+                        .height(300.dp)
+                        .shadow(2.dp, MaterialTheme.shapes.medium)
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(MaterialTheme.colorScheme.surfaceVariant),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    CircularProgressIndicator(modifier = Modifier.size(40.dp))
+                    items(5) { // Show 5 skeleton items
+                        EpisodeListItemSkeleton(modifier = Modifier.padding(horizontal = 8.dp))
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                    }
                 }
             }
             is UiState.Success -> {
                 val episodes = uiState.data // 'data' is directly accessible and non-null here
-                if (episodes.isNullOrEmpty()) { // Check if the list itself is empty
+                if (episodes.isEmpty()) { // Check if the list itself is empty
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -126,6 +139,35 @@ fun AnimeEpisodesList(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun EpisodeListItemSkeleton(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp, horizontal = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Episode number circle placeholder
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .shimmerEffect()
+        )
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        // Episode title placeholder
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .height(16.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .shimmerEffect()
+        )
     }
 }
 

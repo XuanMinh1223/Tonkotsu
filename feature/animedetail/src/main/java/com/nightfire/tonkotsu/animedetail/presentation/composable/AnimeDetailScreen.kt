@@ -224,9 +224,7 @@ fun AnimeDetailScreenContent(
                                 }
                             }
                         }
-                        Spacer(Modifier.height(16.dp)) // Add spacing after stats
                         anime.trailerYoutubeId?.let { youtubeId ->
-                            AppHorizontalDivider()
                             Spacer(Modifier.height(16.dp))
                             Button(
                                 onClick = {
@@ -246,7 +244,6 @@ fun AnimeDetailScreenContent(
                             }
                             Spacer(Modifier.height(16.dp))
                         }
-                        AppHorizontalDivider()
                         // --- 3. Key Info ---
                         AnimeKeyInfo(anime = anime)
                         Spacer(Modifier.height(16.dp)) // Add spacing after key info
@@ -322,9 +319,9 @@ fun AnimeDetailScreenContent(
                         AppHorizontalDivider()
 
                         // Anime Episodes List
-                        if (animeDetailState.data.type == "TV") {
+                        if (animeDetailState.data.type?.lowercase() != "movie") {
                             AnimeEpisodesList(animeEpisodesState)
-                            Spacer(Modifier.height(16.dp)) // Add spacing after episodes list
+                            Spacer(Modifier.height(16.dp))
                             AppHorizontalDivider()
                         }
                         // Character List Section

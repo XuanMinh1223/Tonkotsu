@@ -23,8 +23,9 @@ fun AnimeKeyInfo(anime: AnimeDetail) {
         }
         anime.endDate?.let { endDate ->
             val endLabel = if (endDate.isAfter(today)) "Ends:" else "Ended:"
-
-            InfoRow(label = endLabel, value = endDate.toString())
+            val customFormatter = DateTimeFormatter.ofPattern("MMMM d, yyyy") // e.g., "April 1, 2023"
+            val formattedEndDate = endDate.format(customFormatter)
+            InfoRow(label = endLabel, value = formattedEndDate)
         }
         anime.broadcast?.let {
             InfoRow(label = "Broadcast time:", value = it)
