@@ -207,16 +207,16 @@ fun AnimeDetailScreenContent(
                             uiState = animeVideosState,
                             onVideoClick = { clickedVideo, index -> // Now receives Video and Int
                                 (animeVideosState as? UiState.Success)?.data?.let { videosList ->
-                                    if (videosList.size == 1) {
+                                    overlayContent = if (videosList.size == 1) {
                                         // If there's only one video in the list, open it directly
-                                        overlayContent = OverlayContent.VideoFullScreen(
+                                        OverlayContent.VideoFullScreen(
                                             videos = listOf(clickedVideo), // Still pass as a list of one
                                             initialIndex = 0,
                                             title = anime.title // Use anime title or clickedVideo.title if available
                                         )
                                     } else {
                                         // If multiple videos, open the gallery
-                                        overlayContent = OverlayContent.VideoFullScreen(
+                                        OverlayContent.VideoFullScreen(
                                             videos = videosList, // Pass the full list
                                             initialIndex = index, // Pass the clicked index
                                             title = anime.title // Use anime title or a gallery title
@@ -282,87 +282,14 @@ fun AnimeDetailScreenContent(
                             ExternalUrlSection(links, modifier = Modifier.padding(top = 8.dp, bottom = 16.dp))
                         }
 
-
                         // --- 7. Themes (Opening/Ending) ---
-                        anime.openingThemes.takeIf { it.isNotEmpty() }?.let { themes ->
-                            AppHorizontalDivider()
-                            Spacer(Modifier.height(8.dp))
-                            Text(
-                                text = "Opening Themes:",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Spacer(Modifier.height(4.dp))
-                            Column(modifier = Modifier.fillMaxWidth()) {
-                                themes.forEach { theme ->
-                                    Text(text = "• $theme", style = MaterialTheme.typography.bodyMedium)
-                                }
-                            }
-                            Spacer(Modifier.height(16.dp)) // Add spacing after opening themes
-                        }
-
-                        anime.endingThemes.takeIf { it.isNotEmpty() }?.let { themes ->
-                            Text(
-                                text = "Ending Themes:",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Spacer(Modifier.height(4.dp))
-                            Column(modifier = Modifier.fillMaxWidth()) {
-                                themes.forEach { theme ->
-                                    Text(text = "• $theme", style = MaterialTheme.typography.bodyMedium)
-                                }
-                            }
-                            Spacer(Modifier.height(16.dp)) // Add spacing after ending themes
-                        }
+                        AnimeThemesSection(anime = anime)
 
                         // --- 8. Relations (Basic Display) ---
-                        anime.relations.takeIf { it.isNotEmpty() }?.let { relationsMap ->
-                            AppHorizontalDivider()
-                            Spacer(Modifier.height(16.dp)) // Add spacing after divider
-                            Text(
-                                text = "Relations:",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Spacer(Modifier.height(4.dp))
-                            Column(modifier = Modifier.fillMaxWidth()) {
-                                relationsMap.forEach { (type, entries) ->
-                                    Text(
-                                        text = "$type:",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.SemiBold,
-                                        modifier = Modifier.padding(start = 8.dp)
-                                    )
-                                    entries.forEach { entry ->
-                                        // Make the entry name clickable
-                                        Text(
-                                            text = "• ${entry.name}",
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.primary, // Make text color distinct
-                                            modifier = Modifier
-                                                .padding(start = 16.dp)
-                                                .clickable {
-                                                    onRelationClick(entry)
-                                                }
-                                        )
-                                    }
-                                    Spacer(Modifier.height(4.dp))
-                                }
-                            }
-                            anime.externalLinks.takeIf { it.isNotEmpty() }?.let {
-                                Spacer(Modifier.height(16.dp)) // Add spacing before External Links divider
-                                AppHorizontalDivider()
-                                Spacer(Modifier.height(16.dp)) // Add spacing after divider
-                                Text(
-                                    text = "External Links:",
-                                    style = MaterialTheme.typography.titleLarge,
-                                    fontWeight = FontWeight.SemiBold,
-                                )
-                                ExternalUrlSection(navigableLinks = it, modifier = Modifier.padding(top = 8.dp, bottom = 16.dp))
-                            }
-                            Spacer(Modifier.height(16.dp))
-                        }
+                        AnimeRelationsSection(
+                            anime = anime,
+                            onRelationClick = onRelationClick,
+                        )
                     }
                     Spacer(Modifier.height(16.dp)) // Final bottom padding for the entire scrollable Column
                 }
