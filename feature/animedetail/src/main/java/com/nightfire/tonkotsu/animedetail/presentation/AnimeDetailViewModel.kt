@@ -22,9 +22,12 @@ import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeRecommendationsUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeReviewsUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeVideosUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -39,6 +42,9 @@ class AnimeDetailViewModel @Inject constructor(
     private val getAnimeReviewsUseCase: GetAnimeReviewsUseCase,
     private val getAnimeRecommendationsUseCase: GetAnimeRecommendationsUseCase,
 ) : ViewModel() {
+
+    private val _animeId = MutableStateFlow<Int?>(null)
+    val animeId: StateFlow<Int?> = _animeId
 
     // Initialize with UiState.Loading() for each state flow
     private val _animeDetailState = MutableStateFlow<UiState<AnimeDetail>>(UiState.Loading())
@@ -59,7 +65,20 @@ class AnimeDetailViewModel @Inject constructor(
     private val _animeRecommendationsState = MutableStateFlow<UiState<List<Recommendation>>>(UiState.Loading())
     val animeRecommendationsState : StateFlow<UiState<List<Recommendation>>> = _animeRecommendationsState
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val animeEpisodes: Flow<PagingData<AnimeEpisode>> = _animeId
+        .filterNotNull()
+        .flatMapLatest { id ->
+            getAnimeEpisodesUseCase(id)
+        }
+        .cachedIn(viewModelScope)
+
+    private fun setAnimeId(id: Int) {
+        _animeId.value = id
+    }
+
     fun getAnimeDetail(id: Int) {
+        setAnimeId(id)
         getAnimeDetailUseCase(id).onEach { result ->
             when (result) {
                 is Resource.Loading -> {

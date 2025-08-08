@@ -68,9 +68,7 @@ fun AnimeDetailScreen(
     val animeReviewsState by viewModel.animeReviewsState.collectAsState()
     val animeRecommendationState by viewModel.animeRecommendationsState.collectAsState()
 
-    val animeEpisodes = remember(malId) {
-        viewModel.getAnimeEpisodes(malId)
-    }.collectAsLazyPagingItems()
+    val animeEpisodes = viewModel.animeEpisodes.collectAsLazyPagingItems()
 
     LaunchedEffect(key1 = malId) {
         viewModel.getAnimeDetail(malId)
