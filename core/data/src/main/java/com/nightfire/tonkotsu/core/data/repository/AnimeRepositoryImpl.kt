@@ -83,7 +83,8 @@ class AnimeRepositoryImpl @Inject constructor(
         return Pager(
             config = PagingConfig(
                 pageSize = 100,
-                enablePlaceholders = false
+                enablePlaceholders = false,
+                prefetchDistance = 2
             ),
             pagingSourceFactory = {
                 AnimeEpisodesPagingSource(api, id)

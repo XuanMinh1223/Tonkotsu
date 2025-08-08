@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.itemKey
 import com.nightfire.tonkotsu.animedetail.presentation.composable.EpisodeListItem
 import com.nightfire.tonkotsu.core.common.UiState // Import the sealed UiState
 import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
@@ -64,7 +65,10 @@ fun AnimeEpisodesList(
                 .background(MaterialTheme.colorScheme.surfaceVariant),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            items(animeEpisodes.itemCount) { index ->
+            items(
+                animeEpisodes.itemCount,
+                animeEpisodes.itemKey { it.malId }
+            ) { index ->
                 val episode = animeEpisodes[index]
                 if (episode != null) {
                     EpisodeListItem(
