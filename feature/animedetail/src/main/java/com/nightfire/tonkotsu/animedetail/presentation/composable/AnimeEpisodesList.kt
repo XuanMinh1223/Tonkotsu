@@ -83,8 +83,8 @@ fun AnimeEpisodesList(
 
             animeEpisodes.apply {
                 when {
-                    loadState.refresh is LoadState.Loading -> item { PagingLoadingItem() }
-                    loadState.append is LoadState.Loading -> item { PagingLoadingItem() }
+                    loadState.refresh is LoadState.Loading -> item { EpisodeSkeletonItem() }
+                    loadState.append is LoadState.Loading -> item { EpisodeSkeletonItem() }
                     loadState.refresh is LoadState.Error -> {
                         val e = loadState.refresh as LoadState.Error
                         item { PagingErrorItem(e.error) }
@@ -99,14 +99,42 @@ fun AnimeEpisodesList(
 }
 
 @Composable
-fun PagingLoadingItem() {
-    Box(
-        modifier = Modifier
+fun EpisodeSkeletonItem(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
-        contentAlignment = Alignment.Center
+            .height(72.dp)
+            .background(
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                shape = MaterialTheme.shapes.medium
+            )
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        CircularProgressIndicator()
+        Box(
+            modifier = Modifier
+                .size(56.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .shimmerEffect() // Custom modifier, see below
+        )
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .height(16.dp)
+                    .shimmerEffect()
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .height(12.dp)
+                    .shimmerEffect()
+            )
+        }
     }
 }
 
