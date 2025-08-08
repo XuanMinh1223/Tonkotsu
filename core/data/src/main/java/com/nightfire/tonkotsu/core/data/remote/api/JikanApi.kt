@@ -60,7 +60,7 @@ interface JikanApi {
     @GET("anime/{id}/episodes")
     suspend fun getAnimeEpisodes(
         @Path("id") malId: Int,
-        @Path("page") page: Int? = 1
+        @Query("page") page: Int? = 1
     ): Response<AnimeEpisodesResponse>
 
     @GET("anime/{id}/characters")

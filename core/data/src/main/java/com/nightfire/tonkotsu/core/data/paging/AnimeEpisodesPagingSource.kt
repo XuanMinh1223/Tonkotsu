@@ -14,13 +14,14 @@ class AnimeEpisodesPagingSource(
         val page = params.key ?: 1
         return try {
             val response = api.getAnimeEpisodes(animeId, page)
-            val episodes = response.body()?.data?.run {
-                this.map { it.toAnimeEpisode() }
-            } ?: emptyList()
+            val responseBody = response.body()
+            val episodes = responseBody?.data?.map { it.toAnimeEpisode() } ?: emptyList()
+            val hasNextPage = responseBody?.pagination?.hasNextPage ?: false
+
             LoadResult.Page(
                 data = episodes,
                 prevKey = if (page == 1) null else page - 1,
-                nextKey = if (episodes.isEmpty()) null else page + 1
+                nextKey = if (hasNextPage) page + 1 else null
             )
         } catch (e: Exception) {
             LoadResult.Error(e)
@@ -28,6 +29,9 @@ class AnimeEpisodesPagingSource(
     }
 
     override fun getRefreshKey(state: PagingState<Int, AnimeEpisode>): Int? {
-        return state.anchorPosition
+        return state.anchorPosition?.let { anchorPosition ->
+            state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
+                ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
+        }
     }
 }

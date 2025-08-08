@@ -22,6 +22,7 @@ import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeRecommendationsUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeReviewsUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeVideosUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -42,12 +43,6 @@ class AnimeDetailViewModel @Inject constructor(
     // Initialize with UiState.Loading() for each state flow
     private val _animeDetailState = MutableStateFlow<UiState<AnimeDetail>>(UiState.Loading())
     val animeDetailState : StateFlow<UiState<AnimeDetail>> = _animeDetailState
-
-    private val _animeEpisodes = MutableStateFlow<PagingData<AnimeEpisode>>(PagingData.empty())
-    val animeEpisodes : StateFlow<PagingData<AnimeEpisode>> = _animeEpisodes
-
-    private val _animeEpisodesState = MutableStateFlow<UiState<List<AnimeEpisode>>>(UiState.Loading()) // Changed to Episode
-    val animeEpisodesState: StateFlow<UiState<List<AnimeEpisode>>> = _animeEpisodesState
 
     private val _animeCharactersState = MutableStateFlow<UiState<List<Character>>>(UiState.Loading())
     val animeCharactersState: StateFlow<UiState<List<Character>>> = _animeCharactersState
@@ -104,13 +99,9 @@ class AnimeDetailViewModel @Inject constructor(
         getAnimeDetail(id = malId)
     }
 
-    private fun getAnimeEpisodes(animeId: Int) {
-        getAnimeEpisodesUseCase(animeId)
-            .cachedIn(viewModelScope) // Required to cache paging across recompositions
-            .onEach { pagingData ->
-                _animeEpisodes.value = pagingData
-            }
-            .launchIn(viewModelScope)
+    fun getAnimeEpisodes(animeId: Int): Flow<PagingData<AnimeEpisode>> {
+        return getAnimeEpisodesUseCase(animeId)
+            .cachedIn(viewModelScope)
     }
 
     private fun getCharacters(animeId: Int) {

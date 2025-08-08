@@ -32,6 +32,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import com.nightfire.tonkotsu.animedetail.presentation.composable.EpisodeListItem
 import com.nightfire.tonkotsu.core.common.UiState // Import the sealed UiState
 import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
@@ -43,7 +45,7 @@ import java.time.ZoneOffset
 
 @Composable
 fun AnimeEpisodesList(
-    uiState: UiState<List<AnimeEpisode>>, // Changed from AnimeEpisode to Episode
+    animeEpisodes: LazyPagingItems<AnimeEpisode>, // Changed from AnimeEpisode to Episode
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -53,221 +55,65 @@ fun AnimeEpisodesList(
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(bottom = 8.dp)
         )
-
-        when (uiState) { // Use 'when' with the sealed UiState
-            is UiState.Loading -> {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp)
-                        .shadow(2.dp, MaterialTheme.shapes.medium)
-                        .clip(MaterialTheme.shapes.medium)
-                        .background(MaterialTheme.colorScheme.surfaceVariant),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    items(5) { // Show 5 skeleton items
-                        EpisodeListItemSkeleton(modifier = Modifier.padding(horizontal = 8.dp))
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.outline
-                        )
-                    }
-                }
-            }
-            is UiState.Success -> {
-                val episodes = uiState.data // 'data' is directly accessible and non-null here
-                if (episodes.isEmpty()) { // Check if the list itself is empty
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(100.dp) // Consistent height for empty state
-                            .padding(vertical = 16.dp)
-                            .clip(MaterialTheme.shapes.medium)
-                            .background(MaterialTheme.colorScheme.surfaceVariant),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.List,
-                                contentDescription = "No episodes icon",
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.size(32.dp)
-                            )
-                            Spacer(Modifier.height(8.dp))
-                            Text(
-                                text = "No episodes found for this anime.",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(horizontal = 16.dp)
-                            )
-                        }
-                    }
-                } else {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(300.dp) // Fixed height for the scrollable list
-                            .shadow(2.dp, MaterialTheme.shapes.medium)
-                            .clip(MaterialTheme.shapes.medium)
-                            .background(MaterialTheme.colorScheme.surfaceVariant),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        items(episodes) { episode -> // Iterate directly over episode objects
-                            EpisodeListItem(
-                                modifier = Modifier.padding(horizontal = 8.dp),
-                                episode = episode,
-                            )
-                            HorizontalDivider(
-                                color = MaterialTheme.colorScheme.outline
-                            )
-                        }
-                    }
-                }
-            }
-            is UiState.Error -> {
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = uiState.message, // 'message' is directly accessible
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(bottom = 4.dp)
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp)
+                .shadow(2.dp, MaterialTheme.shapes.medium)
+                .clip(MaterialTheme.shapes.medium)
+                .background(MaterialTheme.colorScheme.surfaceVariant),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            items(animeEpisodes.itemCount) { index ->
+                val episode = animeEpisodes[index]
+                if (episode != null) {
+                    EpisodeListItem(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        episode = episode,
                     )
-                    Button(onClick = { /* ViewModel.retryFetchEpisodes() */ }) { // You'd need a retry function in ViewModel
-                        Text("Try Again")
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                }
+            }
+
+            animeEpisodes.apply {
+                when {
+                    loadState.refresh is LoadState.Loading -> item { PagingLoadingItem() }
+                    loadState.append is LoadState.Loading -> item { PagingLoadingItem() }
+                    loadState.refresh is LoadState.Error -> {
+                        val e = loadState.refresh as LoadState.Error
+                        item { PagingErrorItem(e.error) }
                     }
                 }
             }
         }
+
         Spacer(Modifier.height(16.dp))
         AppHorizontalDivider()
     }
 }
 
 @Composable
-fun EpisodeListItemSkeleton(modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier
+fun PagingLoadingItem() {
+    Box(
+        modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp, horizontal = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
     ) {
-        // Episode number circle placeholder
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .shimmerEffect()
-        )
-
-        Spacer(modifier = Modifier.width(12.dp))
-
-        // Episode title placeholder
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .height(16.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .shimmerEffect()
-        )
+        CircularProgressIndicator()
     }
 }
 
-// --- Previews ---
-
-@Preview(showBackground = true, widthDp = 360, heightDp = 500)
 @Composable
-fun EpisodeListSectionSuccessPreview() {
-    val mockEpisodes = listOf(
-        AnimeEpisode( // Changed from AnimeEpisode to Episode
-            malId = 1,
-            title = "The Journey Begins",
-            titleJapanese = "旅の始まり",
-            titleRomanji = "Tabi no Hajimari",
-            airedDate = OffsetDateTime.of(2023, 10, 6, 0, 0, 0, 0, ZoneOffset.UTC), 
-            score = 8.5,
-            isFiller = false,
-            isRecap = false,
-            episodeUrl = null,
-            forumUrl = null
-        ),
-        AnimeEpisode( // Changed from AnimeEpisode to Episode
-            malId = 2,
-            title = "Forest of Whispers",
-            titleJapanese = "ささやきの森",
-            titleRomanji = "Sasayaki no Mori",
-            airedDate = OffsetDateTime.of(2023, 10, 6, 0, 0, 0, 0, ZoneOffset.UTC), 
-            score = 8.2,
-            isFiller = true,
-            isRecap = false,
-            episodeUrl = null,
-            forumUrl = null
-        ),
-        AnimeEpisode( // Changed from AnimeEpisode to Episode
-            malId = 3,
-            title = "Memory of a Hero",
-            titleJapanese = "英雄の記憶",
-            titleRomanji = "Eiyuu no Kioku",
-            airedDate = OffsetDateTime.of(2023, 10, 6, 0, 0, 0, 0, ZoneOffset.UTC), 
-            score = 8.7,
-            isFiller = false,
-            isRecap = true,
-            episodeUrl = null,
-            forumUrl = null
-        ),
-        AnimeEpisode( // Changed from AnimeEpisode to Episode
-            malId = 4,
-            title = "New Companions",
-            titleJapanese = "新たな仲間",
-            titleRomanji = "Arata na Nakama",
-            airedDate = OffsetDateTime.of(2023, 10, 6, 0, 0, 0, 0, ZoneOffset.UTC), 
-            score = 8.9,
-            isFiller = false,
-            isRecap = false,
-            episodeUrl = null,
-            forumUrl = null
-        ),
-        AnimeEpisode( // Changed from AnimeEpisode to Episode
-            malId = 5,
-            title = "Clash of Fate",
-            titleJapanese = "運命の衝突",
-            titleRomanji = "Unmei no Shoutotsu",
-            airedDate = OffsetDateTime.of(2023, 10, 6, 0, 0, 0, 0, ZoneOffset.UTC), 
-            score = 9.0,
-            isFiller = false,
-            isRecap = false,
-            episodeUrl = null,
-            forumUrl = null
-        )
-    )
-
-    MaterialTheme {
-        Surface {
-            AnimeEpisodesList(
-                uiState = UiState.Success(mockEpisodes) // Updated constructor
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true, widthDp = 360, heightDp = 200)
-@Composable
-fun EpisodeListSectionLoadingPreview() {
-    MaterialTheme {
-        Surface {
-            AnimeEpisodesList(uiState = UiState.Loading()) // Updated constructor
-        }
-    }
-}
-
-@Preview(showBackground = true, widthDp = 360, heightDp = 200)
-@Composable
-fun EpisodeListSectionErrorPreview() {
-    MaterialTheme {
-        Surface {
-            // Updated to reflect the new UiState.Error constructor
-            AnimeEpisodesList(uiState = UiState.Error("Failed to fetch episodes. Please try again.",))
-        }
+fun PagingErrorItem(error: Throwable?) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text("Error: ${error?.message ?: "Unknown error"}")
     }
 }
