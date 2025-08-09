@@ -75,7 +75,7 @@ interface AnimeRepository {
 
     fun getAnimeReviews(
         id: Int
-    ): Flow<Resource<List<AnimeReview>>>
+    ): Flow<PagingData<AnimeReview>>
 
     fun getAnimeRecommendations(
         animeId: Int

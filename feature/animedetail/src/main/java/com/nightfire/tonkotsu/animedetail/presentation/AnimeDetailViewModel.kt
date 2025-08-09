@@ -73,6 +73,14 @@ class AnimeDetailViewModel @Inject constructor(
         }
         .cachedIn(viewModelScope)
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val animeReviews: Flow<PagingData<AnimeReview>> = _animeId
+        .filterNotNull()
+        .flatMapLatest { id ->
+            getAnimeReviewsUseCase(id)
+        }
+        .cachedIn(viewModelScope)
+
     private fun setAnimeId(id: Int) {
         _animeId.value = id
     }
@@ -91,11 +99,9 @@ class AnimeDetailViewModel @Inject constructor(
                         UiState.Success(it)
                     }
 
-                    getAnimeEpisodes(id)
                     getCharacters(id)
                     getImages(id)
                     getVideos(id)
-                    getReviews(id)
                     getRecommendations(id)
                 }
                 is Resource.Error -> {
@@ -116,11 +122,6 @@ class AnimeDetailViewModel @Inject constructor(
 
     fun onRecommendationClick(malId: Int) {
         getAnimeDetail(id = malId)
-    }
-
-    fun getAnimeEpisodes(animeId: Int): Flow<PagingData<AnimeEpisode>> {
-        return getAnimeEpisodesUseCase(animeId)
-            .cachedIn(viewModelScope)
     }
 
     private fun getCharacters(animeId: Int) {
@@ -180,28 +181,6 @@ class AnimeDetailViewModel @Inject constructor(
                 }
                 is Resource.Error -> {
                     _animeVideosState.value = UiState.Error(
-                        message = result.message,
-                        data = result.data,
-                        
-                    )
-                }
-            }
-        }.launchIn(viewModelScope)
-    }
-
-    private fun getReviews(animeId: Int) {
-        getAnimeReviewsUseCase(animeId).onEach { result ->
-            when (result) {
-                is Resource.Loading -> {
-                    _animeReviewsState.value = UiState.Loading()
-                }
-
-                is Resource.Success -> {
-                    _animeReviewsState.value = UiState.Success(result.data)
-                }
-
-                is Resource.Error -> {
-                    _animeReviewsState.value = UiState.Error(
                         message = result.message,
                         data = result.data,
                         

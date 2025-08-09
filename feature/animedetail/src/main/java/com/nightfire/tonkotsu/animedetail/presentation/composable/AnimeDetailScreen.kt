@@ -25,7 +25,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -65,10 +64,10 @@ fun AnimeDetailScreen(
     val animeCharactersState by viewModel.animeCharactersState.collectAsState()
     val animeImagesState by viewModel.animeImagesState.collectAsState()
     val animeVideosState by viewModel.animeVideosState.collectAsState()
-    val animeReviewsState by viewModel.animeReviewsState.collectAsState()
     val animeRecommendationState by viewModel.animeRecommendationsState.collectAsState()
 
     val animeEpisodes = viewModel.animeEpisodes.collectAsLazyPagingItems()
+    val animeReviews = viewModel.animeReviews.collectAsLazyPagingItems()
 
     LaunchedEffect(key1 = malId) {
         viewModel.getAnimeDetail(malId)
@@ -80,7 +79,7 @@ fun AnimeDetailScreen(
             animeCharactersState = animeCharactersState,
             animeImagesState = animeImagesState,
             animeVideosState = animeVideosState,
-            animeReviewsState = animeReviewsState,
+            animeReviews = animeReviews,
             animeRecommendationState = animeRecommendationState,
             onRecommendationClick = viewModel::onRecommendationClick,
             onRelationClick = viewModel::onRelationClick,
@@ -97,7 +96,7 @@ fun AnimeDetailScreenContent(
     animeCharactersState: UiState<List<Character>>,
     animeImagesState: UiState<List<Image>>,
     animeVideosState: UiState<List<Video>>,
-    animeReviewsState: UiState<List<AnimeReview>>,
+    animeReviews: LazyPagingItems<AnimeReview>,
     animeRecommendationState: UiState<List<Recommendation>>,
     modifier: Modifier = Modifier,
     onGenreClick: (String) -> Unit = {},
@@ -243,15 +242,7 @@ fun AnimeDetailScreenContent(
                         Spacer(Modifier.height(16.dp)) // Add spacing after character list
                         AppHorizontalDivider()
                         AnimeReviewList(
-                            uiState = animeReviewsState,
-                            onReviewClick = { clickedReview, index ->
-                                (animeReviewsState as? UiState.Success)?.data?.let { reviewsList ->
-                                    overlayContent = OverlayContent.ReviewFullScreen(
-                                        reviews = reviewsList,
-                                        initialIndex = index
-                                    )
-                                }
-                            }
+                            reviews = animeReviews,
                         )
 
                         RecommendationList(
