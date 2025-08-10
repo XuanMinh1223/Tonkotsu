@@ -13,21 +13,10 @@ sealed class OverlayContent {
      */
     data class ImageGalleryFullScreen(val images: List<Image>, val initialIndex: Int) : OverlayContent()
 
-    /**
-     * Content for displaying a video, typically embedded.
-     * @param video The Video domain model.
-     * @param title An optional title for the video.
-     */
     data class VideoFullScreen(val videos: List<Video>, val title: String?,  val initialIndex: Int = 0) : OverlayContent()
 
-    /**
-     * Content for displaying a gallery of reviews with navigation.
-     * @param reviews The list of ReviewData models in the gallery.
-     * @param initialIndex The index of the review that was initially clicked.
-     */
     data class ReviewFullScreen(
-        val reviews: List<AnimeReview>,
-        val initialIndex: Int
+        val review: AnimeReview,
     ) : OverlayContent()
 
 }

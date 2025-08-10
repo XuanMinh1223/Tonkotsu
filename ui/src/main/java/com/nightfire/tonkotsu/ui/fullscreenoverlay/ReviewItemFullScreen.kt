@@ -43,10 +43,9 @@ import java.time.format.FormatStyle
 @Composable
 fun ReviewItemFullScreen(
     content: OverlayContent.ReviewFullScreen, // Changed parameter type
-    currentPage: Int, // New parameter to indicate which review to display
     modifier: Modifier = Modifier,
 ) {
-    val review = content.reviews[currentPage] // Get the current review from the list
+    val review = content.review
     val context = LocalContext.current
     val dateFormatter = remember { DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM) }
 

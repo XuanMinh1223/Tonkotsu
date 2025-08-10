@@ -33,7 +33,7 @@ fun AnimeReviewList(
     reviews: LazyPagingItems<AnimeReview>,
     modifier: Modifier = Modifier,
     rowHeight: Dp = 220.dp,
-    onReviewClick: (AnimeReview, Int) -> Unit = { _, _ -> },
+    onReviewClick: (AnimeReview) -> Unit = { _ -> },
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         // Section title
@@ -99,7 +99,7 @@ fun AnimeReviewList(
                                 modifier = Modifier
                                     .fillMaxHeight()
                                     .clickable {
-                                        onReviewClick(review, index)
+                                        onReviewClick(review)
                                     }
                             )
                         }

@@ -243,6 +243,11 @@ fun AnimeDetailScreenContent(
                         AppHorizontalDivider()
                         AnimeReviewList(
                             reviews = animeReviews,
+                            onReviewClick = {
+                                overlayContent = OverlayContent.ReviewFullScreen(
+                                    review = it
+                                )
+                            }
                         )
 
                         RecommendationList(
