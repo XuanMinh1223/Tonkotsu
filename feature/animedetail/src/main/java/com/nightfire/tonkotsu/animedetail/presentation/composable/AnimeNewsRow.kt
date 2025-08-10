@@ -101,7 +101,7 @@ fun AnimeNewsRow(
                         .fillMaxWidth()
                         .height(rowHeight),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(horizontal = 16.dp)
+                    contentPadding = PaddingValues(horizontal = 8.dp)
                 ) {
                     items(news.itemCount) { index ->
                         news[index]?.let { news ->
