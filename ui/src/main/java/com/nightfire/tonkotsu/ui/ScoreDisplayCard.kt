@@ -21,7 +21,6 @@ import java.util.Locale
 
 @Composable
 fun ScoreDisplayCard(score: Double?, scoredBy: Int?) {
-    // Removed the 'return' check here. The card will always be displayed.
 
     ElevatedCard(
         modifier = Modifier
