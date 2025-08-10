@@ -41,6 +41,7 @@ import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
 import com.nightfire.tonkotsu.core.domain.model.AnimeReview
 import com.nightfire.tonkotsu.core.domain.model.Character
 import com.nightfire.tonkotsu.core.domain.model.Image
+import com.nightfire.tonkotsu.core.domain.model.News
 import com.nightfire.tonkotsu.core.domain.model.Recommendation
 import com.nightfire.tonkotsu.core.domain.model.RelationEntry
 import com.nightfire.tonkotsu.core.domain.model.Video
@@ -68,6 +69,7 @@ fun AnimeDetailScreen(
 
     val animeEpisodes = viewModel.animeEpisodes.collectAsLazyPagingItems()
     val animeReviews = viewModel.animeReviews.collectAsLazyPagingItems()
+    val animeNews = viewModel.animeNews.collectAsLazyPagingItems()
 
     LaunchedEffect(key1 = malId) {
         viewModel.getAnimeDetail(malId)
@@ -81,6 +83,7 @@ fun AnimeDetailScreen(
             animeVideosState = animeVideosState,
             animeReviews = animeReviews,
             animeRecommendationState = animeRecommendationState,
+            animeNews = animeNews,
             onRecommendationClick = viewModel::onRecommendationClick,
             onRelationClick = viewModel::onRelationClick,
             modifier = Modifier.padding(innerPadding)
@@ -98,6 +101,7 @@ fun AnimeDetailScreenContent(
     animeVideosState: UiState<List<Video>>,
     animeReviews: LazyPagingItems<AnimeReview>,
     animeRecommendationState: UiState<List<Recommendation>>,
+    animeNews: LazyPagingItems<News>,
     modifier: Modifier = Modifier,
     onGenreClick: (String) -> Unit = {},
     onRecommendationClick: (Int) -> Unit = {},
@@ -249,7 +253,10 @@ fun AnimeDetailScreenContent(
                                 )
                             }
                         )
-
+                        AppHorizontalDivider()
+                        AnimeNewsRow(
+                            news = animeNews
+                        )
                         RecommendationList(
                             uiState = animeRecommendationState,
                             onRecommendationClick = onRecommendationClick

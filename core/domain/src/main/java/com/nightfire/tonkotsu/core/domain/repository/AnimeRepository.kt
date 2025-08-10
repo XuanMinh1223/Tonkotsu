@@ -10,6 +10,7 @@ import com.nightfire.tonkotsu.core.domain.model.AnimeEpisodeDetail
 import com.nightfire.tonkotsu.core.domain.model.AnimeReview
 import com.nightfire.tonkotsu.core.domain.model.Character
 import com.nightfire.tonkotsu.core.domain.model.Image
+import com.nightfire.tonkotsu.core.domain.model.News
 import com.nightfire.tonkotsu.core.domain.model.Recommendation
 import com.nightfire.tonkotsu.core.domain.model.Video
 import kotlinx.coroutines.flow.Flow
@@ -86,4 +87,7 @@ interface AnimeRepository {
         episodeId: Int
     ): Flow<Resource<AnimeEpisodeDetail>>
 
+    fun getAnimeNews(
+        animeId: Int,
+    ): Flow<PagingData<News>>
 }

@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import com.nightfire.tonkotsu.core.common.Resource
 import com.nightfire.tonkotsu.core.common.networkBoundResourceFlow
 import com.nightfire.tonkotsu.core.data.paging.AnimeEpisodesPagingSource
+import com.nightfire.tonkotsu.core.data.paging.AnimeNewsPagingSource
 import com.nightfire.tonkotsu.core.data.paging.AnimeReviewsPagingSource
 import com.nightfire.tonkotsu.core.data.remote.api.JikanApi
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeDetailResponse
@@ -30,6 +31,7 @@ import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 import com.nightfire.tonkotsu.core.domain.model.AnimeReview
 import com.nightfire.tonkotsu.core.domain.model.Character
 import com.nightfire.tonkotsu.core.domain.model.Image
+import com.nightfire.tonkotsu.core.domain.model.News
 import com.nightfire.tonkotsu.core.domain.model.Recommendation
 import com.nightfire.tonkotsu.core.domain.model.Video
 import com.nightfire.tonkotsu.core.domain.repository.AnimeRepository
@@ -149,5 +151,20 @@ class AnimeRepositoryImpl @Inject constructor(
                 dto.data.toAnimeEpisodeDetail()
             },
         )
+    }
+
+    override fun getAnimeNews(
+        animeId: Int,
+    ): Flow<PagingData<News>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 20,
+                enablePlaceholders = false,
+                prefetchDistance = 2
+            ),
+            pagingSourceFactory = {
+                AnimeNewsPagingSource(api, animeId)
+            }
+        ).flow
     }
 }

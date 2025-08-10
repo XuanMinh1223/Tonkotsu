@@ -11,6 +11,7 @@ import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
 import com.nightfire.tonkotsu.core.domain.model.AnimeReview
 import com.nightfire.tonkotsu.core.domain.model.Character
 import com.nightfire.tonkotsu.core.domain.model.Image
+import com.nightfire.tonkotsu.core.domain.model.News
 import com.nightfire.tonkotsu.core.domain.model.Recommendation
 import com.nightfire.tonkotsu.core.domain.model.RelationEntry
 import com.nightfire.tonkotsu.core.domain.model.Video
@@ -18,6 +19,7 @@ import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeDetailUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeEpisodesUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeCharactersUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeImagesUseCase
+import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeNewsUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeRecommendationsUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeReviewsUseCase
 import com.nightfire.tonkotsu.core.domain.usecase.GetAnimeVideosUseCase
@@ -41,6 +43,7 @@ class AnimeDetailViewModel @Inject constructor(
     private val getAnimeVideosUseCase: GetAnimeVideosUseCase,
     private val getAnimeReviewsUseCase: GetAnimeReviewsUseCase,
     private val getAnimeRecommendationsUseCase: GetAnimeRecommendationsUseCase,
+    private val getAnimeNewsUseCase: GetAnimeNewsUseCase,
 ) : ViewModel() {
 
     private val _animeId = MutableStateFlow<Int?>(null)
@@ -78,6 +81,14 @@ class AnimeDetailViewModel @Inject constructor(
         .filterNotNull()
         .flatMapLatest { id ->
             getAnimeReviewsUseCase(id)
+        }
+        .cachedIn(viewModelScope)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val animeNews: Flow<PagingData<News>> = _animeId
+        .filterNotNull()
+        .flatMapLatest { id ->
+            getAnimeNewsUseCase(id)
         }
         .cachedIn(viewModelScope)
 
