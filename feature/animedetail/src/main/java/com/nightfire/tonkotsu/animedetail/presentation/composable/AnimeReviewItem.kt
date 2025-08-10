@@ -51,7 +51,6 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import kotlin.collections.forEachIndexed
 import androidx.compose.ui.graphics.vector.ImageVector
-
 data class Reaction(val count: Int, val icon: ImageVector, val description: String)
 
 fun getTopReactions(review: AnimeReview, limit: Int = 3): List<Reaction> {

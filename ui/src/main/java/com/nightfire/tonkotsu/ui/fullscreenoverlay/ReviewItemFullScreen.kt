@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,8 +15,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.QuestionMark
+import androidx.compose.material.icons.filled.SentimentSatisfiedAlt
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Icon
@@ -27,6 +35,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import com.nightfire.tonkotsu.core.domain.model.AnimeReview
+import com.nightfire.tonkotsu.core.domain.model.ReviewReactions
 
 @Composable
 fun ReviewItemFullScreen(
@@ -35,7 +45,7 @@ fun ReviewItemFullScreen(
 ) {
     val review = content.review
     val fadeHeight = 48.dp
-    val fadeHeightPx = with(LocalDensity.current) { fadeHeight.toPx() }
+    with(LocalDensity.current) { fadeHeight.toPx() }
     val fadeColor = MaterialTheme.colorScheme.background
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -98,6 +108,11 @@ fun ReviewItemFullScreen(
                     color = MaterialTheme.colorScheme.onSurface,
                 )
             }
+
+            ReviewReactionsDirect(
+                reactions = review.reactions,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
         }
 
         // Fixed fade overlays on top and bottom edges
@@ -132,3 +147,43 @@ fun ReviewItemFullScreen(
         )
     }
 }
+
+
+@Composable
+fun ReviewReactionsDirect(
+    reactions: ReviewReactions,
+    modifier: Modifier = Modifier,
+) {
+    val reactionItems = listOf(
+        Triple(reactions.nice, Icons.Filled.ThumbUp, "Nice"),
+        Triple(reactions.loveIt, Icons.Filled.Favorite, "Love it"),
+        Triple(reactions.funny, Icons.Filled.SentimentSatisfiedAlt, "Funny"),
+        Triple(reactions.confusing, Icons.Filled.QuestionMark, "Confusing"),
+        Triple(reactions.informative, Icons.Filled.Lightbulb, "Informative"),
+        Triple(reactions.wellWritten, Icons.Filled.Edit, "Well Written"),
+        Triple(reactions.creative, Icons.Filled.AutoAwesome, "Creative"),
+    ).filter { it.first > 0 }.sortedByDescending { it.first }
+
+    if (reactionItems.isEmpty()) return
+
+    FlowRow(
+        modifier = modifier,
+    ) {
+        reactionItems.forEach { (count, icon, label) ->
+            AssistChip(
+                modifier = Modifier.padding(horizontal = 4.dp),
+                onClick = { },
+                label = { Text("$count $label") },
+                leadingIcon = {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = label,
+                        modifier = Modifier.size(AssistChipDefaults.IconSize)
+                    )
+                },
+                colors = AssistChipDefaults.assistChipColors()
+            )
+        }
+    }
+}
+

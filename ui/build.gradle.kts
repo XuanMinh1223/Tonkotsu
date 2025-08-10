@@ -51,7 +51,7 @@ dependencies {
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3) // If you use Material Design 3 components
     debugImplementation(libs.ui.tooling) // For Compose tooling in debug builds
-
+    implementation(libs.material.icons.extended)
     // --- Lifecycle & ViewModel (if your common UI components need them, e.g., for rememberSaveable) ---
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
