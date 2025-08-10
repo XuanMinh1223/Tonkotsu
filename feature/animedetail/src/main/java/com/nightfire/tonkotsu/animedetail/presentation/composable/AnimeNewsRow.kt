@@ -170,7 +170,6 @@ fun NewsRowSkeleton(
             .fillMaxWidth()
             .height(rowHeight),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp)
     ) {
         items(5) {
             Box(
