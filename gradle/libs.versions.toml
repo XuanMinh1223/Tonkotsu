@@ -48,7 +48,8 @@ coil = "2.6.0"
 room = "2.6.1"
 appcompat = "1.6.1"
 material = "1.10.0"
-navigationCommonAndroid = "2.9.0" # This isn't navigation-compose. Keep its version if needed.
+navigationCommonAndroid = "2.9.0"
+uiText = "1.8.3" # This isn't navigation-compose. Keep its version if needed.
 
 [libraries]
 # Kotlin Standard Library
@@ -111,6 +112,7 @@ room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 navigation-common-android = { group = "androidx.navigation", name = "navigation-common-android", version.ref = "navigationCommonAndroid" }
+androidx-ui-text = { group = "androidx.compose.ui", name = "ui-text", version.ref = "uiText" }
 
 [bundles]
 # You can create bundles to easily group related dependencies

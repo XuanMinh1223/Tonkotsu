@@ -1,45 +1,49 @@
 package com.nightfire.tonkotsu.feature.search
 
-import android.app.appsearch.SearchResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nightfire.tonkotsu.core.common.UiState
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
+import com.nightfire.tonkotsu.core.domain.model.AnimeSearchQuery
+import com.nightfire.tonkotsu.core.domain.usecase.AnimeSearchUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchViewModel @Inject constructor(): ViewModel() {
+class SearchViewModel @Inject constructor(
+    animeSearchUseCase: AnimeSearchUseCase
+): ViewModel() {
     data class SearchScreenState(
         val query: String = "",
     )
 
-    private val _screenState = MutableStateFlow(SearchScreenState())
-    val screenState: StateFlow<SearchScreenState> = _screenState.asStateFlow()
+    private val _searchQuery = MutableStateFlow(AnimeSearchQuery())
+    val searchQuery: StateFlow<AnimeSearchQuery> = _searchQuery.asStateFlow()
 
-    private val _results = MutableStateFlow<UiState<List<SearchResult>>>(UiState.Success(emptyList()))
-    val results: StateFlow<UiState<List<SearchResult>>> = _results.asStateFlow()
-
-    fun onQueryChange(query: String) {
-        _screenState.update { it.copy(query = query) }
-        search()
-    }
-
-    private fun search() {
-        val state = _screenState.value
-        if (state.query.isBlank()) {
-            _results.value = UiState.Success(emptyList())
-            return
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+    val searchResults: StateFlow<PagingData<AnimeOverview>> = _searchQuery
+        .debounce(300)
+        .distinctUntilChanged()
+        .filter { query -> !query.query.isNullOrBlank() }  // Filter out empty or null queries
+        .flatMapLatest { query ->
+            animeSearchUseCase(query)
+                .cachedIn(viewModelScope)
         }
+        .stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty())
 
-        viewModelScope.launch {
-            _results.value = UiState.Loading(
-                data = (_results.value as? UiState.Success)?.data
-            )
-        }
+    fun updateSearchQuery(newQuery: AnimeSearchQuery) {
+        _searchQuery.value = newQuery
     }
 }

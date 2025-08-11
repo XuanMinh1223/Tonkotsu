@@ -9,6 +9,7 @@ import com.nightfire.tonkotsu.core.common.networkBoundResourceFlow
 import com.nightfire.tonkotsu.core.data.paging.AnimeEpisodesPagingSource
 import com.nightfire.tonkotsu.core.data.paging.AnimeNewsPagingSource
 import com.nightfire.tonkotsu.core.data.paging.AnimeReviewsPagingSource
+import com.nightfire.tonkotsu.core.data.paging.AnimeSearchPagingSource
 import com.nightfire.tonkotsu.core.data.remote.api.JikanApi
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeDetailResponse
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeEpisodeDetailResponseDto
@@ -29,6 +30,7 @@ import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
 import com.nightfire.tonkotsu.core.domain.model.AnimeEpisodeDetail
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 import com.nightfire.tonkotsu.core.domain.model.AnimeReview
+import com.nightfire.tonkotsu.core.domain.model.AnimeSearchQuery
 import com.nightfire.tonkotsu.core.domain.model.Character
 import com.nightfire.tonkotsu.core.domain.model.Image
 import com.nightfire.tonkotsu.core.domain.model.News
@@ -165,6 +167,16 @@ class TonkotsuRepositoryImpl @Inject constructor(
             pagingSourceFactory = {
                 AnimeNewsPagingSource(api, animeId)
             }
+        ).flow
+    }
+
+    override fun animeSearch(query: AnimeSearchQuery): Flow<PagingData<AnimeOverview>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 25,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { AnimeSearchPagingSource(api, query) }
         ).flow
     }
 }

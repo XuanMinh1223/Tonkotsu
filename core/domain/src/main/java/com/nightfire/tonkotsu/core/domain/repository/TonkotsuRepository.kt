@@ -8,6 +8,7 @@ import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
 import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
 import com.nightfire.tonkotsu.core.domain.model.AnimeEpisodeDetail
 import com.nightfire.tonkotsu.core.domain.model.AnimeReview
+import com.nightfire.tonkotsu.core.domain.model.AnimeSearchQuery
 import com.nightfire.tonkotsu.core.domain.model.Character
 import com.nightfire.tonkotsu.core.domain.model.Image
 import com.nightfire.tonkotsu.core.domain.model.News
@@ -90,4 +91,9 @@ interface TonkotsuRepository {
     fun getAnimeNews(
         animeId: Int,
     ): Flow<PagingData<News>>
+
+    fun animeSearch(
+        query: AnimeSearchQuery
+    ): Flow<PagingData<AnimeOverview>>
+
 }
