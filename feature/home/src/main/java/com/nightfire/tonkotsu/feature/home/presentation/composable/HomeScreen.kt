@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nightfire.tonkotsu.core.common.UiState
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 import com.nightfire.tonkotsu.feature.home.presentation.HomeViewModel
@@ -28,9 +29,9 @@ fun HomeScreen(
     onNavigateToAnimeDetail: (Int) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val popularAnimeState by viewModel.popularAnimeState.collectAsState()
-    val topAiringAnimeState by viewModel.topAiringAnimeState.collectAsState()
-    val mostAnticipatedAnimeState by viewModel.mostAnticipatedAnimeState.collectAsState()
+    val popularAnimeState by viewModel.popularAnimeState.collectAsStateWithLifecycle()
+    val topAiringAnimeState by viewModel.topAiringAnimeState.collectAsStateWithLifecycle()
+    val mostAnticipatedAnimeState by viewModel.mostAnticipatedAnimeState.collectAsStateWithLifecycle()
 
     Scaffold(modifier = Modifier.systemBarsPadding()) { innerPadding ->
         HomeScreenContent(
