@@ -42,7 +42,7 @@ import com.nightfire.tonkotsu.ui.shimmerEffect
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun AnimeNewsRow(
+fun AnimeNewsList(
     news: LazyPagingItems<News>,
     modifier: Modifier = Modifier
 ) {
@@ -142,7 +142,7 @@ fun AnimeNewsRow(
                                         overflow = TextOverflow.Ellipsis,
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(horizontal = 4.dp)
+                                            .padding(4.dp)
                                     )
 
                                     Spacer(modifier = Modifier.weight(1f))
