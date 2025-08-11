@@ -1,0 +1,59 @@
+package com.nightfire.tonkotsu.core.data.remote.dto
+
+import com.google.gson.annotations.SerializedName
+import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
+
+data class AnimeDto(
+    @SerializedName("mal_id") val malId: Int,
+    @SerializedName("url") val url: String?, // Mark as nullable as sometimes URLs might be missing
+    @SerializedName("images") val images: ImagesDto?,
+    @SerializedName("trailer") val trailer: TrailerDto?,
+    @SerializedName("approved") val approved: Boolean?,
+    @SerializedName("titles") val titles: List<TitleDto>?,
+    @SerializedName("title") val title: String,
+    @SerializedName("title_english") val titleEnglish: String?,
+    @SerializedName("title_japanese") val titleJapanese: String?,
+    @SerializedName("title_synonyms") val titleSynonyms: List<String>?,
+    @SerializedName("type") val type: String?,
+    @SerializedName("source") val source: String?,
+    @SerializedName("episodes") val episodes: Int?,
+    @SerializedName("status") val status: String?,
+    @SerializedName("airing") val airing: Boolean?,
+    @SerializedName("aired") val aired: AiredDto?,
+    @SerializedName("duration") val duration: String?,
+    @SerializedName("rating") val rating: String?,
+    @SerializedName("score") val score: Double?,
+    @SerializedName("scored_by") val scoredBy: Int?,
+    @SerializedName("rank") val rank: Int?,
+    @SerializedName("popularity") val popularity: Int?,
+    @SerializedName("members") val members: Int?,
+    @SerializedName("favorites") val favorites: Int?,
+    @SerializedName("synopsis") val synopsis: String?,
+    @SerializedName("background") val background: String?,
+    @SerializedName("season") val season: String?,
+    @SerializedName("year") val year: Int?,
+    @SerializedName("broadcast") val broadcast: BroadcastDto?,
+    @SerializedName("producers") val producers: List<MalSubEntityDto>?,
+    @SerializedName("licensors") val licensors: List<MalSubEntityDto>?,
+    @SerializedName("studios") val studios: List<MalSubEntityDto>?,
+    @SerializedName("genres") val genres: List<MalSubEntityDto>?,
+    @SerializedName("explicit_genres") val explicitGenres: List<MalSubEntityDto>?,
+    @SerializedName("themes") val themes: List<MalSubEntityDto>?,
+    @SerializedName("demographics") val demographics: List<MalSubEntityDto>?
+)
+
+/**
+ * Extension function to map an [AnimeDto] to an [AnimeOverview] domain model.
+ * This keeps the mapping logic isolated and clean.
+ */
+fun AnimeDto.toAnimeOverview(): AnimeOverview {
+    return AnimeOverview(
+        malId = malId,
+        title = title,
+        imageUrl = images?.jpg?.imageUrl,
+        score = score,
+        type = type,
+        episodes = episodes,
+        synopsis = synopsis
+    )
+}

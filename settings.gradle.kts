@@ -23,6 +23,13 @@ rootProject.name = "Tonkotsu"
 include(":app")
 include(":feature")
 include(":feature:home")
+
 include(":core")
+
 include(":core:data")
 include(":core:domain")
+include(":core:network")
+include(":core:common")
+include(":ui")
+include(":feature:animedetail")
+include(":feature:navigation")

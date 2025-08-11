@@ -1,0 +1,37 @@
+package com.nightfire.tonkotsu.animedetail.presentation.composable
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.runtime.Composable
+import com.nightfire.tonkotsu.core.domain.model.AnimeDetail
+import com.nightfire.tonkotsu.ui.InfoRow
+import java.time.LocalDate
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+
+@Composable
+fun AnimeKeyInfo(anime: AnimeDetail) {
+    Column {
+        val today = OffsetDateTime.now()
+        InfoRow(label = "Type:", value = anime.type)
+        InfoRow(label = "Episodes:", value = anime.episodes?.toString())
+        InfoRow(label = "Status:", value = anime.status)
+        anime.premiereDate?.let { premiereDate ->
+            val premiereLabel = if (premiereDate.isAfter(today)) "Airs:" else "Premiered:"
+            val customFormatter = DateTimeFormatter.ofPattern("MMMM d, yyyy") // e.g., "April 1, 2023"
+            val formattedPremiereDate = premiereDate.format(customFormatter)
+            InfoRow(label = premiereLabel, value = formattedPremiereDate)
+        }
+        anime.endDate?.let { endDate ->
+            val endLabel = if (endDate.isAfter(today)) "Ends:" else "Ended:"
+            val customFormatter = DateTimeFormatter.ofPattern("MMMM d, yyyy") // e.g., "April 1, 2023"
+            val formattedEndDate = endDate.format(customFormatter)
+            InfoRow(label = endLabel, value = formattedEndDate)
+        }
+        anime.broadcast?.let {
+            InfoRow(label = "Broadcast time:", value = it)
+        }
+        InfoRow(label = "Duration:", value = anime.duration)
+        InfoRow(label = "Rating:", value = anime.rating)
+        InfoRow(label = "Source:", value = anime.source)
+    }
+}

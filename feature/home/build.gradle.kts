@@ -1,11 +1,10 @@
 // feature/home/build.gradle.kts
 
 plugins {
-    alias(libs.plugins.android.library) // This is an Android Library module
-    alias(libs.plugins.kotlin.android)  // For Kotlin in Android
-    alias(libs.plugins.compose.compiler) // Compose compiler
-    alias(libs.plugins.ksp)             // For Hilt's annotation processing (replaces kapt)
-    alias(libs.plugins.hilt.android)    // For Hilt dependency injection
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt.android)
 }
 
 android {
@@ -24,17 +23,23 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+    
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    }
 
     buildFeatures {
         compose = true // Enable Jetpack Compose in this module
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.kotlinCompilerExtension.get()
-    }
 }
 
 dependencies {
+    implementation(project(":core:domain"))
+    implementation(project(":core:common"))
+    implementation(project(":ui"))
+
     // --- Android & Compose Core UI ---
+    implementation(libs.kotlin.stdlib)
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.activity.compose)
@@ -52,13 +57,11 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
 
-    // --- Multi-Module Dependency: Feature depends on Domain ---
-    // This is crucial for accessing models, repositories interfaces, and use cases
 
     // --- Hilt Dependency Injection ---
     implementation(libs.hilt.android)
+    implementation(libs.hilt.navigation.compose)
     ksp(libs.hilt.android.compiler)
-    ksp(libs.hilt.compiler)
 
     // --- Other common libraries (e.g., Coil for image loading) ---
     implementation(libs.coil.compose)
