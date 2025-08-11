@@ -3,27 +3,19 @@ package com.nightfire.tonkotsu
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
-import com.nightfire.tonkotsu.feature.navigation.Screen // Import your Screen sealed class
-import com.nightfire.tonkotsu.feature.navigation.addAnimeDetailScreen // Import the extension from navigation module
-import com.nightfire.tonkotsu.feature.navigation.addHomeGraph // Import the extension from navigation module
+import com.nightfire.tonkotsu.feature.navigation.addAnimeDetailScreen
+import com.nightfire.tonkotsu.feature.navigation.addHomeGraph
 
 @Composable
-fun TonkotsuNavHost() {
-    val navController = rememberNavController() // Remember the NavController instance
-
+fun TonkotsuNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(
-    navController = navController,
-    startDestination = Screen.HomeGraph.route, // Set your HomeGraph as the starting point
-    modifier = Modifier.fillMaxSize()
+        navController = navController,
+        startDestination = BottomNavScreen.Home.route,
+        modifier = modifier.fillMaxSize()
     ) {
-        // --- Modular Navigation Graph Building ---
-        addHomeGraph(navController = navController)
-
-        // Adds the Anime Detail screen
+        addHomeGraph(navController)
         addAnimeDetailScreen()
-
-        // You can add more feature graphs here as your app grows:
     }
 }
