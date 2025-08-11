@@ -23,7 +23,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.nightfire.tonkotsu.animedetail.presentation.AnimeDetailViewModel
@@ -61,11 +61,11 @@ fun AnimeDetailScreen(
     viewModel: AnimeDetailViewModel = hiltViewModel()
 ) {
 
-    val animeDetailState by viewModel.animeDetailState.collectAsState()
-    val animeCharactersState by viewModel.animeCharactersState.collectAsState()
-    val animeImagesState by viewModel.animeImagesState.collectAsState()
-    val animeVideosState by viewModel.animeVideosState.collectAsState()
-    val animeRecommendationState by viewModel.animeRecommendationsState.collectAsState()
+    val animeDetailState by viewModel.animeDetailState.collectAsStateWithLifecycle()
+    val animeCharactersState by viewModel.animeCharactersState.collectAsStateWithLifecycle()
+    val animeImagesState by viewModel.animeImagesState.collectAsStateWithLifecycle()
+    val animeVideosState by viewModel.animeVideosState.collectAsStateWithLifecycle()
+    val animeRecommendationState by viewModel.animeRecommendationsState.collectAsStateWithLifecycle()
 
     val animeEpisodes = viewModel.animeEpisodes.collectAsLazyPagingItems()
     val animeReviews = viewModel.animeReviews.collectAsLazyPagingItems()
