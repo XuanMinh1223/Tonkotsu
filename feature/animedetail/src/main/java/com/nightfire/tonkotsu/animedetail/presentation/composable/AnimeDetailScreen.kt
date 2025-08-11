@@ -1,4 +1,4 @@
-package com.nightfire.tonkotsu.animedetail.presentation.composable // Adjust your package as needed
+package com.nightfire.tonkotsu.animedetail.presentation.composable
 
 import CharacterListSection
 import androidx.compose.animation.Crossfade
@@ -91,7 +91,7 @@ fun AnimeDetailScreen(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class) // For FlowRow, which TagSection uses
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AnimeDetailScreenContent(
     animeDetailState: UiState<AnimeDetail>,
@@ -114,7 +114,7 @@ fun AnimeDetailScreenContent(
             targetState = animeDetailState,
             label = "DetailTransition"
         ) { state ->
-            when (state) { // Use 'when' with the sealed UiState
+            when (state) {
                 is UiState.Loading -> {
                     AnimeDetailSkeletonScreen()
                 }
@@ -145,7 +145,6 @@ fun AnimeDetailScreenContent(
                                     )
                                 }
                             )
-                            // --- 2. Core Stats ---
                             AnimeCoreStats(anime = anime)
                             anime.trailerYoutubeId?.let { youtubeId ->
                                 Spacer(Modifier.height(16.dp))
@@ -154,7 +153,7 @@ fun AnimeDetailScreenContent(
                                         overlayContent = OverlayContent.VideoFullScreen(
                                             videos = listOf(Video(
                                                 videoUrl = anime.trailerYoutubeUrl ?: "https://www.youtube.com/watch?v=$youtubeId",
-                                                thumbnailUrl = "https://img.youtube.com/vi/$youtubeId/hqdefault.jpg" // Standard YouTube thumbnail
+                                                thumbnailUrl = "https://img.youtube.com/vi/$youtubeId/hqdefault.jpg"
                                             )),
                                             title = "${anime.title} Trailer"
                                         )
@@ -167,18 +166,16 @@ fun AnimeDetailScreenContent(
                                 }
                                 Spacer(Modifier.height(16.dp))
                             }
-                            // --- 3. Key Info ---
                             AnimeKeyInfo(anime = anime)
-                            Spacer(Modifier.height(16.dp)) // Add spacing after key info
+                            Spacer(Modifier.height(16.dp))
                             AppHorizontalDivider()
 
                             TagSection(title = "Genres:", tags = anime.genres, onTagClick = onGenreClick)
                             TagSection(title = "Themes:", tags = anime.themes, onTagClick = onGenreClick)
                             TagSection(title = "Categories:", tags = anime.categories, onTagClick = onGenreClick)
-                            Spacer(Modifier.height(16.dp)) // Add spacing after tags
+                            Spacer(Modifier.height(16.dp))
                             AppHorizontalDivider()
 
-                            // --- 4. Synopsis & Background (with "Read More") ---
                             ExpandableText(
                                 title = "Synopsis",
                                 text = anime.synopsis
@@ -189,43 +186,37 @@ fun AnimeDetailScreenContent(
                                 text = anime.background,
                                 modifier = Modifier.padding(top = 16.dp)
                             )
-                            Spacer(Modifier.height(16.dp)) // Add spacing after expandable texts
+                            Spacer(Modifier.height(16.dp))
                             AppHorizontalDivider()
-                            // --- 5. Production Details (FlowRows using TagSection) ---
                             TagSection(title = "Studios:", tags = anime.studios, isSecondary = true)
                             TagSection(title = "Producers:", tags = anime.producers, isSecondary = true)
                             TagSection(title = "Licensors:", tags = anime.licensors, isSecondary = true)
-                            Spacer(Modifier.height(16.dp)) // Add spacing after production details
+                            Spacer(Modifier.height(16.dp))
 
-                            // --- 6. External Media & Streaming Services ---
-                            // Removed the single "Watch Trailer" button, now handled by VideoList
                             AppHorizontalDivider()
                             VideoList(
                                 uiState = animeVideosState,
-                                onVideoClick = { clickedVideo, index -> // Now receives Video and Int
+                                onVideoClick = { clickedVideo, index ->
                                     (animeVideosState as? UiState.Success)?.data?.let { videosList ->
                                         overlayContent = if (videosList.size == 1) {
-                                            // If there's only one video in the list, open it directly
                                             OverlayContent.VideoFullScreen(
-                                                videos = listOf(clickedVideo), // Still pass as a list of one
+                                                videos = listOf(clickedVideo),
                                                 initialIndex = 0,
-                                                title = anime.title // Use anime title or clickedVideo.title if available
+                                                title = anime.title
                                             )
                                         } else {
-                                            // If multiple videos, open the gallery
                                             OverlayContent.VideoFullScreen(
-                                                videos = videosList, // Pass the full list
-                                                initialIndex = index, // Pass the clicked index
-                                                title = anime.title // Use anime title or a gallery title
+                                                videos = videosList,
+                                                initialIndex = index,
+                                                title = anime.title
                                             )
                                         }
                                     }
                                 },
                                 modifier = Modifier.fillMaxWidth()
                             )
-                            Spacer(Modifier.height(16.dp)) // Add spacing after video list
+                            Spacer(Modifier.height(16.dp))
                             AppHorizontalDivider()
-                            // Displaying Anime Images using the ImageList
                             ImageList(
                                 uiState = animeImagesState,
                                 onImageClick = { clickedImage, index ->
@@ -238,16 +229,14 @@ fun AnimeDetailScreenContent(
                                 },
                                 modifier = Modifier.fillMaxWidth()
                             )
-                            Spacer(Modifier.height(16.dp)) // Add spacing after image list
+                            Spacer(Modifier.height(16.dp))
                             AppHorizontalDivider()
 
-                            // Anime Episodes List
                             if (anime.type?.lowercase() != "movie") {
                                 AnimeEpisodesList(animeEpisodes)
                             }
-                            // Character List Section
                             CharacterListSection(animeCharactersState)
-                            Spacer(Modifier.height(16.dp)) // Add spacing after character list
+                            Spacer(Modifier.height(16.dp))
                             AppHorizontalDivider()
                             AnimeReviewList(
                                 reviews = animeReviews,
@@ -277,16 +266,14 @@ fun AnimeDetailScreenContent(
                                 ExternalUrlSection(links, modifier = Modifier.padding(top = 8.dp, bottom = 16.dp))
                             }
 
-                            // --- 7. Themes (Opening/Ending) ---
                             AnimeThemesSection(anime = anime)
 
-                            // --- 8. Relations (Basic Display) ---
                             AnimeRelationsSection(
                                 anime = anime,
                                 onRelationClick = onRelationClick,
                             )
                         }
-                        Spacer(Modifier.height(16.dp)) // Final bottom padding for the entire scrollable Column
+                        Spacer(Modifier.height(16.dp))
                     }
                 }
             }
@@ -295,7 +282,7 @@ fun AnimeDetailScreenContent(
     overlayContent?.let { content ->
         FullScreenOverlay(
             content = content,
-            onDismiss = { overlayContent = null } // Dismisses the overlay by setting state to null
+            onDismiss = { overlayContent = null }
         )
     }
 }
