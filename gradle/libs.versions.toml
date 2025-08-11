@@ -3,6 +3,7 @@
 [versions]
 # SDK & Kotlin
 compileSdk = "35"
+coreSplashscreen = "1.0.1"
 espressoCore = "3.6.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -52,6 +53,7 @@ navigationCommonAndroid = "2.9.0" # This isn't navigation-compose. Keep its vers
 [libraries]
 # Kotlin Standard Library
 androidx-activity-compose = { module = "androidx.activity:activity-compose" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 
 # AndroidX
