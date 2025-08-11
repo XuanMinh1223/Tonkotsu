@@ -1,6 +1,7 @@
 package com.nightfire.tonkotsu.core.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
+import com.nightfire.tonkotsu.core.common.utils.parseDateTimeString
 import com.nightfire.tonkotsu.core.domain.model.News
 
 data class NewsDto(
@@ -26,7 +27,7 @@ fun NewsDto.toNews(): News {
         id = malId,
         url = url,
         title = title,
-        date = date,
+        date = parseDateTimeString(date),
         authorUsername = authorUsername,
         authorUrl = authorUrl,
         forumUrl = forumUrl,

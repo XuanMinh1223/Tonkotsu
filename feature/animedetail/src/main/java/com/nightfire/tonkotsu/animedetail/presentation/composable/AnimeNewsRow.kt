@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,6 +21,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +39,7 @@ import androidx.paging.LoadState
 import coil.compose.AsyncImage
 import com.nightfire.tonkotsu.ui.ErrorCard
 import com.nightfire.tonkotsu.ui.shimmerEffect
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun AnimeNewsRow(
@@ -44,7 +48,7 @@ fun AnimeNewsRow(
 ) {
     val context = LocalContext.current
     val loadState = news.loadState
-    val rowHeight = 220.dp
+    val rowHeight = 240.dp
     val cardWidth = 240.dp
 
     Column(modifier = modifier.fillMaxWidth()) {
@@ -108,6 +112,7 @@ fun AnimeNewsRow(
                             Card(
                                 modifier = Modifier
                                     .width(cardWidth)
+                                    .height(rowHeight) // FIXED height for all cards
                                     .clickable {
                                         val intent = Intent(Intent.ACTION_VIEW, news.url.toUri())
                                         context.startActivity(intent)
@@ -115,7 +120,10 @@ fun AnimeNewsRow(
                                 shape = RoundedCornerShape(12.dp),
                                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                             ) {
-                                Column {
+                                Column(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.Top
+                                ) {
                                     if (!news.imageUrl.isNullOrBlank()) {
                                         AsyncImage(
                                             model = news.imageUrl,
@@ -126,29 +134,39 @@ fun AnimeNewsRow(
                                             contentScale = ContentScale.Crop
                                         )
                                     }
-                                    Column(
+
+                                    Text(
+                                        text = news.title,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        maxLines = if (news.imageUrl.isNullOrBlank()) 5 else 2,
+                                        overflow = TextOverflow.Ellipsis,
                                         modifier = Modifier
-                                            .padding(8.dp)
                                             .fillMaxWidth()
+                                            .padding(horizontal = 4.dp)
+                                    )
+
+                                    Spacer(modifier = Modifier.weight(1f))
+
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 8.dp, vertical = 4.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
-                                        Text(
-                                            text = news.title,
-                                            style = MaterialTheme.typography.titleMedium,
-                                            maxLines = 2,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
-                                        Spacer(Modifier.height(4.dp))
                                         Text(
                                             text = news.authorUsername,
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
-                                        Spacer(Modifier.height(2.dp))
-                                        Text(
-                                            text = news.date,
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
+                                        news.date?.let { date ->
+                                            val formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy")
+                                            val formattedDate = remember(date) { date.format(formatter) }
+                                            Text(
+                                                text = formattedDate,
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
                                     }
                                 }
                             }
