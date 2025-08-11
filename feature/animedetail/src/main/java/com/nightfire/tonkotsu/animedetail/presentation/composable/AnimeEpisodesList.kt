@@ -1,4 +1,4 @@
-package com.nightfire.tonkotsu.ui.composables // Adjusted package for common composables
+package com.nightfire.tonkotsu.animedetail.presentation.composable // Adjusted package for common composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
-import com.nightfire.tonkotsu.animedetail.presentation.composable.EpisodeListItem
 import com.nightfire.tonkotsu.core.domain.model.AnimeEpisode
 import com.nightfire.tonkotsu.ui.AppHorizontalDivider
 import com.nightfire.tonkotsu.ui.shimmerEffect

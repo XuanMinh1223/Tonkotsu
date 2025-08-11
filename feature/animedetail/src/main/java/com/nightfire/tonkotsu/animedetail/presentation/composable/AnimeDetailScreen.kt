@@ -51,7 +51,6 @@ import com.nightfire.tonkotsu.ui.ErrorCard
 import com.nightfire.tonkotsu.ui.ExpandableText
 import com.nightfire.tonkotsu.ui.ImageList
 import com.nightfire.tonkotsu.ui.TagSection
-import com.nightfire.tonkotsu.ui.composables.AnimeEpisodesList
 import com.nightfire.tonkotsu.ui.composables.VideoList
 import com.nightfire.tonkotsu.ui.fullscreenoverlay.FullScreenOverlay
 import com.nightfire.tonkotsu.ui.fullscreenoverlay.OverlayContent
