@@ -20,6 +20,7 @@ fun MainScreen() {
 
     val bottomNavItems = listOf(
         BottomNavScreen.Home,
+        BottomNavScreen.Search
     )
 
     Scaffold(

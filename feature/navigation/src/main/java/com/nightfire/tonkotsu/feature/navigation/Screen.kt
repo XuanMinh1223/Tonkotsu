@@ -14,6 +14,7 @@ sealed class Screen(
 ) {
     // --- Top-Level Graphs / Features ---
     object HomeGraph : Screen("home_graph")
+    object SearchGraph : Screen("search_graph")
 
     // --- Individual Screens within Features ---
 
@@ -32,6 +33,8 @@ sealed class Screen(
         // Helper function to create the route with the actual anime ID
         fun createRoute(animeId: Int) = "anime_detail_screen/$animeId"
     }
+
+    object Search : Screen("search")
 
     // --- Internal Constants for Navigation Arguments ---
     object Args {

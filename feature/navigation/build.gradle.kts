@@ -8,7 +8,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        minSdk = 24
+        minSdk = libs.versions.minSdk.get().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -46,6 +46,7 @@ android {
 dependencies {
     implementation(project(":feature:animedetail"))
     implementation(project(":feature:home"))
+    implementation(project(":feature:search"))
 
     implementation(libs.kotlin.stdlib)
     implementation(libs.core.ktx)

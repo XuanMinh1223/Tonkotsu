@@ -7,6 +7,7 @@ import com.nightfire.tonkotsu.core.data.remote.dto.AnimeEpisodeDetailResponseDto
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeEpisodesResponse
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeNewsResponseDto
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeReviewsResponseDto
+import com.nightfire.tonkotsu.core.data.remote.dto.AnimeSearchResponseDto
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeSummaryDto
 import com.nightfire.tonkotsu.core.data.remote.dto.AnimeVideosResponseDto
 import com.nightfire.tonkotsu.core.data.remote.dto.ImagesResponseDto
@@ -103,5 +104,27 @@ interface JikanApi {
         @Path("id") malId: Int,
         @Query("page") page: Int? = 1,
         ): Response<AnimeNewsResponseDto>
+
+    @GET("v4/anime")
+    suspend fun searchAnime(
+        @Query("q") query: String? = null,
+        @Query("type") type: String? = null, // tv, movie, ova, etc.
+        @Query("score") score: Double? = null, // minimum score
+        @Query("min_score") minScore: Double? = null,
+        @Query("max_score") maxScore: Double? = null,
+        @Query("status") status: String? = null, // airing, complete, upcoming
+        @Query("rating") rating: String? = null, // g, pg, pg13, r17, r, rx
+        @Query("sfw") sfw: Boolean? = null,
+        @Query("genres") genres: String? = null, // comma-separated IDs
+        @Query("genres_exclude") genresExclude: String? = null,
+        @Query("order_by") orderBy: String? = null, // title, score, rank, popularity, etc.
+        @Query("sort") sort: String? = null, // asc, desc
+        @Query("letter") letter: String? = null,
+        @Query("producers") producers: String? = null, // comma-separated IDs
+        @Query("start_date") startDate: String? = null, // YYYY-MM-DD
+        @Query("end_date") endDate: String? = null,
+        @Query("page") page: Int? = null,
+        @Query("limit") limit: Int? = null
+    ): AnimeSearchResponseDto
 
 }

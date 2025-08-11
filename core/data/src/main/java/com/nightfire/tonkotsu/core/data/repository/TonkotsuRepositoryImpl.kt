@@ -34,18 +34,18 @@ import com.nightfire.tonkotsu.core.domain.model.Image
 import com.nightfire.tonkotsu.core.domain.model.News
 import com.nightfire.tonkotsu.core.domain.model.Recommendation
 import com.nightfire.tonkotsu.core.domain.model.Video
-import com.nightfire.tonkotsu.core.domain.repository.AnimeRepository
+import com.nightfire.tonkotsu.core.domain.repository.TonkotsuRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 /**
- * Implementation of the [AnimeRepository] interface.
+ * Implementation of the [TonkotsuRepository] interface.
  * This class handles fetching anime data from the Jikan API and mapping it to domain models.
  * It also wraps the results in a [Resource] sealed class for state management.
  */
-class AnimeRepositoryImpl @Inject constructor(
+class TonkotsuRepositoryImpl @Inject constructor(
     private val api: JikanApi
-) : AnimeRepository {
+) : TonkotsuRepository {
 
     override fun getTopAnimeOverview(
         type: String?,

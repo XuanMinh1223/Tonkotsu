@@ -2,8 +2,8 @@ package com.nightfire.tonkotsu.core.data.di
 
 import com.google.gson.Gson
 import com.nightfire.tonkotsu.core.data.remote.api.JikanApi // Your API interface
-import com.nightfire.tonkotsu.core.data.repository.AnimeRepositoryImpl
-import com.nightfire.tonkotsu.core.domain.repository.AnimeRepository
+import com.nightfire.tonkotsu.core.data.repository.TonkotsuRepositoryImpl
+import com.nightfire.tonkotsu.core.domain.repository.TonkotsuRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,13 +29,13 @@ object DataModule {
     }
 
     /**
-     * Provides a singleton instance of [AnimeRepository].
+     * Provides a singleton instance of [TonkotsuRepository].
      * Hilt will automatically inject the [JikanApi] instance.
      */
     @Provides
     @Singleton
-    fun provideAnimeRepository(api: JikanApi): AnimeRepository {
-        return AnimeRepositoryImpl(api)
+    fun provideAnimeRepository(api: JikanApi): TonkotsuRepository {
+        return TonkotsuRepositoryImpl(api)
     }
 
 }

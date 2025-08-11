@@ -46,6 +46,7 @@ dependencies {
     implementation(project(":feature:navigation"))
     implementation(project(":feature:home"))
     implementation(project(":feature:animedetail"))
+    implementation(project(":feature:search"))
     implementation(project(":core:data"))
     implementation(project(":core:network"))
     implementation(project(":ui"))

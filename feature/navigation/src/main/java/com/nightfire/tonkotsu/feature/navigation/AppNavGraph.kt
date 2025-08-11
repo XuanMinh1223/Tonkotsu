@@ -9,6 +9,7 @@ import com.nightfire.tonkotsu.animedetail.presentation.composable.AnimeDetailScr
 import com.nightfire.tonkotsu.feature.home.presentation.composable.HomeScreen
 import com.nightfire.tonkotsu.feature.navigation.Screen.AnimeDetailScreen
 import com.nightfire.tonkotsu.feature.navigation.Screen.HomeScreen
+import com.nightfire.tonkotsu.feature.search.presentation.SearchScreen
 
 // Import the Composable functions from your feature modules
 
@@ -35,22 +36,28 @@ fun NavGraphBuilder.addAnimeDetailScreen() {
  * to destinations outside its immediate scope (e.g., to AnimeDetailScreen).
  */
 fun NavGraphBuilder.addHomeGraph(navController: NavController) {
-    // Defines a nested navigation graph for the 'home' feature
     navigation(
-        startDestination = HomeScreen.route, // The first screen within the HomeGraph
-        route = Screen.HomeGraph.route // The base route for the entire Home graph
+        startDestination = HomeScreen.route,
+        route = Screen.HomeGraph.route
     ) {
-        // Define the HomeScreen Composable
         composable(HomeScreen.route) {
-            // Call the Composable from the home feature module
-            // We pass a lambda for navigation from HomeScreen to AnimeDetailScreen
             HomeScreen(
                 onNavigateToAnimeDetail = { animeId ->
                     navController.navigate(AnimeDetailScreen.createRoute(animeId))
                 }
             )
         }
-        // Add other screens specific to the home feature if you add more later
-        // composable(Screen.AnotherHomeScreen.route) { /* ... */ }
+    }
+}
+
+fun NavGraphBuilder.addSearchGraph(navController: NavController) {
+    navigation(
+        startDestination = Screen.Search.route, // The first screen within the HomeGraph
+        route = Screen.SearchGraph.route // The base route for the entire Home graph
+    ) {
+        // Define the HomeScreen Composable
+        composable(Screen.Search.route) {
+            SearchScreen()
+        }
     }
 }

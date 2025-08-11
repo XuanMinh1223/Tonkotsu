@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.Flow
  * This lives in the domain layer to specify what data operations are needed,
  * independent of how the data is sourced (e.g., from API or database).
  */
-interface AnimeRepository {
+interface TonkotsuRepository {
 
     /**
      * Retrieves a list of top anime overviews.

@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.nightfire.tonkotsu.feature.navigation.addAnimeDetailScreen
 import com.nightfire.tonkotsu.feature.navigation.addHomeGraph
+import com.nightfire.tonkotsu.feature.navigation.addSearchGraph
 
 @Composable
 fun TonkotsuNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
@@ -16,6 +17,7 @@ fun TonkotsuNavHost(navController: NavHostController, modifier: Modifier = Modif
         modifier = modifier.fillMaxSize()
     ) {
         addHomeGraph(navController)
+        addSearchGraph(navController)
         addAnimeDetailScreen()
     }
 }
