@@ -25,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -107,7 +108,7 @@ fun AnimeDetailScreenContent(
     onRecommendationClick: (Int) -> Unit = {},
     onRelationClick: (RelationEntry) -> Unit = {}
 ) {
-    var overlayContent by rememberSaveable  { mutableStateOf<OverlayContent?>(null) }
+    var overlayContent by remember  { mutableStateOf<OverlayContent?>(null) }
 
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         when (animeDetailState) { // Use 'when' with the sealed UiState
