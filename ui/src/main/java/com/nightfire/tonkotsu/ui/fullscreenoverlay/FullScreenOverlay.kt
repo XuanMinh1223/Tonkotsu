@@ -1,11 +1,13 @@
 package com.nightfire.tonkotsu.ui.fullscreenoverlay
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.nightfire.tonkotsu.core.domain.model.AnimeReview
@@ -171,6 +174,7 @@ fun ReviewTopBar(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.weight(1f)
         ) {
+            val intent = Intent(Intent.ACTION_VIEW, review.user.profileUrl?.toUri())
             AsyncImage(
                 model = ImageRequest.Builder(context)
                     .data(review.user.avatarUrl) // Use imageUrl from ReviewUser
@@ -182,6 +186,9 @@ fun ReviewTopBar(
                     .size(56.dp) // Slightly larger avatar for full screen
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
+                    .clickable {
+                        context.startActivity(intent)
+                    }
             )
             Spacer(Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
@@ -191,7 +198,10 @@ fun ReviewTopBar(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.clickable {
+                        context.startActivity(intent)
+                    }
                 )
                 val reviewMeta = buildAnnotatedString {
                     review.date?.let { append(it.format(dateFormatter)) }
