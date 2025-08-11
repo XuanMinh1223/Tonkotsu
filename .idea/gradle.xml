@@ -20,6 +20,7 @@
             <option value="$PROJECT_DIR$/feature/animedetail" />
             <option value="$PROJECT_DIR$/feature/home" />
             <option value="$PROJECT_DIR$/feature/navigation" />
+            <option value="$PROJECT_DIR$/feature/search" />
             <option value="$PROJECT_DIR$/ui" />
           </set>
         </option>
