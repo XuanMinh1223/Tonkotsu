@@ -3,11 +3,9 @@ package com.nightfire.tonkotsu.feature.home.presentation.composable
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -33,20 +31,17 @@ fun HomeScreen(
     val topAiringAnimeState by viewModel.topAiringAnimeState.collectAsStateWithLifecycle()
     val mostAnticipatedAnimeState by viewModel.mostAnticipatedAnimeState.collectAsStateWithLifecycle()
 
-    Scaffold(modifier = Modifier.systemBarsPadding()) { innerPadding ->
-        HomeScreenContent(
-            popularAnimeState = popularAnimeState,
-            topAiringAnimeState = topAiringAnimeState,
-            mostAnticipatedAnimeState = mostAnticipatedAnimeState,
-            popularAnimeErrorClickAction = { viewModel.getPopularAnime() },
-            topAiringErrorClickAction = { viewModel.getTopAiringAnime() },
-            mostAnticipatedAnimeErrorClickAction = { viewModel.getMostAnticipatedAnime() },
-            onNavigateToAnimeDetail = onNavigateToAnimeDetail,
-            modifier = Modifier.padding(innerPadding)
-        )
-    }
+    HomeScreenContent(
+        popularAnimeState = popularAnimeState,
+        topAiringAnimeState = topAiringAnimeState,
+        mostAnticipatedAnimeState = mostAnticipatedAnimeState,
+        popularAnimeErrorClickAction = { viewModel.getPopularAnime() },
+        topAiringErrorClickAction = { viewModel.getTopAiringAnime() },
+        mostAnticipatedAnimeErrorClickAction = { viewModel.getMostAnticipatedAnime() },
+        onNavigateToAnimeDetail = onNavigateToAnimeDetail,
+        modifier = Modifier.padding()
+    )
 }
-
 /**
  * Stateless composable that displays the Home screen content based on the provided state.
  * This function is ideal for previews as it doesn't depend on a ViewModel.
