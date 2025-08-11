@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.material3)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
+    implementation(libs.androidx.core.splashscreen)
 
     // --- Lifecycle & ViewModel ---
     implementation(libs.lifecycle.viewmodel.ktx)

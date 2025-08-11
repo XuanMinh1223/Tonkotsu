@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.nightfire.tonkotsu.ui.theme.MainScreen
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.nightfire.tonkotsu.ui.theme.TonkotsuTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -16,6 +17,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        installSplashScreen()
         enableEdgeToEdge()
         setContent {
             TonkotsuTheme { // Your app's main theme

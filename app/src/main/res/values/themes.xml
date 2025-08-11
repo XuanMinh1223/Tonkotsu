@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="Theme.Tonkotsu" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.Tonkotsu" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">#3b0b06</item>
+        <item name="windowSplashScreenBackground">#3b0b06</item>
+        <!-- Optional: Add splash screen icon if you want -->
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="windowSplashScreenAnimationDuration">300</item> <!-- duration in ms -->
+        <item name="postSplashScreenTheme">@style/Theme.Tonkotsu</item>
+    </style>
 </resources>
