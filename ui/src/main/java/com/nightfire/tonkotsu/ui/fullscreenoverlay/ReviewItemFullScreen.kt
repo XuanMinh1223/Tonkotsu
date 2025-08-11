@@ -56,7 +56,10 @@ fun ReviewItemFullScreen(
                 .padding(16.dp)
         ) {
             if (review.isSpoiler || review.isPreliminary) {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    modifier = Modifier.padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     if (review.isSpoiler) {
                         AssistChip(
                             onClick = { /* No action or toggle blur */ },

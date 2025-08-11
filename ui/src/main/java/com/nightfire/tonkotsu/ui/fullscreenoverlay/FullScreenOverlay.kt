@@ -1,6 +1,7 @@
 package com.nightfire.tonkotsu.ui.fullscreenoverlay
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -59,6 +60,10 @@ fun FullScreenOverlay(
     // Controls animation for the overlay
     var isVisible by remember { mutableStateOf(false) } // State for animation
 
+    BackHandler(enabled = isVisible) {
+        isVisible = false
+    }
+
     LaunchedEffect(Unit) {
         isVisible = true // Trigger animation when composable enters composition
     }
@@ -100,7 +105,7 @@ fun FullScreenOverlay(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(16.dp),
+                        .padding(horizontal = 16.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     when (content) {

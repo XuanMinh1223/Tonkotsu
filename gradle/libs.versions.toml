@@ -51,6 +51,7 @@ navigationCommonAndroid = "2.9.0" # This isn't navigation-compose. Keep its vers
 
 [libraries]
 # Kotlin Standard Library
+androidx-activity-compose = { module = "androidx.activity:activity-compose" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 
 # AndroidX

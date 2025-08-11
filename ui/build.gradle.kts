@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.lifecycle.viewmodel.compose)
+    implementation (libs.androidx.activity.compose)
 
     //Coil
     implementation(libs.coil.compose)
