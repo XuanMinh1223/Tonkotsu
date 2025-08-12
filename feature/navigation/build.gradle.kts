@@ -44,10 +44,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":feature:animedetail"))
-    implementation(project(":feature:home"))
-    implementation(project(":feature:search"))
-
     implementation(libs.kotlin.stdlib)
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)

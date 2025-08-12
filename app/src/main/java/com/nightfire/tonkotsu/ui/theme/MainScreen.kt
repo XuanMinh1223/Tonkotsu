@@ -12,7 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.nightfire.tonkotsu.BottomNavScreen
-import com.nightfire.tonkotsu.TonkotsuNavHost
+import com.nightfire.tonkotsu.animedetail.presentation.composable.AnimeDetailScreen
+import com.nightfire.tonkotsu.feature.home.presentation.composable.HomeScreen
+import com.nightfire.tonkotsu.feature.navigation.TonkotsuNavHost
+import com.nightfire.tonkotsu.feature.search.presentation.SearchScreen
 
 @Composable
 fun MainScreen() {
@@ -50,8 +53,11 @@ fun MainScreen() {
         }
     ) { innerPadding ->
         TonkotsuNavHost(
+            modifier = Modifier.padding(innerPadding),
             navController = navController,
-            modifier = Modifier.padding(innerPadding)
+            homeScreen = { onNavigate -> HomeScreen(onNavigate) },
+            searchScreen = { onNavigate -> SearchScreen(onNavigate) },
+            animeDetailScreen = { malId -> AnimeDetailScreen(malId) }
         )
     }
 }

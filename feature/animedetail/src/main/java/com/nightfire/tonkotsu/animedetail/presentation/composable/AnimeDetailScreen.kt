@@ -74,21 +74,18 @@ fun AnimeDetailScreen(
     LaunchedEffect(key1 = malId) {
         viewModel.getAnimeDetail(malId)
     }
-    Scaffold(modifier = Modifier.systemBarsPadding()) { innerPadding ->
-        AnimeDetailScreenContent(
-            animeDetailState = animeDetailState,
-            animeEpisodes = animeEpisodes,
-            animeCharactersState = animeCharactersState,
-            animeImagesState = animeImagesState,
-            animeVideosState = animeVideosState,
-            animeReviews = animeReviews,
-            animeRecommendationState = animeRecommendationState,
-            animeNews = animeNews,
-            onRecommendationClick = viewModel::onRecommendationClick,
-            onRelationClick = viewModel::onRelationClick,
-            modifier = Modifier.padding(innerPadding)
-        )
-    }
+    AnimeDetailScreenContent(
+        animeDetailState = animeDetailState,
+        animeEpisodes = animeEpisodes,
+        animeCharactersState = animeCharactersState,
+        animeImagesState = animeImagesState,
+        animeVideosState = animeVideosState,
+        animeReviews = animeReviews,
+        animeRecommendationState = animeRecommendationState,
+        animeNews = animeNews,
+        onRecommendationClick = viewModel::onRecommendationClick,
+        onRelationClick = viewModel::onRelationClick,
+    )
 }
 
 @OptIn(ExperimentalLayoutApi::class)

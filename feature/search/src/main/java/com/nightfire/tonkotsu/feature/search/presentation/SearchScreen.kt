@@ -20,7 +20,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -50,7 +49,10 @@ import com.nightfire.tonkotsu.ui.shimmerEffect
 import java.util.Locale
 
 @Composable
-fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
+fun SearchScreen(
+    onNavigateToAnimeDetail: (Int) -> Unit,
+    viewModel: SearchViewModel = hiltViewModel()
+) {
     val searchResults = viewModel.searchResults.collectAsLazyPagingItems()
     val currentQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
 
@@ -90,7 +92,10 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
             items(searchResults.itemCount) { index ->
                 val anime = searchResults[index]
                 anime?.let {
-                    AnimeSearchListItem(anime)
+                    AnimeSearchListItem(
+                        anime = anime,
+                        onClick = onNavigateToAnimeDetail
+                        )
                 }
             }
 
@@ -119,12 +124,12 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
 @Composable
 fun AnimeSearchListItem(
     anime: AnimeOverview,
-    onClick: (AnimeOverview) -> Unit = {}
+    onClick: (Int) -> Unit = {}
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick(anime) }
+            .clickable { onClick(anime.malId) }
             .padding(12.dp),
         verticalAlignment = Alignment.Top
     ) {
