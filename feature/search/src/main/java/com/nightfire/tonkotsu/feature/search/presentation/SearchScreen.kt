@@ -1,9 +1,11 @@
 package com.nightfire.tonkotsu.feature.search.presentation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,6 +48,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 import com.nightfire.tonkotsu.feature.search.SearchViewModel
+import com.nightfire.tonkotsu.ui.AppHorizontalDivider
 import com.nightfire.tonkotsu.ui.shimmerEffect
 import java.util.Locale
 
@@ -59,7 +63,11 @@ fun SearchScreen(
     // Local text state to capture user typing without triggering search yet
     var textFieldValue by remember { mutableStateOf(currentQuery.query ?: "") }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
         OutlinedTextField(
             value = textFieldValue,
             onValueChange = { newText ->
@@ -88,7 +96,9 @@ fun SearchScreen(
             )
         )
 
-        LazyColumn {
+        LazyColumn(
+            contentPadding = PaddingValues(horizontal = 12.dp),
+        ) {
             items(searchResults.itemCount) { index ->
                 val anime = searchResults[index]
                 anime?.let {
@@ -96,6 +106,9 @@ fun SearchScreen(
                         anime = anime,
                         onClick = onNavigateToAnimeDetail
                         )
+                }
+                if (index < searchResults.itemCount - 1) {
+                    AppHorizontalDivider()
                 }
             }
 
@@ -126,79 +139,88 @@ fun AnimeSearchListItem(
     anime: AnimeOverview,
     onClick: (Int) -> Unit = {}
 ) {
-    Row(
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        tonalElevation = 2.dp,
+        shadowElevation = 2.dp,
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick(anime.malId) }
-            .padding(12.dp),
-        verticalAlignment = Alignment.Top
     ) {
-        // Poster image
-        anime.imageUrl?.let { url ->
-            AsyncImage(
-                model = url,
-                contentDescription = anime.title,
-                modifier = Modifier
-                    .size(width = 80.dp, height = 110.dp)
-                    .clip(RoundedCornerShape(8.dp)),
-                contentScale = ContentScale.Crop
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-        }
-
-        Column(
-            modifier = Modifier.weight(1f)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onClick(anime.malId) }
+                .padding(12.dp),
+            verticalAlignment = Alignment.Top
         ) {
-            Text(
-                text = anime.title,
-                style = MaterialTheme.typography.titleMedium,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            // Type + Episodes
-            val typeAndEpisodes = listOfNotNull(
-                anime.type,
-                anime.episodes?.let { "$it ep" }
-            ).joinToString(" • ")
-
-            if (typeAndEpisodes.isNotEmpty()) {
-                Text(
-                    text = typeAndEpisodes,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+            // Poster image
+            anime.imageUrl?.let { url ->
+                AsyncImage(
+                    model = url,
+                    contentDescription = anime.title,
+                    modifier = Modifier
+                        .size(width = 80.dp, height = 110.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop
                 )
+                Spacer(modifier = Modifier.width(12.dp))
             }
 
-            // Score row
-            Row(
-                modifier = Modifier.padding(top = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            Column(
+                modifier = Modifier.weight(1f)
             ) {
-                Icon(
-                    imageVector = Icons.Filled.Star,
-                    contentDescription = "Score",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(18.dp)
-                )
                 Text(
-                    text = anime.score?.let { String.format(Locale.US, "%.2f", it) } ?: "N/A",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-
-            // Synopsis snippet
-            anime.synopsis?.takeIf { it.isNotBlank() }?.let { synopsis ->
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = synopsis,
-                    style = MaterialTheme.typography.bodySmall,
-                    maxLines = 3,
+                    text = anime.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
+
+                // Type + Episodes
+                val typeAndEpisodes = listOfNotNull(
+                    anime.type,
+                    anime.episodes?.let { "$it ep" }
+                ).joinToString(" • ")
+
+                if (typeAndEpisodes.isNotEmpty()) {
+                    Text(
+                        text = typeAndEpisodes,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                // Score row
+                Row(
+                    modifier = Modifier.padding(top = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Star,
+                        contentDescription = "Score",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Text(
+                        text = anime.score?.let { String.format(Locale.US, "%.2f", it) } ?: "N/A",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                // Synopsis snippet
+                anime.synopsis?.takeIf { it.isNotBlank() }?.let { synopsis ->
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = synopsis,
+                        style = MaterialTheme.typography.bodySmall,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
         }
     }

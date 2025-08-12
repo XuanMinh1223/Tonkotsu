@@ -9,11 +9,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.nightfire.tonkotsu.BottomNavScreen
 import com.nightfire.tonkotsu.animedetail.presentation.composable.AnimeDetailScreen
 import com.nightfire.tonkotsu.feature.home.presentation.composable.HomeScreen
+import com.nightfire.tonkotsu.feature.navigation.Screen
 import com.nightfire.tonkotsu.feature.navigation.TonkotsuNavHost
 import com.nightfire.tonkotsu.feature.search.presentation.SearchScreen
 
@@ -28,23 +31,26 @@ fun MainScreen() {
 
     Scaffold(
         bottomBar = {
-            NavigationBar  {
+            NavigationBar {
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentRoute = navBackStackEntry?.destination?.route
+                val currentDestination = navBackStackEntry?.destination
+
+                val currentTabRoute = when {
+                    currentDestination?.hierarchy?.any { it.route == "home_graph" } == true -> "home_graph"
+                    currentDestination?.hierarchy?.any { it.route == "search_graph" } == true -> "search_graph"
+                    else -> "home_graph"
+                }
+
                 bottomNavItems.forEach { screen ->
                     NavigationBarItem(
                         icon = { Icon(screen.icon, contentDescription = screen.title) },
                         label = { Text(screen.title) },
-                        selected = currentRoute == screen.route,
+                        selected = currentTabRoute == screen.graphRoute,
                         onClick = {
-                            if (currentRoute != screen.route) {
-                                navController.navigate(screen.route) {
-                                    popUpTo(navController.graph.startDestinationId) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
+                            navController.navigate(screen.graphRoute) {
+                                popUpTo(screen.graphRoute) { inclusive = false }
+                                launchSingleTop = true
+                                restoreState = false // don't restore old backstack
                             }
                         }
                     )
@@ -61,3 +67,4 @@ fun MainScreen() {
         )
     }
 }
+

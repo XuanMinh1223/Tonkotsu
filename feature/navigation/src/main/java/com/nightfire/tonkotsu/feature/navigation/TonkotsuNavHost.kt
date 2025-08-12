@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 
 @Composable
@@ -18,25 +19,45 @@ fun TonkotsuNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route,
+        startDestination = "home_graph",
         modifier = modifier
     ) {
-        composable(Screen.Home.route) {
-            homeScreen { malId ->
-                navController.navigate(Screen.AnimeDetail.createRoute(malId))
+        // Home tab graph
+        navigation(
+            route = "home_graph",
+            startDestination = Screen.Home.route
+        ) {
+            composable(Screen.Home.route) {
+                homeScreen { malId ->
+                    navController.navigate(Screen.AnimeDetail.createRoute(malId))
+                }
+            }
+            composable(
+                route = Screen.AnimeDetail.route,
+                arguments = listOf(navArgument("malId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val malId = backStackEntry.arguments?.getInt("malId") ?: error("Missing malId")
+                animeDetailScreen(malId)
             }
         }
-        composable(Screen.Search.route) {
-            searchScreen { malId ->
-                navController.navigate(Screen.AnimeDetail.createRoute(malId))
+
+        // Search tab graph
+        navigation(
+            route = "search_graph",
+            startDestination = Screen.Search.route
+        ) {
+            composable(Screen.Search.route) {
+                searchScreen { malId ->
+                    navController.navigate(Screen.AnimeDetail.createRoute(malId))
+                }
             }
-        }
-        composable(
-            route = Screen.AnimeDetail.route,
-            arguments = listOf(navArgument("malId") { type = NavType.IntType })
-        ) { backStackEntry ->
-            val malId = backStackEntry.arguments?.getInt("malId") ?: error("Missing malId")
-            animeDetailScreen(malId)
+            composable(
+                route = Screen.AnimeDetail.route,
+                arguments = listOf(navArgument("malId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val malId = backStackEntry.arguments?.getInt("malId") ?: error("Missing malId")
+                animeDetailScreen(malId)
+            }
         }
     }
 }
