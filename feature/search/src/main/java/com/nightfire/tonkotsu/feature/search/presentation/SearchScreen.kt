@@ -2,6 +2,7 @@ package com.nightfire.tonkotsu.feature.search.presentation
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -44,6 +46,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 import com.nightfire.tonkotsu.feature.search.SearchViewModel
+import com.nightfire.tonkotsu.ui.shimmerEffect
 import java.util.Locale
 
 @Composable
@@ -94,13 +97,11 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
             searchResults.apply {
                 when {
                     loadState.refresh is LoadState.Loading -> {
-                        item {
-                            CircularProgressIndicator(Modifier.fillMaxWidth())
-                        }
+                        items(5) { AnimeSearchListItemPlaceholder() }
                     }
                     loadState.append is LoadState.Loading -> {
                         item {
-                            CircularProgressIndicator(Modifier.fillMaxWidth())
+                            AnimeSearchListItemPlaceholder()
                         }
                     }
                     loadState.refresh is LoadState.Error -> {
@@ -192,6 +193,82 @@ fun AnimeSearchListItem(
                     style = MaterialTheme.typography.bodySmall,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun AnimeSearchListItemPlaceholder() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp),
+        verticalAlignment = Alignment.Top
+    ) {
+        // Poster skeleton
+        Box(
+            modifier = Modifier
+                .size(width = 80.dp, height = 110.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .shimmerEffect()
+        )
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            // Title skeleton
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(20.dp)
+                    .shimmerEffect()
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Type + Episodes skeleton
+            Box(
+                modifier = Modifier
+                    .width(100.dp)
+                    .height(14.dp)
+                    .shimmerEffect()
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Score row skeleton
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(18.dp)
+                        .clip(CircleShape)
+                        .shimmerEffect()
+                )
+                Box(
+                    modifier = Modifier
+                        .width(40.dp)
+                        .height(14.dp)
+                        .shimmerEffect()
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Synopsis snippet skeleton
+            repeat(3) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(14.dp)
+                        .padding(vertical = 2.dp)
+                        .shimmerEffect()
                 )
             }
         }
