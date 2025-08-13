@@ -22,6 +22,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +31,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,10 +49,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 import com.nightfire.tonkotsu.feature.search.SearchViewModel
 import com.nightfire.tonkotsu.ui.AppHorizontalDivider
+import com.nightfire.tonkotsu.ui.ErrorCard
 import com.nightfire.tonkotsu.ui.shimmerEffect
 import java.util.Locale
 
@@ -97,40 +103,49 @@ fun SearchScreen(
         )
 
         LazyColumn(
-            contentPadding = PaddingValues(horizontal = 12.dp),
+            modifier = Modifier.fillMaxSize()
         ) {
-            items(searchResults.itemCount) { index ->
-                val anime = searchResults[index]
-                anime?.let {
-                    AnimeSearchListItem(
-                        anime = anime,
-                        onClick = onNavigateToAnimeDetail
-                        )
+            when (val refreshState = searchResults.loadState.refresh) {
+                is LoadState.Loading -> {
+                    // Cover old results with placeholders
+                    items(10) { AnimeSearchListItemPlaceholder() }
                 }
-                if (index < searchResults.itemCount - 1) {
-                    AppHorizontalDivider()
+                is LoadState.Error -> {
+                    item {
+                        ErrorCard(
+                            message = refreshState.error.localizedMessage ?: "Unknown error",
+                        )
+                    }
+                }
+                else -> {
+                    // Normal results
+                    items(
+                        count = searchResults.itemCount,
+                        key = searchResults.itemKey { it.malId }
+                    ) { index ->
+                        searchResults[index]?.let { anime ->
+                            AnimeSearchListItem(anime)
+                        }
+                    }
                 }
             }
 
-            searchResults.apply {
-                when {
-                    loadState.refresh is LoadState.Loading -> {
-                        items(5) { AnimeSearchListItemPlaceholder() }
-                    }
-                    loadState.append is LoadState.Loading -> {
-                        item {
-                            AnimeSearchListItemPlaceholder()
-                        }
-                    }
-                    loadState.refresh is LoadState.Error -> {
-                        val e = loadState.refresh as LoadState.Error
-                        item {
-                            Text("Error: ${e.error.localizedMessage}")
-                        }
-                    }
+            // Append loading
+            if (searchResults.loadState.append is LoadState.Loading) {
+                item { AnimeSearchListItemPlaceholder() }
+            }
+
+            // Append error
+            if (searchResults.loadState.append is LoadState.Error) {
+                item {
+                    ErrorCard(
+                        message = (searchResults.loadState.append as LoadState.Error).error.localizedMessage
+                            ?: "Unknown error",
+                    )
                 }
             }
         }
+
     }
 }
 
