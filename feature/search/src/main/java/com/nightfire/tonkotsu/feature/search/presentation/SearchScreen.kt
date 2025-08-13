@@ -1,11 +1,13 @@
 package com.nightfire.tonkotsu.feature.search.presentation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,8 +24,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -31,8 +31,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,7 +51,6 @@ import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 import com.nightfire.tonkotsu.feature.search.SearchViewModel
-import com.nightfire.tonkotsu.ui.AppHorizontalDivider
 import com.nightfire.tonkotsu.ui.ErrorCard
 import com.nightfire.tonkotsu.ui.shimmerEffect
 import java.util.Locale
@@ -101,47 +98,47 @@ fun SearchScreen(
                 }
             )
         )
+        val isRefreshing = searchResults.loadState.refresh is LoadState.Loading
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
+        AnimatedVisibility(
+            visible = isRefreshing,
+            enter = fadeIn(),
+            exit = fadeOut()
         ) {
-            when (val refreshState = searchResults.loadState.refresh) {
-                is LoadState.Loading -> {
-                    // Cover old results with placeholders
-                    items(10) { AnimeSearchListItemPlaceholder() }
-                }
-                is LoadState.Error -> {
-                    item {
-                        ErrorCard(
-                            message = refreshState.error.localizedMessage ?: "Unknown error",
+            LazyColumn {
+                items(10) { AnimeSearchListItemPlaceholder() }
+            }
+        }
+
+        AnimatedVisibility(
+            visible = !isRefreshing,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            LazyColumn {
+                items(
+                    count = searchResults.itemCount,
+                    key = searchResults.itemKey { it.malId }
+                ) { index ->
+                    searchResults[index]?.let { anime ->
+                        AnimeSearchListItem(
+                            anime = anime,
+                            onClick = onNavigateToAnimeDetail
                         )
                     }
                 }
-                else -> {
-                    // Normal results
-                    items(
-                        count = searchResults.itemCount,
-                        key = searchResults.itemKey { it.malId }
-                    ) { index ->
-                        searchResults[index]?.let { anime ->
-                            AnimeSearchListItem(anime)
-                        }
-                    }
+
+                if (searchResults.loadState.append is LoadState.Loading) {
+                    item { AnimeSearchListItemPlaceholder() }
                 }
-            }
 
-            // Append loading
-            if (searchResults.loadState.append is LoadState.Loading) {
-                item { AnimeSearchListItemPlaceholder() }
-            }
-
-            // Append error
-            if (searchResults.loadState.append is LoadState.Error) {
-                item {
-                    ErrorCard(
-                        message = (searchResults.loadState.append as LoadState.Error).error.localizedMessage
-                            ?: "Unknown error",
-                    )
+                if (searchResults.loadState.append is LoadState.Error) {
+                    item {
+                        ErrorCard(
+                            message = (searchResults.loadState.append as LoadState.Error).error.localizedMessage
+                                ?: "Unknown error",
+                        )
+                    }
                 }
             }
         }
