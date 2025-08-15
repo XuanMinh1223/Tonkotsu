@@ -1,9 +1,11 @@
 package com.nightfire.tonkotsu.core.common
 
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flowOn
 import retrofit2.HttpException
 import retrofit2.Response // Import Retrofit's Response class!
 import java.io.IOException
@@ -87,4 +89,4 @@ fun <DomainModel, DtoType> networkBoundResourceFlow(
             break
         }
     }
-}
+}.flowOn(Dispatchers.IO)
