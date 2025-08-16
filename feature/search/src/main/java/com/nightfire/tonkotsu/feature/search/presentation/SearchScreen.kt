@@ -24,16 +24,19 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,18 +56,39 @@ import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 import com.nightfire.tonkotsu.feature.search.SearchViewModel
 import com.nightfire.tonkotsu.ui.ErrorCard
 import com.nightfire.tonkotsu.ui.shimmerEffect
+import kotlinx.coroutines.launch
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
     onNavigateToAnimeDetail: (Int) -> Unit,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
+    val coroutineScope = rememberCoroutineScope()
+
     val searchResults = viewModel.searchResults.collectAsLazyPagingItems()
     val currentQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
 
     // Local text state to capture user typing without triggering search yet
     var textFieldValue by remember { mutableStateOf(currentQuery.query ?: "") }
+
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showSortSheet by remember { mutableStateOf(false) }
+
+    if (showSortSheet) {
+        SortSheet(
+            sheetState = sheetState,
+            currentOrderBy = currentQuery.orderBy ?: "popularity",
+            onSelect = { option ->
+                viewModel.updateSearchQuery(currentQuery.copy(orderBy = option))
+                coroutineScope.launch { sheetState.hide() }.invokeOnCompletion {
+                    showSortSheet = false
+                }
+            },
+            onDismiss = { showSortSheet = false }
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -99,7 +123,10 @@ fun SearchScreen(
             )
         )
         val isRefreshing = searchResults.loadState.refresh is LoadState.Loading
-
+        SortBar(
+            currentOrderBy = currentQuery.orderBy ?: "popularity",
+            onOrderByChange = { showSortSheet = true },
+        )
         AnimatedVisibility(
             visible = isRefreshing,
             enter = fadeIn(),

@@ -1,15 +1,13 @@
 package com.nightfire.tonkotsu.feature.search
 
-import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.compose.LazyPagingItems
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 import com.nightfire.tonkotsu.core.domain.model.AnimeSearchQuery
 import com.nightfire.tonkotsu.core.domain.usecase.AnimeSearchUseCase
+import com.nightfire.tonkotsu.feature.search.model.AnimeOrderBy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -22,18 +20,18 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     animeSearchUseCase: AnimeSearchUseCase
 ): ViewModel() {
-    data class SearchScreenState(
-        val query: String = "",
+    private val _searchQuery = MutableStateFlow(
+        AnimeSearchQuery(
+            orderBy = AnimeOrderBy.FAVORITES.apiName,
+            sfw = true
+        )
     )
-
-    private val _searchQuery = MutableStateFlow(AnimeSearchQuery())
     val searchQuery: StateFlow<AnimeSearchQuery> = _searchQuery.asStateFlow()
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
