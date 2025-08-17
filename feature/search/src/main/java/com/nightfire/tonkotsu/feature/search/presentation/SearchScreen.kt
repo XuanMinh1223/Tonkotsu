@@ -31,8 +31,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -130,13 +132,22 @@ fun SearchScreen(
                 onSearch = {
                     viewModel.updateSearchQuery(currentQuery.copy(query = textFieldValue.ifBlank { null }))
                 }
-            )
+            ),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor =  MaterialTheme.colorScheme.surfaceContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer
+            ),
+            shape = RoundedCornerShape(24.dp),
         )
 
         val isRefreshing = searchResults.loadState.refresh is LoadState.Loading
         SortBar(
             currentOrderBy = currentQuery.orderBy ?: "favorites",
             onOrderByChange = { showSortSheet = true },
+        )
+        HorizontalDivider(
+            color = MaterialTheme.colorScheme.outline,
         )
         AnimatedVisibility(
             visible = isRefreshing,
