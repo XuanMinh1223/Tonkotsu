@@ -1,4 +1,4 @@
-package com.nightfire.tonkotsu.feature.search.model
+package com.nightfire.tonkotsu.core.domain.model
 
 enum class AnimeOrderBy(val apiName: String, val label: String) {
     POPULARITY("popularity", "Popularity"),

@@ -15,7 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.nightfire.tonkotsu.feature.search.model.AnimeOrderBy
+import com.nightfire.tonkotsu.core.domain.model.AnimeOrderBy
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

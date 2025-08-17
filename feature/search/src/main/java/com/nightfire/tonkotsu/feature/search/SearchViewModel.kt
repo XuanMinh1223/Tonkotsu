@@ -7,7 +7,7 @@ import androidx.paging.cachedIn
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 import com.nightfire.tonkotsu.core.domain.model.AnimeSearchQuery
 import com.nightfire.tonkotsu.core.domain.usecase.AnimeSearchUseCase
-import com.nightfire.tonkotsu.feature.search.model.AnimeOrderBy
+import com.nightfire.tonkotsu.core.domain.model.AnimeOrderBy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -28,7 +28,7 @@ class SearchViewModel @Inject constructor(
 ): ViewModel() {
     private val _searchQuery = MutableStateFlow(
         AnimeSearchQuery(
-            orderBy = AnimeOrderBy.FAVORITES.apiName,
+            orderBy = AnimeOrderBy.POPULARITY.apiName,
             sfw = true
         )
     )

@@ -52,6 +52,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
+import com.nightfire.tonkotsu.core.domain.model.AnimeOrderBy
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 import com.nightfire.tonkotsu.feature.search.SearchViewModel
 import com.nightfire.tonkotsu.ui.ErrorCard
@@ -79,7 +80,7 @@ fun SearchScreen(
     if (showSortSheet) {
         SortSheet(
             sheetState = sheetState,
-            currentOrderBy = currentQuery.orderBy ?: "popularity",
+            currentOrderBy = currentQuery.orderBy ?: AnimeOrderBy.POPULARITY.apiName,
             onSelect = { option ->
                 viewModel.updateSearchQuery(currentQuery.copy(orderBy = option))
                 coroutineScope.launch { sheetState.hide() }.invokeOnCompletion {
@@ -124,7 +125,7 @@ fun SearchScreen(
         )
         val isRefreshing = searchResults.loadState.refresh is LoadState.Loading
         SortBar(
-            currentOrderBy = currentQuery.orderBy ?: "popularity",
+            currentOrderBy = currentQuery.orderBy ?: "favorites",
             onOrderByChange = { showSortSheet = true },
         )
         AnimatedVisibility(
