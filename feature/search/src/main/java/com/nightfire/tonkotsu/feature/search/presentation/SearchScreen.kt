@@ -22,9 +22,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -104,13 +106,20 @@ fun SearchScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-            placeholder = { Text("Search anime...") },
+            placeholder = { Text("Search") },
             leadingIcon = {
                 IconButton(onClick = {
                     // Trigger search on icon click
                     viewModel.updateSearchQuery(currentQuery.copy(query = textFieldValue.ifBlank { null }))
                 }) {
                     Icon(Icons.Default.Search, contentDescription = "Search")
+                }
+            },
+            trailingIcon = {
+                if (textFieldValue.isNotEmpty()) {
+                    IconButton(onClick = { textFieldValue = "" }) {
+                        Icon(Icons.Default.Close, contentDescription = "Clear text")
+                    }
                 }
             },
             singleLine = true,
@@ -123,6 +132,7 @@ fun SearchScreen(
                 }
             )
         )
+
         val isRefreshing = searchResults.loadState.refresh is LoadState.Loading
         SortBar(
             currentOrderBy = currentQuery.orderBy ?: "favorites",
@@ -149,6 +159,9 @@ fun SearchScreen(
                     key = searchResults.itemKey { it.malId }
                 ) { index ->
                     searchResults[index]?.let { anime ->
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.outline, // Or onBackground.copy(alpha=0.1f), etc.
+                        )
                         AnimeSearchListItem(
                             anime = anime,
                             onClick = onNavigateToAnimeDetail
@@ -180,7 +193,6 @@ fun AnimeSearchListItem(
     onClick: (Int) -> Unit = {}
 ) {
     Surface(
-        shape = RoundedCornerShape(12.dp),
         tonalElevation = 2.dp,
         shadowElevation = 2.dp,
         modifier = Modifier
@@ -200,8 +212,7 @@ fun AnimeSearchListItem(
                     model = url,
                     contentDescription = anime.title,
                     modifier = Modifier
-                        .size(width = 80.dp, height = 110.dp)
-                        .clip(RoundedCornerShape(8.dp)),
+                        .size(width = 80.dp, height = 110.dp),
                     contentScale = ContentScale.Crop
                 )
                 Spacer(modifier = Modifier.width(12.dp))
