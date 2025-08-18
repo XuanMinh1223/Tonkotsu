@@ -145,12 +145,13 @@ fun SearchScreen(
             currentOrderBy = currentQuery.orderBy ?: "favorites",
             onOrderByChange = { showSortSheet = true },
         )
+        Spacer(modifier = Modifier.size(8.dp))
         HorizontalDivider(
             color = MaterialTheme.colorScheme.outline,
         )
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.surfaceContainer
+            color = MaterialTheme.colorScheme.surfaceContainerHigh
         ) {
             AnimatedVisibility(
                 visible = isRefreshing,
