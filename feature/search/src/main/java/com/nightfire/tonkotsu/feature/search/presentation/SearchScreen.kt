@@ -23,6 +23,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,9 +45,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -101,16 +104,13 @@ fun SearchScreen(
     ) {
         OutlinedTextField(
             value = textFieldValue,
-            onValueChange = { newText ->
-                textFieldValue = newText
-            },
+            onValueChange = { newText -> textFieldValue = newText },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
             placeholder = { Text("Search") },
             leadingIcon = {
                 IconButton(onClick = {
-                    // Trigger search on icon click
                     viewModel.updateSearchQuery(currentQuery.copy(query = textFieldValue.ifBlank { null }))
                 }) {
                     Icon(Icons.Default.Search, contentDescription = "Search")
@@ -124,16 +124,14 @@ fun SearchScreen(
                 }
             },
             singleLine = true,
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Search
-            ),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(
                 onSearch = {
                     viewModel.updateSearchQuery(currentQuery.copy(query = textFieldValue.ifBlank { null }))
                 }
             ),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor =  MaterialTheme.colorScheme.surfaceContainer,
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
                 disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer
             ),
@@ -146,53 +144,61 @@ fun SearchScreen(
             onOrderByChange = { showSortSheet = true },
         )
         Spacer(modifier = Modifier.size(8.dp))
-        HorizontalDivider(
-            color = MaterialTheme.colorScheme.outline,
-        )
+        HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.surfaceContainerHigh
         ) {
-            AnimatedVisibility(
-                visible = isRefreshing,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                LazyColumn {
-                    items(10) { AnimeSearchListItemPlaceholder() }
+            when {
+                isRefreshing -> {
+                    LazyColumn {
+                        items(10) { AnimeSearchListItemPlaceholder() }
+                    }
                 }
-            }
-            AnimatedVisibility(
-                visible = !isRefreshing,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                LazyColumn {
-                    items(
-                        count = searchResults.itemCount,
-                        key = searchResults.itemKey { it.malId }
-                    ) { index ->
-                        searchResults[index]?.let { anime ->
-                            HorizontalDivider(
-                                color = MaterialTheme.colorScheme.outline, // Or onBackground.copy(alpha=0.1f), etc.
-                            )
-                            AnimeSearchListItem(
-                                anime = anime,
-                                onClick = onNavigateToAnimeDetail
-                            )
+
+                textFieldValue.isBlank() -> {
+                    // Prompt before searching
+                    EmptyState(
+                        icon = Icons.Default.Search,
+                        message = "Start typing to search for anime"
+                    )
+                }
+
+                searchResults.itemCount == 0 -> {
+                    // No results found
+                    EmptyState(
+                        icon = Icons.Default.Info,
+                        message = "No results found. Try different keywords or filters."
+                    )
+                }
+
+                else -> {
+                    LazyColumn {
+                        items(
+                            count = searchResults.itemCount,
+                            key = searchResults.itemKey { it.malId }
+                        ) { index ->
+                            searchResults[index]?.let { anime ->
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+                                AnimeSearchListItem(
+                                    anime = anime,
+                                    onClick = onNavigateToAnimeDetail
+                                )
+                            }
                         }
-                    }
 
-                    if (searchResults.loadState.append is LoadState.Loading) {
-                        item { AnimeSearchListItemPlaceholder() }
-                    }
+                        if (searchResults.loadState.append is LoadState.Loading) {
+                            item { AnimeSearchListItemPlaceholder() }
+                        }
 
-                    if (searchResults.loadState.append is LoadState.Error) {
-                        item {
-                            ErrorCard(
-                                message = (searchResults.loadState.append as LoadState.Error).error.localizedMessage
-                                    ?: "Unknown error",
-                            )
+                        if (searchResults.loadState.append is LoadState.Error) {
+                            item {
+                                ErrorCard(
+                                    message = (searchResults.loadState.append as LoadState.Error).error.localizedMessage
+                                        ?: "Unknown error",
+                                )
+                            }
                         }
                     }
                 }
@@ -200,6 +206,35 @@ fun SearchScreen(
         }
     }
 }
+
+@Composable
+fun EmptyState(
+    icon: ImageVector,
+    message: String
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(48.dp)
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
 
 @Composable
 fun AnimeSearchListItem(
