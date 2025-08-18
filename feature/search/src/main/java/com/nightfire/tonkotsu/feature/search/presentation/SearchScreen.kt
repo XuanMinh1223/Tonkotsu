@@ -34,7 +34,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -149,52 +148,55 @@ fun SearchScreen(
         HorizontalDivider(
             color = MaterialTheme.colorScheme.outline,
         )
-        AnimatedVisibility(
-            visible = isRefreshing,
-            enter = fadeIn(),
-            exit = fadeOut()
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.surfaceContainer
         ) {
-            LazyColumn {
-                items(10) { AnimeSearchListItemPlaceholder() }
-            }
-        }
-
-        AnimatedVisibility(
-            visible = !isRefreshing,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            LazyColumn {
-                items(
-                    count = searchResults.itemCount,
-                    key = searchResults.itemKey { it.malId }
-                ) { index ->
-                    searchResults[index]?.let { anime ->
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.outline, // Or onBackground.copy(alpha=0.1f), etc.
-                        )
-                        AnimeSearchListItem(
-                            anime = anime,
-                            onClick = onNavigateToAnimeDetail
-                        )
-                    }
-                }
-
-                if (searchResults.loadState.append is LoadState.Loading) {
-                    item { AnimeSearchListItemPlaceholder() }
-                }
-
-                if (searchResults.loadState.append is LoadState.Error) {
-                    item {
-                        ErrorCard(
-                            message = (searchResults.loadState.append as LoadState.Error).error.localizedMessage
-                                ?: "Unknown error",
-                        )
-                    }
+            AnimatedVisibility(
+                visible = isRefreshing,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                LazyColumn {
+                    items(10) { AnimeSearchListItemPlaceholder() }
                 }
             }
-        }
+            AnimatedVisibility(
+                visible = !isRefreshing,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                LazyColumn {
+                    items(
+                        count = searchResults.itemCount,
+                        key = searchResults.itemKey { it.malId }
+                    ) { index ->
+                        searchResults[index]?.let { anime ->
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.outline, // Or onBackground.copy(alpha=0.1f), etc.
+                            )
+                            AnimeSearchListItem(
+                                anime = anime,
+                                onClick = onNavigateToAnimeDetail
+                            )
+                        }
+                    }
 
+                    if (searchResults.loadState.append is LoadState.Loading) {
+                        item { AnimeSearchListItemPlaceholder() }
+                    }
+
+                    if (searchResults.loadState.append is LoadState.Error) {
+                        item {
+                            ErrorCard(
+                                message = (searchResults.loadState.append as LoadState.Error).error.localizedMessage
+                                    ?: "Unknown error",
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
