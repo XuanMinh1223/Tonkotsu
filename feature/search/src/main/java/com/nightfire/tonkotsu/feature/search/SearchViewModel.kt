@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.nightfire.tonkotsu.core.domain.model.AnimeFilterOptions
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
 import com.nightfire.tonkotsu.core.domain.model.AnimeSearchQuery
 import com.nightfire.tonkotsu.core.domain.usecase.AnimeSearchUseCase
@@ -47,5 +48,17 @@ class SearchViewModel @Inject constructor(
 
     fun updateSearchQuery(newQuery: AnimeSearchQuery) {
         _searchQuery.value = newQuery
+    }
+
+    fun updateSearchFilter(filter: AnimeFilterOptions) {
+        _searchQuery.value = _searchQuery.value.copy(
+            startDate = filter.startDate,
+            endDate = filter.endDate,
+            type = filter.type.apiValue,
+            status = filter.status?.apiValue,
+            rating = filter.rating?.apiValue,
+            minScore = filter.minScore?.toDouble(),
+            maxScore = filter.maxScore?.toDouble(),
+        )
     }
 }

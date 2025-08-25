@@ -55,8 +55,12 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
+import com.nightfire.tonkotsu.core.domain.model.AnimeFilterOptions
 import com.nightfire.tonkotsu.core.domain.model.AnimeOrderBy
 import com.nightfire.tonkotsu.core.domain.model.AnimeOverview
+import com.nightfire.tonkotsu.core.domain.util.AnimeRating
+import com.nightfire.tonkotsu.core.domain.util.AnimeStatus
+import com.nightfire.tonkotsu.core.domain.util.AnimeType
 import com.nightfire.tonkotsu.feature.search.SearchViewModel
 import com.nightfire.tonkotsu.ui.ErrorCard
 import com.nightfire.tonkotsu.ui.shimmerEffect
@@ -73,12 +77,14 @@ fun SearchScreen(
 
     val searchResults = viewModel.searchResults.collectAsLazyPagingItems()
     val currentQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
-
     // Local text state to capture user typing without triggering search yet
     var textFieldValue by remember { mutableStateOf(currentQuery.query ?: "") }
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showSortSheet by remember { mutableStateOf(false) }
+    var showFilterSheet by remember { mutableStateOf(false) }
+
+    val isQueryActive = textFieldValue.isNotBlank()
 
     if (showSortSheet) {
         SortSheet(
@@ -91,6 +97,27 @@ fun SearchScreen(
                 }
             },
             onDismiss = { showSortSheet = false }
+        )
+    }
+
+    if (showFilterSheet) {
+        val currentFilter = AnimeFilterOptions(
+            startDate = currentQuery.startDate,
+            endDate = currentQuery.endDate,
+            type = AnimeType.fromApiValue(currentQuery.type),
+            status = AnimeStatus.fromApiValue(currentQuery.status),
+            rating = AnimeRating.fromApiValue(currentQuery.rating),
+            minScore = currentQuery.minScore?.toFloat(),
+            maxScore = currentQuery.maxScore?.toFloat()
+        )
+        FilterSheet(
+            sheetState = sheetState,
+            currentOptions = currentFilter,
+            onApply = {
+                viewModel.updateSearchFilter(it)
+                showFilterSheet = false
+                      },
+            onDismiss = { showFilterSheet = false }
         )
     }
 
@@ -135,10 +162,11 @@ fun SearchScreen(
             shape = RoundedCornerShape(24.dp),
         )
 
-        val isRefreshing = searchResults.loadState.refresh is LoadState.Loading
-        SortBar(
+        val isRefreshing = searchResults?.loadState?.refresh is LoadState.Loading
+        SortAndFilterBar(
             currentOrderBy = currentQuery.orderBy ?: "favorites",
             onOrderByChange = { showSortSheet = true },
+            onShowFilters = { showFilterSheet = true }
         )
         Spacer(modifier = Modifier.size(8.dp))
         HorizontalDivider(color = MaterialTheme.colorScheme.outline)
@@ -154,7 +182,7 @@ fun SearchScreen(
                     }
                 }
 
-                textFieldValue.isBlank() -> {
+                textFieldValue.isBlank() && currentQuery.query.isNullOrBlank() -> {
                     // Prompt before searching
                     EmptyState(
                         icon = Icons.Default.Search,
