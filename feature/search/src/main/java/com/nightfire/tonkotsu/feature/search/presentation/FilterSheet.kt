@@ -71,7 +71,7 @@ fun FilterSheet(
                 label = "Type",
                 options = AnimeType.entries.toTypedArray(),
                 selectedOption = type,
-                optionLabel = { it.apiValue ?: "All types" }
+                optionLabel = { it.displayName }
             ) { type = it }
 
             Spacer(Modifier.height(12.dp))
@@ -91,7 +91,7 @@ fun FilterSheet(
                 label = "Status",
                 options = AnimeStatus.entries.toTypedArray(),
                 selectedOption = status,
-                optionLabel = { it.name.replaceFirstChar { c -> c.uppercase() } }
+                optionLabel = { it.displayName }
             ) { newStatus ->
                 status = newStatus
             }
