@@ -40,10 +40,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -67,24 +69,21 @@ import com.nightfire.tonkotsu.ui.shimmerEffect
 import kotlinx.coroutines.launch
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SearchScreen(
     onNavigateToAnimeDetail: (Int) -> Unit,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     val searchResults = viewModel.searchResults.collectAsLazyPagingItems()
     val currentQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
-    // Local text state to capture user typing without triggering search yet
-    var textFieldValue by remember { mutableStateOf(currentQuery.query ?: "") }
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showSortSheet by remember { mutableStateOf(false) }
     var showFilterSheet by remember { mutableStateOf(false) }
-
-    val isQueryActive = textFieldValue.isNotBlank()
 
     if (showSortSheet) {
         SortSheet(
@@ -127,22 +126,18 @@ fun SearchScreen(
             .background(MaterialTheme.colorScheme.background)
     ) {
         OutlinedTextField(
-            value = textFieldValue,
-            onValueChange = { newText -> textFieldValue = newText },
+            value = currentQuery.query ?: "",
+            onValueChange = viewModel::onQueryChange,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
             placeholder = { Text("Search") },
             leadingIcon = {
-                IconButton(onClick = {
-                    viewModel.updateSearchQuery(currentQuery.copy(query = textFieldValue.ifBlank { null }))
-                }) {
-                    Icon(Icons.Default.Search, contentDescription = "Search")
-                }
+                Icon(Icons.Default.Search, contentDescription = "Search")
             },
             trailingIcon = {
-                if (textFieldValue.isNotEmpty()) {
-                    IconButton(onClick = { textFieldValue = "" }) {
+                if (!currentQuery.query.isNullOrBlank()) {
+                    IconButton(onClick = { viewModel.clearQuery() }) {
                         Icon(Icons.Default.Close, contentDescription = "Clear text")
                     }
                 }
@@ -151,7 +146,7 @@ fun SearchScreen(
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(
                 onSearch = {
-                    viewModel.updateSearchQuery(currentQuery.copy(query = textFieldValue.ifBlank { null }))
+                    keyboardController?.hide()
                 }
             ),
             colors = OutlinedTextFieldDefaults.colors(
@@ -162,7 +157,7 @@ fun SearchScreen(
             shape = RoundedCornerShape(24.dp),
         )
 
-        val isRefreshing = searchResults?.loadState?.refresh is LoadState.Loading
+        val isRefreshing = searchResults.loadState.refresh is LoadState.Loading
         SortAndFilterBar(
             currentOrderBy = currentQuery.orderBy ?: "favorites",
             onOrderByChange = { showSortSheet = true },
@@ -182,16 +177,14 @@ fun SearchScreen(
                     }
                 }
 
-                textFieldValue.isBlank() && currentQuery.query.isNullOrBlank() -> {
-                    // Prompt before searching
+                currentQuery.query.isNullOrBlank() -> {
                     EmptyState(
                         icon = Icons.Default.Search,
                         message = "Start typing to search for anime"
                     )
                 }
 
-                searchResults.itemCount == 0 -> {
-                    // No results found
+                searchResults.itemCount == 0 && searchResults.loadState.refresh is LoadState.NotLoading -> {
                     EmptyState(
                         icon = Icons.Default.Info,
                         message = "No results found. Try different keywords or filters."

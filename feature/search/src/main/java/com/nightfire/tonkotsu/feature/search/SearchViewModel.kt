@@ -18,9 +18,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,15 +39,26 @@ class SearchViewModel @Inject constructor(
     val searchResults: StateFlow<PagingData<AnimeOverview>> = _searchQuery
         .debounce(300)
         .distinctUntilChanged()
-        .filter { query -> !query.query.isNullOrBlank() }  // Filter out empty or null queries
         .flatMapLatest { query ->
-            animeSearchUseCase(query)
-                .cachedIn(viewModelScope)
+            if (query.query.isNullOrBlank()) {
+                flowOf(PagingData.empty())
+            } else {
+                animeSearchUseCase(query)
+                    .cachedIn(viewModelScope)
+            }
         }
         .stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty())
 
     fun updateSearchQuery(newQuery: AnimeSearchQuery) {
         _searchQuery.value = newQuery
+    }
+
+    fun clearQuery() {
+        _searchQuery.value = _searchQuery.value.copy(query = null)
+    }
+
+    fun onQueryChange(query: String) {
+        _searchQuery.value = _searchQuery.value.copy(query = query)
     }
 
     fun updateSearchFilter(filter: AnimeFilterOptions) {
