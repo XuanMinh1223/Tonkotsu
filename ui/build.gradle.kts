@@ -1,26 +1,21 @@
-// Tonkotsu/ui/build.gradle.kts
-
 plugins {
-    alias(libs.plugins.android.library) // This module is an Android library
-    alias(libs.plugins.kotlin.android)    // For Kotlin Android features
-    alias(libs.plugins.ksp)               // For Kotlin Symbol Processing (e.g., if you add Hilt later or other annotation processors)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "com.nightfire.tonkotsu.ui" // Ensure this matches your package name
+    namespace = "com.nightfire.tonkotsu.ui"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInt()
-        // testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" // Only needed if you have Android tests in this module
     }
 
-    // Enable Compose for this module
     buildFeatures {
         compose = true
     }
 
-    // Specify the Compose Compiler Extension version
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
@@ -36,33 +31,29 @@ android {
 }
 
 dependencies {
+    // --- Internal Modules ---
     implementation(project(":core:domain"))
     implementation(project(":core:common"))
 
-    // --- AndroidX Core ---
-    implementation(libs.core.ktx)
-    implementation(libs.kotlin.stdlib)
-
-    // --- Compose Dependencies ---
-    // Import the Compose BOM to manage versions
+    // --- Core Android & Compose ---
     implementation(platform(libs.compose.bom))
-    implementation(libs.ui)
-    implementation(libs.ui.graphics)
-    implementation(libs.ui.tooling.preview)
-    implementation(libs.material3) // If you use Material Design 3 components
-    debugImplementation(libs.ui.tooling) // For Compose tooling in debug builds
-    implementation(libs.material.icons.extended)
-    // --- Lifecycle & ViewModel (if your common UI components need them, e.g., for rememberSaveable) ---
-    implementation(libs.lifecycle.runtime.ktx)
-    implementation(libs.lifecycle.viewmodel.ktx)
-    implementation(libs.lifecycle.viewmodel.compose)
-    implementation (libs.androidx.activity.compose)
+    implementation(libs.bundles.compose)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.material.icons.extended)
 
-    //Coil
+    // --- Lifecycle & ViewModel ---
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    // --- Image Loading ---
     implementation(libs.coil.compose)
 
-    // --- Testing ---
+    // --- Tooling & Testing ---
+    debugImplementation(libs.androidx.ui.tooling)
+
     testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.androidx.junit.ext)
+    androidTestImplementation(libs.androidx.espresso.core)
 }

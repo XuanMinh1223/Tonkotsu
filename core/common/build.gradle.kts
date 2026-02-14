@@ -1,10 +1,10 @@
 plugins {
-    alias(libs.plugins.android.library) // Applies the Android Library plugin
-    alias(libs.plugins.kotlin.android)  // Applies the Kotlin Android plugin
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
-    namespace = "com.nightfire.tonkotsu.core.common" // IMPORTANT: Must match your package structure
+    namespace = "com.nightfire.tonkotsu.core.common"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
@@ -12,24 +12,22 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17 // Or whatever JVM target you are using
+        sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "17" // Or whatever JVM target you are using
+        jvmTarget = "17"
     }
 }
 
 dependencies {
-    // Basic Android KTX extensions (good for utility modules)
-    implementation(libs.core.ktx)
-    // The Kotlin Standard Library (explicitly declared for clarity)
-    implementation(libs.kotlin.stdlib)
+    // --- Core & Networking ---
+    implementation(libs.androidx.core.ktx)
     implementation(libs.retrofit)
 
     // --- Testing ---
     testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.androidx.junit.ext)
+    androidTestImplementation(libs.androidx.espresso.core)
 }
