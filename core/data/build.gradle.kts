@@ -21,6 +21,10 @@ android {
     }
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 dependencies {
     // --- Module Dependencies ---
     implementation(project(":core:network"))
@@ -41,12 +45,6 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.okhttp.logging.interceptor)
-
-    // --- Local Persistence (Room) - Optional, but good to set up now if you plan to use it ---
-    // Uncomment these lines if you plan to use Room
-    // implementation(libs.room.runtime)
-    // kapt(libs.room.compiler)
-    // implementation(libs.room.ktx)
 
     // --- Testing (Standard for Android Libraries) ---
     testImplementation(libs.junit)

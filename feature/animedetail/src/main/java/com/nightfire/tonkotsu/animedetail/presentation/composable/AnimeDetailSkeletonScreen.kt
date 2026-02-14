@@ -122,25 +122,27 @@ fun AnimeDetailSkeletonScreen(modifier: Modifier = Modifier) {
         repeat(2) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 repeat(3) {
-                    Box(
-                        modifier = Modifier
-                            .padding( vertical = 4.dp)
-                            .width(100.dp)
-                            .height(16.dp)
-                            .shimmerEffect(shape = RoundedCornerShape(4.dp))
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    Box(
-                        modifier = Modifier
-                            .width(80.dp)
-                            .height(14.dp)
-                            .shimmerEffect(shape = RoundedCornerShape(4.dp))
-                    )
+                    Column {
+                        Box(
+                            modifier = Modifier
+                                .padding(vertical = 4.dp)
+                                .width(100.dp)
+                                .height(16.dp)
+                                .shimmerEffect(shape = RoundedCornerShape(4.dp))
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Box(
+                            modifier = Modifier
+                                .width(80.dp)
+                                .height(14.dp)
+                                .shimmerEffect(shape = RoundedCornerShape(4.dp))
+                        )
+                    }
                 }
             }
             Spacer(Modifier.height(16.dp))
         }
-
+        
         // Review & recommendation list placeholders
         repeat(2) {
             Box(
@@ -154,6 +156,28 @@ fun AnimeDetailSkeletonScreen(modifier: Modifier = Modifier) {
 
         Spacer(Modifier.height(24.dp))
 
+        // CharacterListSection placeholder
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(150.dp) // Adjust height as needed
+                .padding(vertical = 8.dp)
+                .shimmerEffect(shape = RoundedCornerShape(6.dp))
+        )
+
+        Spacer(Modifier.height(24.dp))
+
+        // AnimeNewsList placeholder
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(120.dp) // Adjust height as needed
+                .padding(vertical = 8.dp)
+                .shimmerEffect(shape = RoundedCornerShape(6.dp))
+        )
+
+        Spacer(Modifier.height(24.dp))
+
         // Streaming links section
         repeat(3) {
             Box(
@@ -164,6 +188,28 @@ fun AnimeDetailSkeletonScreen(modifier: Modifier = Modifier) {
                     .shimmerEffect(shape = RoundedCornerShape(8.dp))
             )
         }
+
+        Spacer(Modifier.height(24.dp))
+
+        // AnimeThemesSection placeholder
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(80.dp) // Adjust height as needed
+                .padding(vertical = 8.dp)
+                .shimmerEffect(shape = RoundedCornerShape(6.dp))
+        )
+
+        Spacer(Modifier.height(24.dp))
+
+        // AnimeRelationsSection placeholder
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp) // Adjust height as needed
+                .padding(vertical = 8.dp)
+                .shimmerEffect(shape = RoundedCornerShape(6.dp))
+        )
 
         Spacer(Modifier.height(24.dp))
     }

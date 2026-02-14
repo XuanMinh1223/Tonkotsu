@@ -11,9 +11,10 @@ data class MusicVideoDto(
 
 fun MusicVideoDto.toVideo(): Video? {
     val videoDetails = this.video
-    val videoUrl = videoDetails?.embedUrl
+    val videoUrl = convertToStandardYouTubeUrl(videoDetails?.embedUrl)
     val thumbnailUrl = videoDetails?.images?.smallImageUrl
         ?: videoDetails?.images?.imageUrl // Fallback to a general image_url if small isn't available
+        ?: generateYouTubeThumbnailUrl(videoDetails?.embedUrl)
 
     return if (!videoUrl.isNullOrBlank()) {
         Video(

@@ -127,6 +127,68 @@ fun AnimeDetailScreenContent(
                 }
                 is UiState.Success -> {
                     val anime = state.data
+                    // --- Stable Event Handlers for showing overlays ---
+                    val onTitleImageClick: () -> Unit = remember(anime.imageUrl) {
+                        {
+                            overlayContent = OverlayContent.ImageGalleryFullScreen(
+                                images = listOf(Image(anime.imageUrl)),
+                                initialIndex = 0
+                            )
+                        }
+                    }
+
+                    val onWatchTrailerClick: () -> Unit = remember(anime.title, anime.trailerYoutubeId) {
+                        {
+                            anime.trailerYoutubeId?.let { youtubeId ->
+                                overlayContent = OverlayContent.VideoFullScreen(
+                                    videos = listOf(Video(
+                                        videoUrl = anime.trailerYoutubeUrl ?: "https://www.youtube.com/watch?v=$youtubeId",
+                                        thumbnailUrl = "https://img.youtube.com/vi/$youtubeId/hqdefault.jpg"
+                                    )),
+                                    title = "${anime.title} Trailer"
+                                )
+                            }
+                        }
+                    }
+
+                    val onVideoClick: (Video, Int) -> Unit = remember(anime.title, animeVideosState) {
+                        { clickedVideo, index ->
+                            val videosList = (animeVideosState as? UiState.Success)?.data
+                            if (videosList != null) {
+                                overlayContent = if (videosList.size == 1) {
+                                    OverlayContent.VideoFullScreen(
+                                        videos = listOf(clickedVideo),
+                                        initialIndex = 0,
+                                        title = anime.title
+                                    )
+                                } else {
+                                    OverlayContent.VideoFullScreen(
+                                        videos = videosList,
+                                        initialIndex = index,
+                                        title = anime.title
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    val onGalleryImageClick: (Image, Int) -> Unit = remember(animeImagesState) {
+                        { _, index ->
+                            val imagesList = (animeImagesState as? UiState.Success)?.data
+                            if (imagesList != null) {
+                                overlayContent = OverlayContent.ImageGalleryFullScreen(
+                                    images = imagesList,
+                                    initialIndex = index
+                                )
+                            }
+                        }
+                    }
+
+                    val onReviewClick: (AnimeReview) -> Unit = remember {
+                        { review ->
+                            overlayContent = OverlayContent.ReviewFullScreen(review = review)
+                        }
+                    }
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -138,26 +200,13 @@ fun AnimeDetailScreenContent(
                         ) {
                             AnimeTitleSection(
                                 anime = anime,
-                                onImageClick = {
-                                    overlayContent = OverlayContent.ImageGalleryFullScreen(
-                                        images = listOf(Image(anime.imageUrl)),
-                                        initialIndex = 0
-                                    )
-                                }
+                                onImageClick = onTitleImageClick
                             )
                             AnimeCoreStats(anime = anime)
-                            anime.trailerYoutubeId?.let { youtubeId ->
+                            if (anime.trailerYoutubeId != null) {
                                 Spacer(Modifier.height(16.dp))
                                 Button(
-                                    onClick = {
-                                        overlayContent = OverlayContent.VideoFullScreen(
-                                            videos = listOf(Video(
-                                                videoUrl = anime.trailerYoutubeUrl ?: "https://www.youtube.com/watch?v=$youtubeId",
-                                                thumbnailUrl = "https://img.youtube.com/vi/$youtubeId/hqdefault.jpg"
-                                            )),
-                                            title = "${anime.title} Trailer"
-                                        )
-                                    },
+                                    onClick = onWatchTrailerClick,
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Icon(Icons.Default.PlayArrow, contentDescription = "Watch Trailer")
@@ -196,37 +245,14 @@ fun AnimeDetailScreenContent(
                             AppHorizontalDivider()
                             VideoList(
                                 uiState = animeVideosState,
-                                onVideoClick = { clickedVideo, index ->
-                                    (animeVideosState as? UiState.Success)?.data?.let { videosList ->
-                                        overlayContent = if (videosList.size == 1) {
-                                            OverlayContent.VideoFullScreen(
-                                                videos = listOf(clickedVideo),
-                                                initialIndex = 0,
-                                                title = anime.title
-                                            )
-                                        } else {
-                                            OverlayContent.VideoFullScreen(
-                                                videos = videosList,
-                                                initialIndex = index,
-                                                title = anime.title
-                                            )
-                                        }
-                                    }
-                                },
+                                onVideoClick = onVideoClick,
                                 modifier = Modifier.fillMaxWidth()
                             )
                             Spacer(Modifier.height(16.dp))
                             AppHorizontalDivider()
                             ImageList(
                                 uiState = animeImagesState,
-                                onImageClick = { clickedImage, index ->
-                                    (animeImagesState as? UiState.Success)?.data?.let { imagesList ->
-                                        overlayContent = OverlayContent.ImageGalleryFullScreen(
-                                            images = imagesList,
-                                            initialIndex = index
-                                        )
-                                    }
-                                },
+                                onImageClick = onGalleryImageClick,
                                 modifier = Modifier.fillMaxWidth()
                             )
                             Spacer(Modifier.height(16.dp))
@@ -240,11 +266,7 @@ fun AnimeDetailScreenContent(
                             AppHorizontalDivider()
                             AnimeReviewList(
                                 reviews = animeReviews,
-                                onReviewClick = {
-                                    overlayContent = OverlayContent.ReviewFullScreen(
-                                        review = it
-                                    )
-                                }
+                                onReviewClick = onReviewClick
                             )
                             AppHorizontalDivider()
                             AnimeNewsList(
