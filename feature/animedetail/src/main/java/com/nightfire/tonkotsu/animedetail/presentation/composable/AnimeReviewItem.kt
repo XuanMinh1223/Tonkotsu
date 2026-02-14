@@ -1,4 +1,4 @@
-package com.nightfire.tonkotsu.ui.composables
+package com.nightfire.tonkotsu.animedetail.presentation.composable
 
 // ... (existing imports, including Chip if you use it, or Badge)
 import androidx.compose.foundation.background
@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -18,13 +17,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Lightbulb
-import androidx.compose.material.icons.filled.QuestionMark
-import androidx.compose.material.icons.filled.SentimentSatisfiedAlt
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Card
@@ -44,32 +38,32 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.nightfire.tonkotsu.core.domain.model.AnimeReview
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import kotlin.collections.forEachIndexed
-import androidx.compose.ui.graphics.vector.ImageVector
-data class Reaction(val count: Int, val icon: ImageVector, val description: String)
+
+data class Reaction(val count: Int, val emoji: String, val description: String)
 
 fun getTopReactions(review: AnimeReview, limit: Int = 3): List<Reaction> {
     val reactions = mutableListOf<Reaction>()
 
     review.reactions.nice.takeIf { it > 0 }?.let {
-        reactions.add(Reaction(it, Icons.Filled.ThumbUp, "Nice"))
+        reactions.add(Reaction(it, "👍", "Nice"))
     }
     review.reactions.loveIt.takeIf { it > 0 }?.let {
-        reactions.add(Reaction(it, Icons.Filled.Favorite, "Love it"))
+        reactions.add(Reaction(it, "❤️", "Love it"))
     }
     review.reactions.funny.takeIf { it > 0 }?.let {
-        reactions.add(Reaction(it, Icons.Filled.SentimentSatisfiedAlt, "Funny"))
+        reactions.add(Reaction(it, "😂", "Funny"))
     }
     review.reactions.confusing.takeIf { it > 0 }?.let {
-        reactions.add(Reaction(it, Icons.Filled.QuestionMark, "Confusing"))
+        reactions.add(Reaction(it, "🤔", "Confusing"))
     }
     review.reactions.informative.takeIf { it > 0 }?.let {
-        reactions.add(Reaction(it, Icons.Filled.Lightbulb, "Informative"))
+        reactions.add(Reaction(it, "💡", "Informative"))
     }
 
     return reactions.sortedByDescending { it.count }.take(limit)
@@ -192,24 +186,24 @@ fun AnimeReviewItem(
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        topReactions.forEachIndexed { index, reaction ->
-                            Icon(
-                                imageVector = reaction.icon,
-                                contentDescription = reaction.description,
-                                tint = MaterialTheme.colorScheme.primary, // Or a specific reaction color
-                                modifier = Modifier
-                                    .size(20.dp) // Small icon size
-                                    .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape) // Background to make overlap clear
-                                    .clip(CircleShape)
-                                    .padding(2.dp) // Padding inside the circle background
-                            )
+                        Box {
+                            topReactions.forEachIndexed { index, reaction ->
+                                Text(
+                                    text = reaction.emoji,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    modifier = Modifier
+                                        .zIndex(topReactions.size - index.toFloat())
+                                        .padding(start = (index * 14).dp)
+                                )
+                            }
                         }
 
                         Text(
                             text = "${review.reactions.overall}",
                             style = MaterialTheme.typography.bodySmall,
                             fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(start = 8.dp)
                         )
                     }
                 }

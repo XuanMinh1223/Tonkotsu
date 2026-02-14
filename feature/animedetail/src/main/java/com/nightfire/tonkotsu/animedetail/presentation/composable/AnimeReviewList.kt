@@ -25,7 +25,6 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.nightfire.tonkotsu.core.domain.model.AnimeReview
 import com.nightfire.tonkotsu.ui.ErrorCard
-import com.nightfire.tonkotsu.ui.composables.AnimeReviewItem
 import com.nightfire.tonkotsu.ui.shimmerEffect
 
 @Composable
