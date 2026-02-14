@@ -27,10 +27,8 @@ android {
 }
 
 dependencies {
-    // Standard Kotlin library for any Kotlin module
-    implementation(libs.kotlin.stdlib)
     // Kotlin Coroutines for async operations (which your repositories will use)
-    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
@@ -39,9 +37,9 @@ dependencies {
 
     // Testing dependencies
     testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.androidx.junit.ext)
 
     //paging
-    implementation(libs.paging.runtime) // latest as of Aug 2025
+    implementation(libs.androidx.paging.runtime) // latest as of Aug 2025
 
 }

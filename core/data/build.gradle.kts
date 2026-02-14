@@ -32,25 +32,21 @@ dependencies {
     implementation(project(":core:common"))
 
     // --- Core Dependencies ---
-    implementation(libs.kotlin.stdlib)
-    implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
 
     // --- Dependency Injection (Hilt) ---
     implementation(libs.hilt.android)
-    implementation(libs.core.ktx)
+    implementation(libs.androidx.core.ktx)
     ksp(libs.hilt.android.compiler) // Annotation processor for Hilt
 
     // --- Network (Retrofit & OkHttp) ---
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.gson)
-    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.bundles.retrofit)
+
+    // --- Paging ---
+    implementation(libs.androidx.paging.runtime)
 
     // --- Testing (Standard for Android Libraries) ---
     testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
-
-    //paging
-    implementation(libs.paging.runtime)
+    androidTestImplementation(libs.androidx.junit.ext)
+    androidTestImplementation(libs.androidx.espresso.core)
 }

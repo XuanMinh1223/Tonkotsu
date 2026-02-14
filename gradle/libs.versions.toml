@@ -1,90 +1,64 @@
-# Tonkotsu/gradle/libs.versions.toml
-
 [versions]
-# SDK & Kotlin
+# SDK & Build Tools
+androidGradlePlugin = "8.13.2"
 compileSdk = "35"
+minSdk = "26"
+targetSdk = "35"
+
+# Kotlin & Plugins
+# Kotlin 1.9.23 requires Compose Compiler 1.5.12
+kotlin = "1.9.23"
+ksp = "1.9.23-1.0.19"
+kotlinCoroutines = "1.8.0"
+
+# Compose & UI
+# BOM 2025.05.01 manages versions for: UI, Material3, Graphics, Tooling, Activity, and Navigation
+composeBom = "2025.05.01"
+composeCompiler = "1.5.12"
 coreSplashscreen = "1.0.1"
+material = "1.10.0"
+appcompat = "1.6.1"
+
+# Architecture & Lifecycle
+hilt = "2.51.1"
+hiltCompiler = "1.2.0"
+room = "2.6.1"
+paging = "3.3.6"
+lifecycle = "2.8.0"
+
+# Networking & Image Loading
+retrofit = "2.9.0"
+okhttpLogging = "4.12.0"
+coil = "2.6.0"
+
+# Testing
 espressoCore = "3.6.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
-materialIconsExtended = "1.7.8"
-materialIconsExtendedVersion = "1.4.3"
-minSdk = "26"
-pagingCompose = "3.3.6"
-pagingRuntime = "3.3.6"
-targetSdk = "35"
-# ALIGNMENT POINT 1: Update Kotlin to a version compatible with newer Compose Compiler
-kotlin = "1.9.23" # Updated to 1.9.23 for better compatibility with 1.5.12 Compose Compiler
-ksp = "1.9.23-1.0.19" # KSP must match Kotlin version. Update to 1.9.23-1.0.19
-androidGradlePlugin = "8.10.0"
-corektx = "1.16.0"
-
-# Compose
-# ALIGNMENT POINT 2: Use a recent stable Compose BOM version
-composeBom = "2025.05.01" # Updated to a more recent stable BOM (e.g., May 2024)
-activityCompose = "1.9.0" # This will be managed by BOM. Removed explicit version in [libraries]
-lifecycleRuntimeKtx = "2.8.0" # This will be managed by BOM. Removed explicit version in [libraries]
-lifecycleViewModelCompose = "2.8.0" # This will be managed by BOM. Removed explicit version in [libraries]
-# ALIGNMENT POINT 3: Remove explicit version for Navigation Compose in [versions] as BOM manages it
-# navigationCompose = "2.7.7" # <-- REMOVE THIS LINE
-# ALIGNMENT POINT 4: Ensure Compose Compiler matches the chosen Kotlin version and BOM's requirement
-composeCompiler = "1.5.12" # Updated to 1.5.12 for Kotlin 1.9.23 and BOM 2024.05.00
-
-# Hilt
-hilt = "2.51.1"
-hiltCompiler = "1.2.0"
-
-# Network
-retrofit = "2.9.0"
-okhttpLogging = "4.12.0"
-
-# Coroutines
-kotlinCoroutines = "1.8.0"
-
-# Image Loading
-coil = "2.6.0"
-
-# Room
-room = "2.6.1"
-appcompat = "1.6.1"
-material = "1.10.0"
-navigationCommonAndroid = "2.9.0" # This isn't navigation-compose. Keep its version if needed.
 
 [libraries]
-# Kotlin Standard Library
-androidx-activity-compose = { module = "androidx.activity:activity-compose" }
-androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+# AndroidX & Core
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.16.0" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
-# AndroidX
-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "corektx" }
-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
-ext-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
-junit = { module = "junit:junit", version.ref = "junit" }
-# lifecycle-runtime-ktx will now be managed by compose-bom, so remove version.ref here or update
-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
-
-
-# Compose
-activity-compose = { group = "androidx.activity", name = "activity-compose" } # Removed version.ref, managed by BOM
+# Compose (Managed by BOM)
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "pagingRuntime" }
-ui = { group = "androidx.compose.ui", name = "ui" } # Managed by BOM
-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" } # Managed by BOM
-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" } # Managed by BOM
-material3 = { group = "androidx.compose.material3", name = "material3" } # Managed by BOM
-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" } # Managed by BOM
-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" } # Managed by BOM
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose" }
+androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 
-# Lifecycle & ViewModel
-# lifecycle-viewmodel-ktx will likely be managed by BOM, consider removing version.ref
-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose" } # Removed version.ref, managed by BOM
-
-# Navigation
-navigation-compose = { group = "androidx.navigation", name = "navigation-compose" } # Removed version.ref, managed by BOM
+# Lifecycle
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose" }
 
 # Hilt
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
@@ -92,35 +66,42 @@ hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-comp
 hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltCompiler" }
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltCompiler" }
 
-# Network
+# Room & Paging
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "paging" }
+androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
+
+# Networking
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttpLogging" }
 
-# Coroutines
-kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinCoroutines" }
+# Coroutines & Coil
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinCoroutines" }
-
-# Image Loading
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
-# Room
-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-navigation-common-android = { group = "androidx.navigation", name = "navigation-common-android", version.ref = "navigationCommonAndroid" }
+# Testing
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-junit-ext = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 [bundles]
-# You can create bundles to easily group related dependencies
-# Example: network = ["retrofit", "retrofit-converter-gson", "okhttp-logging-interceptor"]
-#          compose = ["ui", "ui-graphics", "ui-tooling-preview", "material3"]
+compose = [
+    "androidx-activity-compose",
+    "androidx-material3",
+    "androidx-ui",
+    "androidx-ui-graphics",
+    "androidx-ui-tooling-preview"
+]
+room = ["androidx-room-runtime", "androidx-room-ktx"]
+retrofit = ["retrofit", "retrofit-converter-gson", "okhttp-logging-interceptor"]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

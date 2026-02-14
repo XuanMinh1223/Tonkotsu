@@ -25,18 +25,14 @@ android {
 
 dependencies {
 
-    implementation(libs.core.ktx)
-    implementation(libs.kotlin.stdlib)
+    implementation(libs.androidx.core.ktx)
 
-    implementation(libs.retrofit)
-    implementation(libs.okhttp.logging.interceptor)
-    implementation(libs.retrofit.converter.gson)// Correctly uses libs.converter.gson from your toml
-
+    implementation(libs.bundles.retrofit)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
 
     testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.androidx.junit.ext)
+    androidTestImplementation(libs.androidx.espresso.core)
 }
