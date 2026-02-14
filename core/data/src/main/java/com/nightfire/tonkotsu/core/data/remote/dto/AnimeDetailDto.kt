@@ -57,6 +57,7 @@ fun AnimeDetailDto.toAnimeDetail(): AnimeDetail {
           imageUrl = images?.jpg?.largeImageUrl
                ?: images?.webp?.largeImageUrl
                ?: images?.jpg?.imageUrl
+               ?: generateYouTubeThumbnailUrl(trailer?.embedUrl)
                ?: "",
           synopsis = synopsis ?: "No synopsis available.",
           type = type,
@@ -83,7 +84,7 @@ fun AnimeDetailDto.toAnimeDetail(): AnimeDetail {
           producers = producers?.mapNotNull { it.name } ?: emptyList(),
           licensors = licensors?.mapNotNull { it.name } ?: emptyList(),
           background = background,
-          trailerYoutubeUrl = trailer?.embedUrl,
+          trailerYoutubeUrl = convertToStandardYouTubeUrl(trailer?.embedUrl),
           trailerYoutubeId = trailer?.youtubeId,
           relations = relations?.associate { relationDto ->
                relationDto.relation!! to (relationDto.entry?.map { entryDto ->

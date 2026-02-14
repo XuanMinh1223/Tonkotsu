@@ -10,9 +10,10 @@ data class PromoVideoDto(
 
 fun PromoVideoDto.toVideo(): Video? {
     val videoDetails = this.trailer
-    val videoUrl = videoDetails?.embedUrl
+    val videoUrl = convertToStandardYouTubeUrl(videoDetails?.embedUrl)
     val thumbnailUrl = videoDetails?.images?.smallImageUrl
         ?: videoDetails?.images?.imageUrl
+        ?: generateYouTubeThumbnailUrl(videoDetails?.embedUrl)
 
     return if (!videoUrl.isNullOrBlank()) {
         Video(
